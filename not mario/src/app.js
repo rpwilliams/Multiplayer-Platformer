@@ -3,6 +3,7 @@
 /* Classes and Libraries */
 const Game = require('./game');
 const Player = require('./player');
+const EntityManager = require('./entity_manager.js');
 
 
 /* Global variables */
