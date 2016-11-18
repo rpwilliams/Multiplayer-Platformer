@@ -3,7 +3,6 @@
 /* Classes and Libraries */
 const Game = require('./game');
 const Player = require('./player');
-const EntityManager = require('./entity_manager.js');
 
 
 /* Global variables */
@@ -16,23 +15,12 @@ var input = {
   right: false
 }
 var player = new Player();
-var img = new Image()
-img.src = 'assets/death_scythe.png';
-//independent of the animation
-var animationTimer = 0;
-var animationCounter = 0;
-var frameLength = 9;
-//animation dependent
-var numberOfSpirtes = 0; // how man y frames are there in the animation
-var spirteWidth = 50; // width of each frame
-var spirteHeight = 48; // height of each frame
-var widthInGame = 80;   
-var heightInGame = 128;
-var xPlaceInImage = 0; // this should CHANGE for the same animation 
-var yPlaceInImage = 0; // this should NOT change for the same animation
+//var img = new Image();
+//img.src = 'assets/death_scythe.png';
 
-var animation = "stand still" // this will keep track of the animation
-var tookAstep = "no"
+
+
+
  
 /**
  * @function onkeydown
@@ -45,7 +33,7 @@ window.onkeydown = function(event) {
       input.up = true;
 	  
 	   
-	  changeAnimation("moving up");
+	  //player.changeAnimation("moving up");
 	   
       event.preventDefault();
       break;
@@ -53,7 +41,7 @@ window.onkeydown = function(event) {
     case "s":
       input.down = true;
 	   
-	  changeAnimation("moving down");
+	  //player.changeAnimation("moving down");
 	   
       event.preventDefault();
       break;
@@ -61,7 +49,7 @@ window.onkeydown = function(event) {
     case "a":
       input.left = true;
 	   
-	  changeAnimation("moving left");
+	  //player.changeAnimation("moving left");
 	   
       event.preventDefault();
       break;
@@ -69,8 +57,8 @@ window.onkeydown = function(event) {
     case "d":
       input.right = true;
 	   
-	  changeAnimation("moving right");
-	  //console.log(yPlaceInImage);
+	  //player.changeAnimation("moving right");
+	  
       event.preventDefault();
       break;
   }
@@ -86,26 +74,26 @@ window.onkeyup = function(event) {
     case "w":
       input.up = false;
 	 
-	  changeAnimation("stand still");
+	  player.changeAnimation("stand still");
 
       event.preventDefault();
       break;
     case "ArrowDown":
     case "s":
       input.down = false;
-	  changeAnimation("stand still");
+	  player.changeAnimation("stand still");
       event.preventDefault();
       break;
     case "ArrowLeft":
     case "a":
       input.left = false;
-	  changeAnimation("stand still");
+	  player.changeAnimation("stand still");
       event.preventDefault();
       break;
     case "ArrowRight":
     case "d":
       input.right = false;
-	  changeAnimation("stand still");
+	  player.changeAnimation("stand still");
       event.preventDefault();
       break;
   }
@@ -130,40 +118,11 @@ masterLoop(performance.now());
  * @param {DOMHighResTimeStamp} elapsedTime indicates
  * the number of milliseconds passed since the last frame.
  */
-function update(elapsedTime,input) {
+function update(elapsedTime) {
 
-  if (!(animation=="stand still" && tookAstep=="yes"))
-  animationTimer++;
-  if (animationTimer>frameLength)
-  {
-	  animationCounter++;
-	  animationTimer = 0;
-  }
-  if (animationCounter>numberOfSpirtes){
-	  animationCounter = 0;
-  }
+   
   
-  switch(animation)
-  {
-	  case "moving up":
-	  case "moving down":
-	  case "moving left":
-	  case "moving right":
-	  if (animationTimer == 0)
-		  tookAstep = "yes";
-	  
-	  break;
-	  case "stand still":
-	  if (animationTimer == 0){
-		  numberOfSpirtes = 0;
-		    animationTimer = 0;
-			animationCounter = 0;
-			tookAstep = "yes";
-	  }
-	  
-  }
-  
-  player.update(elapsedTime);
+  player.update(elapsedTime,input);
  
    
 }
@@ -179,8 +138,8 @@ function render(elapsedTime, ctx) {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, 1024, 786);
  
-  
-  ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
+  player.render(elapsedTime, ctx);
+  //ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
   ctx.save();
    
   ctx.restore();
@@ -189,49 +148,6 @@ function render(elapsedTime, ctx) {
 }
 
 
-function changeAnimation (x)
-{
-	animation = x;
-	if (x == "stand still")
-	{
-		//if (animationTimer == 0)
-		//{
-			numberOfSpirtes = 0;
-		    animationTimer = 0;
-			animationCounter = 0;
-			tookAstep = "yes";
-		//}
-		
-		
-	}
-	else
-	{
-		numberOfSpirtes = 3;
-		//tookAstep = "no";  
-		switch(x)
-		{
-			case "moving up":
-			
-			yPlaceInImage =spirteHeight*3;
-			
-			break;
-			
-			case "moving down":
-			yPlaceInImage =spirteHeight*0;
-			break;
-			
-			case "moving left":
-			yPlaceInImage =spirteHeight*1;
-			break;
-			
-			case "moving right":
-			yPlaceInImage =spirteHeight*2;
-			break;
-		}
-		
-	}
-	
-}
 /**
   * @function renderWorld
   * Renders the entities in the game world

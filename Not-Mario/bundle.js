@@ -16,23 +16,12 @@ var input = {
   right: false
 }
 var player = new Player();
-var img = new Image()
-img.src = 'assets/death_scythe.png';
-//independent of the animation
-var animationTimer = 0;
-var animationCounter = 0;
-var frameLength = 9;
-//animation dependent
-var numberOfSpirtes = 0; // how man y frames are there in the animation
-var spirteWidth = 50; // width of each frame
-var spirteHeight = 48; // height of each frame
-var widthInGame = 80;   
-var heightInGame = 128;
-var xPlaceInImage = 0; // this should CHANGE for the same animation 
-var yPlaceInImage = 0; // this should NOT change for the same animation
+//var img = new Image();
+//img.src = 'assets/death_scythe.png';
 
-var animation = "stand still" // this will keep track of the animation
-var tookAstep = "no"
+
+
+
  
 /**
  * @function onkeydown
@@ -45,7 +34,7 @@ window.onkeydown = function(event) {
       input.up = true;
 	  
 	   
-	  changeAnimation("moving up");
+	  //player.changeAnimation("moving up");
 	   
       event.preventDefault();
       break;
@@ -53,7 +42,7 @@ window.onkeydown = function(event) {
     case "s":
       input.down = true;
 	   
-	  changeAnimation("moving down");
+	  //player.changeAnimation("moving down");
 	   
       event.preventDefault();
       break;
@@ -61,7 +50,7 @@ window.onkeydown = function(event) {
     case "a":
       input.left = true;
 	   
-	  changeAnimation("moving left");
+	  //player.changeAnimation("moving left");
 	   
       event.preventDefault();
       break;
@@ -69,8 +58,8 @@ window.onkeydown = function(event) {
     case "d":
       input.right = true;
 	   
-	  changeAnimation("moving right");
-	  //console.log(yPlaceInImage);
+	  //player.changeAnimation("moving right");
+	  
       event.preventDefault();
       break;
   }
@@ -86,26 +75,26 @@ window.onkeyup = function(event) {
     case "w":
       input.up = false;
 	 
-	  changeAnimation("stand still");
+	  player.changeAnimation("stand still");
 
       event.preventDefault();
       break;
     case "ArrowDown":
     case "s":
       input.down = false;
-	  changeAnimation("stand still");
+	  player.changeAnimation("stand still");
       event.preventDefault();
       break;
     case "ArrowLeft":
     case "a":
       input.left = false;
-	  changeAnimation("stand still");
+	  player.changeAnimation("stand still");
       event.preventDefault();
       break;
     case "ArrowRight":
     case "d":
       input.right = false;
-	  changeAnimation("stand still");
+	  player.changeAnimation("stand still");
       event.preventDefault();
       break;
   }
@@ -130,40 +119,11 @@ masterLoop(performance.now());
  * @param {DOMHighResTimeStamp} elapsedTime indicates
  * the number of milliseconds passed since the last frame.
  */
-function update(elapsedTime,input) {
+function update(elapsedTime) {
 
-  if (!(animation=="stand still" && tookAstep=="yes"))
-  animationTimer++;
-  if (animationTimer>frameLength)
-  {
-	  animationCounter++;
-	  animationTimer = 0;
-  }
-  if (animationCounter>numberOfSpirtes){
-	  animationCounter = 0;
-  }
+   
   
-  switch(animation)
-  {
-	  case "moving up":
-	  case "moving down":
-	  case "moving left":
-	  case "moving right":
-	  if (animationTimer == 0)
-		  tookAstep = "yes";
-	  
-	  break;
-	  case "stand still":
-	  if (animationTimer == 0){
-		  numberOfSpirtes = 0;
-		    animationTimer = 0;
-			animationCounter = 0;
-			tookAstep = "yes";
-	  }
-	  
-  }
-  
-  player.update(elapsedTime);
+  player.update(elapsedTime,input);
  
    
 }
@@ -179,8 +139,8 @@ function render(elapsedTime, ctx) {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, 1024, 786);
  
-  
-  ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
+  player.render(elapsedTime, ctx);
+  //ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
   ctx.save();
    
   ctx.restore();
@@ -189,49 +149,6 @@ function render(elapsedTime, ctx) {
 }
 
 
-function changeAnimation (x)
-{
-	animation = x;
-	if (x == "stand still")
-	{
-		//if (animationTimer == 0)
-		//{
-			numberOfSpirtes = 0;
-		    animationTimer = 0;
-			animationCounter = 0;
-			tookAstep = "yes";
-		//}
-		
-		
-	}
-	else
-	{
-		numberOfSpirtes = 3;
-		//tookAstep = "no";  
-		switch(x)
-		{
-			case "moving up":
-			
-			yPlaceInImage =spirteHeight*3;
-			
-			break;
-			
-			case "moving down":
-			yPlaceInImage =spirteHeight*0;
-			break;
-			
-			case "moving left":
-			yPlaceInImage =spirteHeight*1;
-			break;
-			
-			case "moving right":
-			yPlaceInImage =spirteHeight*2;
-			break;
-		}
-		
-	}
-	
-}
 /**
   * @function renderWorld
   * Renders the entities in the game world
@@ -310,7 +227,8 @@ const PLAYER_RUN_VELOCITY = 0.25;
 const PLAYER_RUN_SPEED = 5;
 const PLAYER_RUN_MAX = 3;
 const PLAYER_FALL_VELOCITY = 0.25;
-const PLAYER_JUMP_SPEED = 3;
+const PLAYER_JUMP_SPEED = 6;
+const PLAYER_JUMP_BREAK_VELOCITY= 0.20;
 
 /**
  * @module Player
@@ -334,16 +252,28 @@ this.spirteWidth = 50; // width of each frame
 this.spirteHeight = 48; // height of each frame
 this.widthInGame = 80;   
 this.heightInGame = 128;
-this. xPlaceInImage = 0; // this should CHANGE for the same animation 
-this. yPlaceInImage = 0; // this should NOT change for the same animation
+this.xPlaceInImage = 0; // this should CHANGE for the same animation 
+this.yPlaceInImage = 0; // this should NOT change for the same animation
 
 this.animation = "stand still" // this will keep track of the animation
 this.tookAstep = "no"
+this.img = new Image()
 this.img.src = 'assets/death_scythe.png';
 
-this.position = {x: 0 , y:0};
+
+this.position = {x: 50, y: 600};
+this.velocity = {x: 0, y: 0};
+this.jumping = false ;
+this.crouching = "no"
+this.floorYPostion = 600;
+
+this.facing = "left";
 
 }
+
+
+
+
 
 /**
  * @function update
@@ -355,21 +285,74 @@ this.position = {x: 0 , y:0};
 Player.prototype.update = function(elapsedTime, input) {
 // set the velocity
 	//this.velocity.x = 0;
-	if(input.left) this.velocity.x -= PLAYER_RUN_VELOCITY;
-	else if(input.right) this.velocity.x += PLAYER_RUN_VELOCITY;
-	else if(this.velocity.x>0) this.velocity.x -=PLAYER_RUN_VELOCITY;
-	else if(this.velocity.x<0)this.velocity.x +=PLAYER_RUN_VELOCITY
-	//this.velocity.y = 0;
+	
+	//track movment than change velocity and animation 
+	if (this.jumping==false)
+	{
+		if(input.left){
+		this.velocity.x -= PLAYER_RUN_VELOCITY;
+		this.changeAnimation("moving left");
+		this.facing = "left";
+		}
+		else if(input.right){
+			this.velocity.x += PLAYER_RUN_VELOCITY;
+			this.changeAnimation("moving right");
+			this.facing = "right";
+		} 
+		else if(this.velocity.x>0) {
+			this.velocity.x -=PLAYER_RUN_VELOCITY;
+		}
+		else if(this.velocity.x<0){
+			this.velocity.x +=PLAYER_RUN_VELOCITY
+		}
+	
+	}
+	
+	// set a maximum run speed
 	if(this.velocity.x < -PLAYER_RUN_MAX) this.velocity.x=-PLAYER_RUN_MAX;
 	if(this.velocity.x > PLAYER_RUN_MAX) this.velocity.x=PLAYER_RUN_MAX;
-
+	
+	
+	
 	if(input.up && this.jumping==false) {
 		this.velocity.y -= PLAYER_JUMP_SPEED;
 		this.jumping=true;
 	}
-	else if(jumping==true) this.velocity.y += PLAYER_FALL_VELOCITY;
+	
+	else if(this.jumping==true) {
+		this.velocity.y += PLAYER_FALL_VELOCITY;
+		
+		if (this.facing=="left")
+		{
+			if(input.right){
+				this.velocity.x += PLAYER_JUMP_BREAK_VELOCITY;
+			}
+			
+		}
+		
+		if (this.facing=="right")
+		{
+			
+			
+			if(input.left){
+			this.velocity.x -= PLAYER_JUMP_BREAK_VELOCITY;
+			 
+			}
+		}
+		
+		if (this.position.y > this.floorYPostion - 4)
+		{
+			this.position.y = this.floorYPostion;
+			this.velocity.y = 0;
+			this.jumping = false;
+		}
+		
+	}
+	
+	
+	/*
 	else if(input.down && this.jumping==false) this.crouching == true;//this.velocity.y += PLAYER_RUN_SPEED / 2;
-
+	*/
 
 
 	// move the player
@@ -377,7 +360,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	this.position.y += this.velocity.y;
 	
 	
-	if (!(this.animation=="stand still" && this.tookAstep=="yes"))
+	//if (!(this.animation=="stand still" && this.tookAstep=="yes"))
   this.animationTimer++;
   if (this.animationTimer>this.frameLength)
   {
@@ -387,7 +370,7 @@ Player.prototype.update = function(elapsedTime, input) {
   if (this.animationCounter>this.numberOfSpirtes){
 	  this.animationCounter = 0;
   }
-  
+  /*
   switch(this.animation)
   {
 	  case "moving up":
@@ -395,7 +378,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	  case "moving left":
 	  case "moving right":
 	  if (this.animationTimer == 0)
-		  tookAstep = "yes";
+		  this.tookAstep = "yes";
 	  
 	  break;
 	  case "stand still":
@@ -407,6 +390,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	  }
 	  
   }
+  */
 }
 
 /**
@@ -416,7 +400,9 @@ Player.prototype.update = function(elapsedTime, input) {
  * @param {CanvasRenderingContext2D} ctx
  */
 Player.prototype.render = function(elapasedTime, ctx) {
-   
+   ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter , 
+   this.yPlaceInImage, this.spirteWidth,this.spirteHeight, 
+   this.position.x, this.position.y, this.widthInGame,this.heightInGame);
 }
  
  
@@ -443,20 +429,20 @@ Player.prototype.changeAnimation = function(x)
 		{
 			case "moving up":
 			
-			this.yPlaceInImage =spirteHeight*3;
+			this.yPlaceInImage =this.spirteHeight*3;
 			
 			break;
 			
 			case "moving down":
-			this.yPlaceInImage =spirteHeight*0;
+			this.yPlaceInImage =this.spirteHeight*0;
 			break;
 			
 			case "moving left":
-			this.yPlaceInImage =spirteHeight*1;
+			this.yPlaceInImage =this.spirteHeight*1;
 			break;
 			
 			case "moving right":
-			this.yPlaceInImage =spirteHeight*2;
+			this.yPlaceInImage =this.spirteHeight*2;
 			break;
 		}
 		
