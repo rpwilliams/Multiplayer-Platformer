@@ -217,6 +217,7 @@ Game.prototype.loop = function(newTime) {
 }
 
 },{}],3:[function(require,module,exports){
+
 "use strict";
 
 /* Classes and Libraries */
@@ -248,17 +249,17 @@ this.animationCounter = 0;
 this.frameLength = 9;
 //animation dependent
 this.numberOfSpirtes = 0; // how man y frames are there in the animation
-this.spirteWidth = 50; // width of each frame
-this.spirteHeight = 48; // height of each frame
-this.widthInGame = 80;   
-this.heightInGame = 128;
+this.spirteWidth = 23; // width of each frame
+this.spirteHeight = 34; // height of each frame
+this.widthInGame = 46;   
+this.heightInGame = 68;
 this.xPlaceInImage = 0; // this should CHANGE for the same animation 
 this.yPlaceInImage = 0; // this should NOT change for the same animation
 
 this.animation = "stand still" // this will keep track of the animation
 this.tookAstep = "no"
 this.img = new Image()
-this.img.src = 'assets/death_scythe.png';
+this.img.src = 'assets/fumiko2.png';
 
 
 this.position = {x: 50, y: 600};
@@ -287,7 +288,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	//this.velocity.x = 0;
 	
 	//track movment than change velocity and animation 
-	if (this.jumping==false)
+	if (input.up==false)
 	{
 		if(input.left){
 		this.velocity.x -= PLAYER_RUN_VELOCITY;
@@ -305,7 +306,9 @@ Player.prototype.update = function(elapsedTime, input) {
 		else if(this.velocity.x<0){
 			this.velocity.x +=PLAYER_RUN_VELOCITY
 		}
-	
+	}
+	else{
+		this.changeAnimation("moving up");
 	}
 	
 	// set a maximum run speed
@@ -364,12 +367,21 @@ Player.prototype.update = function(elapsedTime, input) {
   this.animationTimer++;
   if (this.animationTimer>this.frameLength)
   {
-	  this.animationCounter++;
+	  if(this.animation!="moving up"){
+		this.animationCounter++;
+		
+	  }
 	  this.animationTimer = 0;
   }
-  if (this.animationCounter>this.numberOfSpirtes){
-	  this.animationCounter = 0;
+  if (this.animationCounter>=this.numberOfSpirtes){
+		if(this.animation!="stand still"){
+			this.animationCounter = 3;
+		}
+		else{
+		this.animationCounter = 0;
+		}
   }
+  
   /*
   switch(this.animation)
   {
@@ -403,13 +415,14 @@ Player.prototype.render = function(elapasedTime, ctx) {
    ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter , 
    this.yPlaceInImage, this.spirteWidth,this.spirteHeight, 
    this.position.x, this.position.y, this.widthInGame,this.heightInGame);
+   this.xPlaceInImage=0;
 }
  
  
 Player.prototype.changeAnimation = function(x)
 {
 	this.animation = x;
-	if (x == "stand still")
+	if (this.animation == "stand still")
 	{
 		//if (animationTimer == 0)
 		//{
@@ -423,13 +436,13 @@ Player.prototype.changeAnimation = function(x)
 	}
 	else
 	{
-		this.numberOfSpirtes = 3;
+		this.numberOfSpirtes = 7;
 		//tookAstep = "no";  
-		switch(x)
+		switch(this.animation)
 		{
 			case "moving up":
 			
-			this.yPlaceInImage =this.spirteHeight*3;
+				this.xPlaceInImage =this.spirteWidth*7;
 			
 			break;
 			
@@ -442,7 +455,7 @@ Player.prototype.changeAnimation = function(x)
 			break;
 			
 			case "moving right":
-			this.yPlaceInImage =this.spirteHeight*2;
+			this.yPlaceInImage =this.spirteHeight*0;
 			break;
 		}
 		
