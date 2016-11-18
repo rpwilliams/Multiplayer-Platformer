@@ -1,6 +1,7 @@
 "use strict";
 
 /* Classes and Libraries */
+const EntityManager = require('./entity_manager');
  
 
 /* Constants */

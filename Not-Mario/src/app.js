@@ -3,6 +3,7 @@
 /* Classes and Libraries */
 const Game = require('./game');
 const Player = require('./player');
+const EntityManager = require('./entity_manager');
 
 
 /* Global variables */
@@ -15,10 +16,8 @@ var input = {
   right: false
 }
 var player = new Player();
-//var img = new Image();
+//var img = new Image(
 //img.src = 'assets/death_scythe.png';
-
-
 
 
  
@@ -108,7 +107,8 @@ var masterLoop = function(timestamp) {
   game.loop(timestamp);
   window.requestAnimationFrame(masterLoop);
 }
-masterLoop(performance.now());
+EntityManager.loadAssets(masterLoop); /* add the filenames of all of the images/sounds you want to load in entity_manager.js (images/soundsToLoad) */
+                                      /* access images and sounds with EntityManager.images(filename) / EntityManager.sounds(filename) */
 
 /**
  * @function update
@@ -140,12 +140,14 @@ function render(elapsedTime, ctx) {
  
   player.render(elapsedTime, ctx);
   //ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
+  ctx.drawImage(EntityManager.images("death_scythe.png"), 500, 500);
   ctx.save();
    
   ctx.restore();
  
    
 }
+
 
 
 /**
