@@ -3,6 +3,8 @@ const HEIGHT = 500;
 
 module.exports = exports = Game;
 
+const Player = require('./player.js');
+
 /**
  * @class Game
 
@@ -14,14 +16,22 @@ function Game(io, sockets, room) {
   this.io = io;
   this.room = room;
   this.state = new Uint8Array(WIDTH * HEIGHT);
-  this.players = sockets.map(function(socket, i) {` `
+  this.players = [];
 
     // Initialize the player
-    var player = {
-      socket: socket,
-      id: i + 1
-    }
+  this.players.push(new Player(
+      {x: 120, y: 50},
+      sockets[0],
+      1
+  ));
 
+  this.players.push(new Player(
+    {x: 90, y: 50},
+    sockets[1],
+    2
+  ));
+
+  this.players.forEach(function(player) {
     // Join the room
     player.socket.join(room);
 
@@ -36,13 +46,10 @@ function Game(io, sockets, room) {
       player.direction = direction;
     });
 
-    return player;
+    //return player;
   });
 
   // Place player 1 on the screen and set direction
-  this.players[0].x = 400;
-  this.players[0].y = 50;
-  this.players[0].direction = 'none';
   this.io.to(this.room).emit('move', {
     x: this.players[0].x,
     y: this.players[0].y,
@@ -50,9 +57,6 @@ function Game(io, sockets, room) {
   });
 
   // Place player 2 on the screen and set direction
-  this.players[1].x = 90;
-  this.players[1].y = 50;
-  this.players[1].direction = 'none';
   this.io.to(this.room).emit('move', {
     x: this.players[1].x,
     y: this.players[1].y,
