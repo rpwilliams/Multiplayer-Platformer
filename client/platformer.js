@@ -17,7 +17,7 @@ window.onload = function() {
   // Handle movement updates from the server
   socket.on('move', function(move){
     ctx.fillStyle = colors[move.id];
-    ctx.fillRect(5 * move.x, 5 * move.y, 5, 5);
+    ctx.fillRect(move.x, move.y, 5, 5);
   });
 
   // Handle game on events

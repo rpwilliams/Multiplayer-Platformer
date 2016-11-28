@@ -91,10 +91,10 @@ Game.prototype.update = function() {
 
     // Move in current direction
     switch(player.direction) {
-      case 'left': player.x--; break;
-      case 'right': player.x++; break;
-      case 'down': player.y++; break;
-      case 'up': player.y--; break;
+      case 'left': player.x-=5; break;
+      case 'right': player.x+=5; break;
+      case 'down': player.y+=5; break;
+      case 'up': player.y-=5; break;
     }
 
     // Check for collision with walls
