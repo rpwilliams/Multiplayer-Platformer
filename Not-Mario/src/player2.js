@@ -9,7 +9,7 @@ const PLAYER_RUN_SPEED = 5;
 const PLAYER_RUN_MAX = 3;
 const PLAYER_FALL_VELOCITY = 0.25;
 const PLAYER_JUMP_SPEED = 6;
-const PLAYER_JUMP_BREAK_VELOCITY= 0.10;
+const PLAYER_JUMP_BREAK_VELOCITY= 0.20;
 
 /**
  * @module Player
@@ -94,6 +94,8 @@ Player.prototype.update = function(elapsedTime, input) {
 	if(this.velocity.x < -PLAYER_RUN_MAX) this.velocity.x=-PLAYER_RUN_MAX;
 	if(this.velocity.x > PLAYER_RUN_MAX) this.velocity.x=PLAYER_RUN_MAX;
 	
+	
+	console.log("jumping: " +this.jumping +"  falling: " +this.falling + "animation: " + this.animation);
 	if(input.up && this.jumping==false && this.falling==false) {
 		this.velocity.y -= PLAYER_JUMP_SPEED;
 		this.jumping=true;
@@ -131,7 +133,6 @@ Player.prototype.update = function(elapsedTime, input) {
 			this.velocity.y = 0;
 			this.jumping = false;
 			this.falling=false;
-			this.animation="stand still";
 		}
 		
 	}
@@ -156,14 +157,12 @@ Player.prototype.update = function(elapsedTime, input) {
   this.animationTimer++;
   if (this.animationTimer>this.frameLength)
   {
-	  if(this.animation=="stand still") this.animationCounter=0;
-	  else if(this.animation!="moving up"){
+	  if(this.animation!="moving up"){
 		this.animationCounter++;
 		
 	  }
 	  this.animationTimer = 0;
   }
-  
   if (this.animationCounter>=this.numberOfSpirtes){
 		if(this.animation!="stand still"){
 			this.animationCounter = 3;
@@ -172,9 +171,7 @@ Player.prototype.update = function(elapsedTime, input) {
 		this.animationCounter = 0;
 		}
   }
-  if(this.jumping==true) this.xPlaceInImage = this.spirteWidth*7;
-	else if(this.falling==true) this.xPlaceInImage = this.spirteWidth*8;
-	else this.xPlaceInImage = 0;
+  
   /*
   switch(this.animation)
   {
@@ -205,7 +202,6 @@ Player.prototype.update = function(elapsedTime, input) {
  * @param {CanvasRenderingContext2D} ctx
  */
 Player.prototype.render = function(elapasedTime, ctx) {
-	console.log(this.animationCounter);
    ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter , 
    this.yPlaceInImage, this.spirteWidth,this.spirteHeight, 
    this.position.x, this.position.y, this.widthInGame,this.heightInGame);
@@ -235,7 +231,7 @@ Player.prototype.changeAnimation = function(x)
 		switch(this.animation)
 		{
 			case "moving up":
-				this.animationCounter=0;
+			
 				//this.xPlaceInImage =this.spirteWidth*7;
 			
 			break;
@@ -256,6 +252,8 @@ Player.prototype.changeAnimation = function(x)
 		
 		
 	}
-	
+	if(this.jumping==true) this.xPlaceInImage = this.spirteWidth*7;
+	else if(this.falling==true) this.xPlaceInImage = this.spirteWidth*8;
+	else this.xPlaceInImage = 0;
 	
 }
