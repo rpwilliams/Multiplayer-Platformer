@@ -1,16 +1,16 @@
 "use strict";
 
 /**
- * @module exports the Player class
+ * @module exports the Enemy class
  */
-module.exports = exports = Player;
+module.exports = exports = Enemy;
 
 /**
- * @constructor Player
- * Creates a new player object
+ * @constructor Enemy
+ * Creates a new enemy object
  * @param {Postition} position object specifying an x and y
  */
-function Player(position, socket) {
+function Enemy(position, socket) {
   this.position = {x: position.x, y: position.y, direction: 'none'};
   this.socket = socket;
 }

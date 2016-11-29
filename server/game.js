@@ -4,6 +4,7 @@ const HEIGHT = 786;
 module.exports = exports = Game;
 
 const Player = require('./player.js');
+const Enemy = require('./enemy.js');
 
 /**
  * @class Game
@@ -20,15 +21,13 @@ function Game(io, sockets, room) {
 
     // Initialize the player
   this.players.push(new Player(
-      {x: 120, y: 50},
-      sockets[0],
-      1
+      {x: 90, y: 50},
+      sockets[0]
   ));
 
-  this.players.push(new Player(
-    {x: 90, y: 50},
-    sockets[1],
-    2
+  this.players.push(new Enemy(
+    {x: 120, y: 50},
+    sockets[1]
   ));
 
   this.players.forEach(function(player) {
@@ -51,10 +50,8 @@ function Game(io, sockets, room) {
 
   // Place player 1 on the screen and set direction
   this.io.to(this.room).emit('move', {
-    player_x: this.players[0].x,
-    player_y: this.players[0].y,
-    enemy_x: this.players[1].x,
-    enemy_y: this.players[1].y
+    player: this.players[0].position,
+    enemy: this.players[1].position
   });
 
   // Start the game
@@ -86,51 +83,38 @@ Game.prototype.update = function() {
     // Move in current direction
     switch(player.direction) {
       case 'left':
-        player.x-=5;
-        player.direction = 'left';
+        player.position.x-=5;
+        player.position.direction = 'left';
         break;
       case 'right':
-        player.x+=5;
-        player.direction = 'right';
+        player.position.x+=5;
+        player.position.direction = 'right';
         break;
       case 'down':
-        player.y+=5;
-        player.direction = 'down';
+        player.position.y+=5;
+        player.position.direction = 'down';
         break;
       case 'up':
-        player.y-=5;
-        player.direction = 'up';
+        player.position.y-=5;
+        player.position.direction = 'up';
         break;
       case 'stop':
-        player.direction = 'none';
+        player.position.direction = 'none';
         break;
     }
 
     // Check for collision with walls
-    if(player.x < 0 || player.x > WIDTH || player.y < 0 || player.y > HEIGHT) {
+    if(player.position.x < 0 || player.position.x > WIDTH || player.position.y < 0 || player.position.y > HEIGHT) {
       console.log("went out of bounds");
       player.socket.emit('defeat');
       otherPlayer.socket.emit('defeat');
-      clearInterval(interval);
-    }
-
-    // Check for collision with other player
-    if(otherPlayer.x == player.x && otherPlayer.y == player.y) {
-      // Broadcast game over - both players loose
-      player.socket.emit('defeat');
-      otherPlayer.socket.emit('defeat');
-      console.log("collided with other player");
       clearInterval(interval);
     }
   });
 
   // Broadcast updated game state
   io.to(room).emit('move', {
-    player_x: this.players[0].x,
-    player_y: this.players[0].y,
-    player_direction: this.players[0].direction,
-    enemy_x: this.players[1].x,
-    enemy_y: this.players[1].y,
-    enemy_direction: this.players[1].direction
+    player: this.players[0].position,
+    enemy: this.players[1].position
   });
 }

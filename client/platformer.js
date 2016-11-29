@@ -8,27 +8,13 @@ window.onload = function() {
   var message = document.getElementById('message');
   var ctx = canvas.getContext('2d');
   var socket = io();
-  var colors = [];
-  colors[0] = 'red';
-  colors[1] = 'blue';
 
-  ctx.fillStyle = 'gray';
-  ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
+  renderBackground(ctx);
 
   // Handle movement updates from the server
-  socket.on('move', function(move){
-    // Fill the canvas with gray background
-    if(move.player_direction == 'none' || move.enemy_direction == 'none') {
-      ctx.fillStyle = 'gray';
-      ctx.fillRect(0, 0, WIDTH, HEIGHT);
-    }
-
-    ctx.fillStyle = colors[0];
-    ctx.fillRect(move.player_x, move.player_y, 5, 5);
-
-    ctx.fillStyle = colors[1];
-    ctx.fillRect(move.enemy_x, move.enemy_y, 5, 5);
+  socket.on('move', function(players){
+    renderPlayers(players, ctx);
   });
 
   // Handle game on events
@@ -97,4 +83,38 @@ window.onload = function() {
         break;
     }
   }
+}
+
+function renderBackground(ctx) {
+  var backgrounds = [
+  	new Image(),
+  	new Image()
+  ];
+
+  backgrounds[0].src = 'assets/backgrounds/background-layer.png';
+  backgrounds[1].src = 'assets/backgrounds/foreground-layer.png';
+
+  // Render the background
+  ctx.save();
+  //ctx.translate(-camera.position.x, 0);
+  ctx.drawImage(backgrounds[0], 0, 0, WIDTH, HEIGHT);
+  ctx.restore();
+
+  ctx.save();
+  //ctx.translate(-camera.position.x, 0);
+  ctx.drawImage(backgrounds[1], 0, 0, WIDTH, HEIGHT);
+  ctx.restore();
+}
+
+function renderPlayers(players, ctx) {
+  // Draw the canvas backgrounds
+  if(players.player.direction != 'none' || players.enemy.direction != 'none') {
+    renderBackground(ctx);
+  }
+
+  ctx.fillStyle = 'red';
+  ctx.fillRect(players.player.x, players.player.y, 5, 5);
+
+  ctx.fillStyle = 'blue';
+  ctx.fillRect(players.enemy.x, players.enemy.y, 5, 5);
 }
