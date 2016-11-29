@@ -1,23 +1,34 @@
+const WIDTH = 1024;
+const HEIGHT = 786;
+
 // Start the game after all files have loaded
 window.onload = function() {
-
   // Global variables
   var canvas = document.getElementById('screen');
   var message = document.getElementById('message');
   var ctx = canvas.getContext('2d');
   var socket = io();
   var colors = [];
-  colors[1] = 'red';
-  colors[2] = 'blue';
+  colors[0] = 'red';
+  colors[1] = 'blue';
 
-  // Fill the canvas with gray background
   ctx.fillStyle = 'gray';
-  ctx.fillRect(0, 0, 960, 500);
+  ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
 
   // Handle movement updates from the server
   socket.on('move', function(move){
-    ctx.fillStyle = colors[move.id];
-    ctx.fillRect(move.x, move.y, 5, 5);
+    // Fill the canvas with gray background
+    if(move.player_direction == 'none' || move.enemy_direction == 'none') {
+      ctx.fillStyle = 'gray';
+      ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    }
+
+    ctx.fillStyle = colors[0];
+    ctx.fillRect(move.player_x, move.player_y, 5, 5);
+
+    ctx.fillStyle = colors[1];
+    ctx.fillRect(move.enemy_x, move.enemy_y, 5, 5);
   });
 
   // Handle game on events
@@ -71,4 +82,19 @@ window.onload = function() {
     }
   }
 
+  window.onkeyup = function(event) {
+    event.preventDefault();
+    switch(event.keyCode) {
+      case 38:
+      case 87:
+      case 37:
+      case 65:
+      case 39:
+      case 68:
+      case 40:
+      case 83:
+        socket.emit('steer', 'stop');
+        break;
+    }
+  }
 }
