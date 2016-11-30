@@ -33,11 +33,18 @@ function handleRequest(request, response) {
       response.setHeader('Content-Type', 'text/js');
       response.end(js);
       break;
+    default:
+      response.sendStatus(404);
+      break;
   }
 }
 
 /* The web server that serves our client */
-var server = require('http').createServer(handleRequest);
+var express = require('express');
+var app = express();
+app.use(express.static('client/assets'));
+app.use(handleRequest);
+var server = require('http').createServer(app);
 
 /* The websocket server that provides bi-directional
    communication for our game */

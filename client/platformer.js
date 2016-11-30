@@ -1,6 +1,15 @@
 const WIDTH = 1024;
 const HEIGHT = 786;
 
+var images = [
+  new Image(),
+  new Image()
+];
+
+images[0].src = 'backgrounds/background-layer.png';
+images[1].src = 'backgrounds/foreground-layer.png';
+
+
 // Start the game after all files have loaded
 window.onload = function() {
   // Global variables
@@ -10,8 +19,8 @@ window.onload = function() {
   var socket = io();
 
   //handle draw background inputs from the server
-  socket.on('draw', function(backgrounds) {
-    renderBackground(backgrounds, ctx);
+  socket.on('draw', function() {
+    renderBackground(ctx);
   });
 
   // Handle movement updates from the server
@@ -87,14 +96,7 @@ window.onload = function() {
   }
 }
 
-function renderBackground(backgrounds, ctx) {
-  var images = [
-    new Image(),
-    new Image()
-  ];
-
-  images[0].src = backgrounds[0];
-  images[1].src = backgrounds[1];
+function renderBackground(ctx) {
 
   // Render the background
   ctx.save();
@@ -111,7 +113,7 @@ function renderBackground(backgrounds, ctx) {
 function renderPlayers(players, ctx) {
   // Draw the canvas backgrounds
   if(players.player.direction != 'none' || players.enemy.direction != 'none') {
-    renderBackground(players.backgrounds, ctx);
+    renderBackground(ctx);
   }
 
   ctx.fillStyle = 'red';

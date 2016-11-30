@@ -18,11 +18,6 @@ function Game(io, sockets, room) {
   this.room = room;
   this.state = new Uint8Array(WIDTH * HEIGHT);
 
-  this.backgrounds = [
-    'assets/backgrounds/background-layer.png',
-    'assets/backgrounds/foreground-layer.png'
-  ];
-
   this.players = [];
 
     // Initialize the player
@@ -54,13 +49,12 @@ function Game(io, sockets, room) {
     //return player;
   });
 
-  this.io.to(this.room).emit('draw', this.backgrounds);
+  this.io.to(this.room).emit('draw');
 
   // Place player on the screen
   this.io.to(this.room).emit('move', {
     player: this.players[0].position,
-    enemy: this.players[1].position,
-    backgrounds: this.backgrounds
+    enemy: this.players[1].position
   });
 
   // Start the game
@@ -124,7 +118,6 @@ Game.prototype.update = function() {
   // Broadcast updated game state
   io.to(room).emit('move', {
     player: this.players[0].position,
-    enemy: this.players[1].position,
-    backgrounds: this.backgrounds
+    enemy: this.players[1].position
   });
 }
