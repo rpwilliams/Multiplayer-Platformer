@@ -9,8 +9,10 @@ window.onload = function() {
   var ctx = canvas.getContext('2d');
   var socket = io();
 
-
-  renderBackground(ctx);
+  //handle draw background inputs from the server
+  socket.on('draw', function(backgrounds) {
+    renderBackground(backgrounds, ctx);
+  });
 
   // Handle movement updates from the server
   socket.on('move', function(players){
@@ -85,31 +87,31 @@ window.onload = function() {
   }
 }
 
-function renderBackground(ctx) {
-  var backgrounds = [
-  	new Image(),
-  	new Image()
+function renderBackground(backgrounds, ctx) {
+  var images = [
+    new Image(),
+    new Image()
   ];
 
-  backgrounds[0].src = 'assets/backgrounds/background-layer.png';
-  backgrounds[1].src = 'assets/backgrounds/foreground-layer.png';
+  images[0].src = backgrounds[0];
+  images[1].src = backgrounds[1];
 
   // Render the background
   ctx.save();
   //ctx.translate(-camera.position.x, 0);
-  ctx.drawImage(backgrounds[0], 0, 0, WIDTH, HEIGHT);
+  ctx.drawImage(images[0], 0, 0, WIDTH, HEIGHT);
   ctx.restore();
 
   ctx.save();
   //ctx.translate(-camera.position.x, 0);
-  ctx.drawImage(backgrounds[1], 0, 0, WIDTH, HEIGHT);
+  ctx.drawImage(images[1], 0, 0, WIDTH, HEIGHT);
   ctx.restore();
 }
 
 function renderPlayers(players, ctx) {
   // Draw the canvas backgrounds
   if(players.player.direction != 'none' || players.enemy.direction != 'none') {
-    renderBackground(ctx);
+    renderBackground(players.backgrounds, ctx);
   }
 
   ctx.fillStyle = 'red';
