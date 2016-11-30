@@ -3,11 +3,13 @@
 /* Classes and Libraries */
 const Game = require('./game');
 const Player = require('./player');
-
+var tilemap = require('./tilemap');
 
 /* Global variables */
 var canvas = document.getElementById('screen');
 var game = new Game(canvas, update, render);
+
+var tilemapData = require('../assets/tilemap.json');
 var input = {
   up: false,
   down: false,
@@ -15,9 +17,13 @@ var input = {
   right: false
 }
 var player = new Player();
-//var img = new Image();
-//img.src = 'assets/death_scythe.png';
 
+ tilemap.load(tilemapData, {
+    onload: function() {
+      tilemap.render(canvas.getContext('2d'));
+      //renderPlayer();
+    }
+  });
 
 
 
@@ -110,6 +116,18 @@ var masterLoop = function(timestamp) {
 }
 masterLoop(performance.now());
 
+
+function isPassible(x, y) {
+    var data = tilemap.tileAt(x, y, 0);
+    // if the tile is out-of-bounds for the tilemap, then
+    // data will be undefined, a "falsy" value, and the
+    // && operator will shortcut to false.
+    // Otherwise, it is truthy, so the solid property
+    // of the tile will determine the result
+    return data && !data.solid
+}
+
+
 /**
  * @function update
  * Updates the game state, moving
@@ -119,7 +137,12 @@ masterLoop(performance.now());
  * the number of milliseconds passed since the last frame.
  */
 function update(elapsedTime) {
-
+if(player.falling==true){
+	if(isPassible(player.position.x,player.position.y)){
+		player.velocity.y=0;
+		player.falling=false;
+	}
+}
    
   
   player.update(elapsedTime,input);
@@ -137,7 +160,7 @@ function update(elapsedTime) {
 function render(elapsedTime, ctx) {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, 1024, 786);
- 
+ tilemap.render(ctx);
   player.render(elapsedTime, ctx);
   //ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
   ctx.save();
@@ -146,13 +169,3 @@ function render(elapsedTime, ctx) {
  
    
 }
-
-
-/**
-  * @function renderWorld
-  * Renders the entities in the game world
-  * IN WORLD COORDINATES
-  * @param {DOMHighResTimeStamp} elapsedTime
-  * @param {CanvasRenderingContext2D} ctx the context to render to
-  */
- 
