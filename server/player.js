@@ -30,15 +30,14 @@ this.widthInGame = 46;
 this.heightInGame = 68;
 this.xPlaceInImage = 0; // this should CHANGE for the same animation
 this.yPlaceInImage = 0; // this should NOT change for the same animation
-this.madeit=false;
 this.animation = "stand still"; // this will keep track of the animation
 this.tookAstep = "no";
 this.velocity = {x: 0, y: 0};
-
-this.position = {x: position.x, y: position.y, direction: 'none',
-sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter,sy:this.yPlaceInImage,
-swidth:this.spirteWidth,sheight:this.spirteHeight,width:this.widthInGame,
-height:this.heightInGame,animation:this.animationCounter, madeit:this.madeit,
+this.position={x: position.x, y: position.y};
+this.send = {x: this.position.x, y: this.position.y, direction: 'none',
+sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
+swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
+height:this.heightInGame, animation:this.animationCounter,
 velocity:this.velocity};
 
 
@@ -73,7 +72,6 @@ this.facing = "left";
 Player.prototype.update = function() {
 // set the velocity
 	//this.velocity.x = 0;
-
 	//track movment than change velocity and animation
 	if (this.jumping==false && this.falling==false)
 	{
@@ -86,6 +84,10 @@ Player.prototype.update = function() {
 			this.velocity.x += PLAYER_RUN_VELOCITY;
 			this.changeAnimation("moving right");
 			this.facing = "right";
+		}
+    else if(this.position.direction=="none"){
+			//this.velocity.x += PLAYER_RUN_VELOCITY;
+			this.changeAnimation("stand still");
 		}
 		else if(this.velocity.x>0) {
 			this.velocity.x -=PLAYER_RUN_VELOCITY;
@@ -146,12 +148,7 @@ Player.prototype.update = function() {
 	// move the player
 	this.position.x += this.velocity.x;
 	this.position.y += this.velocity.y;
-	//if(this.velocity.y>0) this.jumping=true;
-	if(this.velocity.y<0) {
-		//this.jumping=false;
-		//this.falling=true;
-		//this.velocity.y=0;
-	}
+
 
 	//if (!(this.animation=="stand still" && this.tookAstep=="yes"))
   this.animationTimer++;
@@ -176,42 +173,14 @@ Player.prototype.update = function() {
   if(this.jumping==true) this.xPlaceInImage = this.spirteWidth*7;
 	else if(this.falling==true) this.xPlaceInImage = this.spirteWidth*8;
 	else this.xPlaceInImage = 0;
-  /*
-  switch(this.animation)
-  {
-	  case "moving up":
-	  case "moving down":
-	  case "moving left":
-	  case "moving right":
-	  if (this.animationTimer == 0)
-		  this.tookAstep = "yes";
 
-	  break;
-	  case "stand still":
-	  if (this.animationTimer == 0){
-		  this.numberOfSpirtes = 0;
-		    this.animationTimer = 0;
-			this.animationCounter = 0;
-			this.tookAstep = "yes";
-	  }
-
-  }
-  */
+  this.send = {x: this.position.x, y: this.position.y, direction: 'none',
+  sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
+  swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
+  height:this.heightInGame, animation:this.animationCounter,
+  velocity:this.velocity};
 }
 
-/**
- * @function render
- * Renders the player helicopter in world coordinates
- * @param {DOMHighResTimeStamp} elapsedTime
- * @param {CanvasRenderingContext2D} ctx
-
-Player.prototype.render = function(elapasedTime, ctx) {
-   ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter ,
-   this.yPlaceInImage, this.spirteWidth,this.spirteHeight,
-   this.position.x, this.position.y, this.widthInGame,this.heightInGame);
-   //this.xPlaceInImage=0;
-}
-*/
 
 Player.prototype.changeAnimation = function(x)
 {
@@ -242,24 +211,19 @@ Player.prototype.changeAnimation = function(x)
 			break;
 
 			case "moving down":
-			this.yPlaceInImage =this.spirteHeight*0;
-			break;
+  			this.yPlaceInImage =this.spirteHeight*0;
+  			break;
 
 			case "moving left":
 
-				if(this.jumping==false && this.falling==false){
-          this.yPlaceInImage =this.spirteHeight*1;
+				  if(this.jumping==false && this.falling==false){
+            this.yPlaceInImage =this.spirteHeight*1;
 
-        }
-			break;
-
+          }
+			     break;
 			case "moving right":
 			this.yPlaceInImage =this.spirteHeight*0;
 			break;
 		}
-
-
 	}
-
-
 }

@@ -22,7 +22,7 @@ function Game(io, sockets, room) {
 
     // Initialize the player
   this.players.push(new Player(
-      {x: 90, y: 50},
+      {x: 90, y: 250},
       sockets[0]
   ));
 
@@ -53,7 +53,7 @@ function Game(io, sockets, room) {
 
   // Place player on the screen
   this.io.to(this.room).emit('move', {
-    player: this.players[0].position,
+    player: this.players[0].send,
     enemy: this.players[1].position
   });
 
@@ -84,32 +84,9 @@ Game.prototype.update = function() {
     var otherPlayer = players[(i+1)%2];
 
 
-    
+
       player.update();
-/*
-    // Move in current direction
-    switch(player.direction) {
-      case 'left':
-        player.position.x-=5;
-        player.position.direction = 'left';
-        break;
-      case 'right':
-        player.position.x+=5;
-        player.position.direction = 'right';
-        break;
-      case 'down':
-        player.position.y+=5;
-        player.position.direction = 'down';
-        break;
-      case 'up':
-        player.position.y-=5;
-        player.position.direction = 'up';
-        break;
-      case 'stop':
-        player.position.direction = 'none';
-        break;
-    }
-*/
+
     // Check for collision with walls
     if(player.position.x < 0 || player.position.x > WIDTH || player.position.y < 0 || player.position.y > HEIGHT) {
       console.log("went out of bounds");
@@ -121,7 +98,7 @@ Game.prototype.update = function() {
 
   // Broadcast updated game state
   io.to(room).emit('move', {
-    player: this.players[0].position,
+    player: this.players[0].send,
     enemy: this.players[1].position
   });
 }
