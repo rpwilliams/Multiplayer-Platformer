@@ -3,11 +3,13 @@ const HEIGHT = 786;
 
 var images = [
   new Image(),
+  new Image(),
   new Image()
 ];
 
 images[0].src = 'backgrounds/background-layer.png';
 images[1].src = 'backgrounds/foreground-layer.png';
+images[2].src = 'fumiko2.png';
 
 
 // Start the game after all files have loaded
@@ -115,9 +117,12 @@ function renderPlayers(players, ctx) {
   if(players.player.direction != 'none' || players.enemy.direction != 'none') {
     renderBackground(ctx);
   }
-
+  console.log(players.player);
   ctx.fillStyle = 'red';
-  ctx.fillRect(players.player.x, players.player.y, 5, 5);
+  //ctx.fillRect(players.player.x, players.player.y, 5, 5);
+  ctx.drawImage( images[2],players.player.sx ,
+   players.player.sy, players.player.swidth, players.player.sheight,
+   players.player.x, players.player.y, players.player.width, players.player.height);
 
   ctx.fillStyle = 'blue';
   ctx.fillRect(players.enemy.x, players.enemy.y, 5, 5);
