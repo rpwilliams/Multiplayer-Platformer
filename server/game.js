@@ -43,7 +43,7 @@ function Game(io, sockets, room) {
 
     // Handle steering events
     player.socket.on('steer', function(direction) {
-      player.direction = direction;
+      player.position.direction = direction;
     });
 
     //return player;
@@ -83,6 +83,10 @@ Game.prototype.update = function() {
   this.players.forEach(function(player, i, players) {
     var otherPlayer = players[(i+1)%2];
 
+
+    
+      player.update();
+/*
     // Move in current direction
     switch(player.direction) {
       case 'left':
@@ -105,7 +109,7 @@ Game.prototype.update = function() {
         player.position.direction = 'none';
         break;
     }
-
+*/
     // Check for collision with walls
     if(player.position.x < 0 || player.position.x > WIDTH || player.position.y < 0 || player.position.y > HEIGHT) {
       console.log("went out of bounds");
