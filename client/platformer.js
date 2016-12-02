@@ -7,9 +7,9 @@ var images = [
   new Image()
 ];
 
-images[0].src = 'backgrounds/background-layer.png';
-images[1].src = 'backgrounds/foreground-layer.png';
-images[2].src = 'fumiko2.png';
+images[0].src = 'backgrounds/background-layer.png'; // Background
+images[1].src = 'backgrounds/foreground-layer.png'; // Foreground
+images[2].src = 'fumiko2.png';  // Player
 
 
 // Start the game after all files have loaded
@@ -103,12 +103,12 @@ function renderBackground(ctx) {
   // Render the background
   ctx.save();
   //ctx.translate(-camera.position.x, 0);
-  ctx.drawImage(images[0], 0, 0, WIDTH, HEIGHT);
+  ctx.drawImage(images[0], 0, 0, images[0].width, HEIGHT);
   ctx.restore();
 
   ctx.save();
   //ctx.translate(-camera.position.x, 0);
-  ctx.drawImage(images[1], 0, 0, WIDTH, HEIGHT);
+  ctx.drawImage(images[1], 0, 0, images[1].width, HEIGHT);
   ctx.restore();
 }
 
