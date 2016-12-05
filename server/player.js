@@ -195,8 +195,6 @@ Player.prototype.changeAnimation = function(x)
 			this.animationCounter = 0;
 			this.tookAstep = "yes";
 		//}
-
-
 	}
 	else
 	{
@@ -207,19 +205,15 @@ Player.prototype.changeAnimation = function(x)
 			case "moving up":
 				this.animationCounter=0;
 				//this.xPlaceInImage =this.spirteWidth*7;
-
 			break;
-
 			case "moving down":
-  			this.yPlaceInImage =this.spirteHeight*0;
-  			break;
-
+	  			this.yPlaceInImage =this.spirteHeight*0;
+	  			break;
 			case "moving left":
-
-				  if(this.jumping==false && this.falling==false){
-            this.yPlaceInImage =this.spirteHeight*1;
-
-          }
+				if(this.jumping==false && this.falling==false)
+				{
+            		this.yPlaceInImage =this.spirteHeight*1;
+				}
 			     break;
 			case "moving right":
 			this.yPlaceInImage =this.spirteHeight*0;
