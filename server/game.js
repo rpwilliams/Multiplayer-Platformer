@@ -3,8 +3,11 @@ const HEIGHT = 786;
 
 module.exports = exports = Game;
 
+const fs = require('fs');
+
 const Player = require('./player.js');
 const Enemy = require('./enemy.js');
+const Tilemap = require('./tilemap.js');
 
 /**
  * @class Game
@@ -18,16 +21,18 @@ function Game(io, sockets, room) {
   this.room = room;
   this.state = new Uint8Array(WIDTH * HEIGHT);
 
+  this.tilemap = Tilemap.load(JSON.parse(fs.readFileSync('./server/assets/tilemap.json')), {});
+
   this.players = [];
 
     // Initialize the player
   this.players.push(new Player(
-      {x: 90, y: 50},
+      {x: 50, y: 50},
       sockets[0]
   ));
 
   this.players.push(new Enemy(
-    {x: 120, y: 50},
+    {x: 60, y: 50},
     sockets[1]
   ));
 
@@ -79,8 +84,12 @@ Game.prototype.update = function() {
   var room = this.room;
   var io = this.io;
 
+
   // Update players
   this.players.forEach(function(player, i, players) {
+  var tilemapX = Math.floor(player.position.x / 64);
+  var tilemapY = Math.floor(player.position.y / 64);
+  console.log(tilemapX * tilemapY);
     var otherPlayer = players[(i+1)%2];
 
     // Move in current direction
@@ -94,6 +103,7 @@ Game.prototype.update = function() {
         player.position.direction = 'right';
         break;
       case 'down':
+	if (player.hitGround(Tilemap)) break;
         player.position.y+=5;
         player.position.direction = 'down';
         break;

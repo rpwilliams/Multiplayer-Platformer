@@ -27,15 +27,6 @@ module.exports = (function (){
     // Load the tileset(s)
     mapData.tilesets.forEach( function(tilesetmapData, index) {
       // Load the tileset image
-      var tileset = new Image();
-      loading++;
-      tileset.onload = function() {
-        loading--;
-        if(loading == 0 && options.onload) options.onload();
-      }
-      tileset.src = tilesetmapData.image;
-      tilesets.push(tileset);
-      
       // Create the tileset's tiles
       var colCount = Math.floor(tilesetmapData.imagewidth / tileWidth),
           rowCount = Math.floor(tilesetmapData.imageheight / tileHeight),
@@ -44,7 +35,7 @@ module.exports = (function (){
       for(i = 0; i < tileCount; i++) {
         var tile = {
           // Reference to the image, shared amongst all tiles in the tileset
-          image: tileset,
+          image: null,
           // Source x position.  i % colCount == col number (as we remove full rows)
           sx: (i % colCount) * tileWidth,
           // Source y position. i / colWidth (integer division) == row number 
@@ -87,49 +78,18 @@ module.exports = (function (){
     });
   }
 
-  var render = function(screenCtx) {
-    // Render tilemap layers - note this assumes
-    // layers are sorted back-to-front so foreground
-    // layers obscure background ones.
-    // see http://en.wikipedia.org/wiki/Painter%27s_algorithm
-    layers.forEach(function(layer){
-      
-      // Only draw layers that are currently visible
-      if(layer.visible) { 
-        for(y = 0; y < layer.height; y++) {
-          for(x = 0; x < layer.width; x++) {
-            var tileId = layer.data[x + layer.width * y];
-            
-            // tiles with an id of 0 don't exist
-            if(tileId != 0) {
-              var tile = tiles[tileId - 1];
-              if(tile.image) { // Make sure the image has loaded
-                screenCtx.drawImage(
-                  tile.image,     // The image to draw 
-                  tile.sx, tile.sy, tileWidth, tileHeight, // The portion of image to draw
-                  x*tileWidth, y*tileHeight, tileWidth, tileHeight // Where to draw the image on-screen
-                );
-              }
-            }
-            
-          }
-        }
-      }
-      
-    });
-  }
-  
   var tileAt = function(x, y, layer) {
     // sanity check
     if(layer < 0 || x < 0 || y < 0 || layer >= layers.length || x > mapWidth || y > mapHeight) 
       return undefined;  
-    return tiles[layers[layer].data[x + y*mapWidth] - 1];
+    var tilemapX = Math.floor(x / tileWidth);
+    var tilemapY = Math.floor(y / tileHeight);
+    return tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1];
   }
   
   // Expose the module's public API
   return {
     load: load,
-    render: render,
     tileAt: tileAt
   }
   

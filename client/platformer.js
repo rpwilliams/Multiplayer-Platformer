@@ -6,6 +6,10 @@ var images = [
   new Image()
 ];
 
+var sounds = {
+  "moving": new Audio("sounds/moving.mp3") //will make this anon function to initalize volume, length of clip, etc...
+};
+
 images[0].src = 'backgrounds/background-layer.png';
 images[1].src = 'backgrounds/foreground-layer.png';
 
@@ -91,6 +95,7 @@ window.onload = function() {
       case 40:
       case 83:
         socket.emit('steer', 'stop');
+        sounds["moving"].play();
         break;
     }
   }
