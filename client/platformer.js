@@ -1,6 +1,14 @@
+"use strict";
+
 const WIDTH = 1024;
 const HEIGHT = 786;
+//const Camera = require('./camera');
 
+/* Global variables */
+var canvas = document.getElementById('screen');
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+//var camera = new Camera(canvas);
 var images = [
   new Image(),
   new Image(),
@@ -27,6 +35,7 @@ window.onload = function() {
 
   // Handle movement updates from the server
   socket.on('move', function(players){
+    //updateCamera(players.player, camera);
     renderPlayers(players, ctx);
   });
 
@@ -126,4 +135,36 @@ function renderPlayers(players, ctx) {
 
   ctx.fillStyle = 'blue';
   ctx.fillRect(players.enemy.x, players.enemy.y, 5, 5);
+}
+
+// TODO: FIX THIS
+// var camera = {
+//   //position:{x:0, y:0};
+//   width : canvas.width;
+//   height = canvas.height;
+//   xMin = 100;
+//   xMax = 500;
+//   xOff = 500;
+// }
+
+/**
+ * @function update
+ * Updates the camera based on the supplied target
+ * @param {Vector} target what the camera is looking at
+ */
+var updateCamera = function(target, camera) {
+  // TODO: Align camera with player
+  camera.xOff += target.velocity.x;
+  //console.log(self.xOff, self.xMax, self.xOff > self.xMax);
+  if(camera.xOff > camera.xMax) {
+    camera.position.x += camera.xOff - camera.xMax;
+    camera.xOff = camera.xMax;
+  }
+  if(camera.xOff < camera.xMin) {
+    camera.position.x -= camera.xMin - camera.xOff;
+    camera.xOff = camera.xMin;
+  }
+
+  if(camera.position.x < 0) camera.position.x = 0;
+  console.log("Camera: (" + camera.position.x + "," + camera.position.y + ")");
 }
