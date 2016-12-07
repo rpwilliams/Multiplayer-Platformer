@@ -111,12 +111,12 @@ function renderBackground(ctx) {
 
   // Render the background
   ctx.save();
-  ctx.translate(-camera_position.x - .25, 0);
+  ctx.translate(-camera_position.x, 0);
   ctx.drawImage(images[0], 0, 0, images[0].width, HEIGHT);
   ctx.restore();
 
   ctx.save();
-  ctx.translate(-camera_position.x - .25, 0);
+  ctx.translate(-camera_position.x, 0);
   ctx.drawImage(images[1], 0, 0, images[1].width, HEIGHT);
   ctx.restore();
 }
@@ -152,7 +152,7 @@ var camera_width = canvas.width;
 var camera_height = canvas.height;
 var camera_xMin = 100;
 var camera_xMax = 500;
-var camera_xOff = 450;
+var camera_xOff = 100;
 
 /**
  * @function update
