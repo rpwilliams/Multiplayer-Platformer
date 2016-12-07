@@ -166,15 +166,15 @@ var updateCamera = function(target) {
   // // TODO: Align camera with player
   camera_position.x = target.x;
   // //console.log(self.xOff, self.xMax, self.xOff > self.xMax);
-  // if(camera_xOff > camera_xMax) {
-  //   camera_position.x += camera_xOff - camera_xMax;
-  //   camera_xOff = camera_xMax;
-  // }
-  // if(camera_xOff < camera_xMin) {
-  //   camera_position.x -= camera_xMin - camera_xOff;
-  //   camera_xOff = camera_xMin;
-  // }
+  if(camera_xOff > camera_xMax) {
+    camera_position.x += camera_xOff - camera_xMax;
+    camera_xOff = camera_xMax;
+  }
+  if(camera_xOff < camera_xMin) {
+    camera_position.x -= camera_xMin - camera_xOff;
+    camera_xOff = camera_xMin;
+  }
 
-  // if(camera_position.x < 0) camera_position.x = 0;
+  if(camera_position.x < 0) camera_position.x = 0;
   // console.log("Camera: (" + camera_position.x + "," + camera_position.y + ")");
 }

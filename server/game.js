@@ -1,4 +1,4 @@
-const WIDTH = 1024;
+const WIDTH = 4800;
 const HEIGHT = 786;
 
 module.exports = exports = Game;
