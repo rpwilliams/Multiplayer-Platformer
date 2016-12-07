@@ -123,7 +123,7 @@ function renderBackground(ctx) {
 
 function renderPlayers(players, ctx) {
   // Draw the canvas backgrounds
-  if(players.player.direction != 'none' || players.enemy.direction != 'none') {
+  if(players.player.direction == 'none' || players.enemy.direction == 'none') {
     renderBackground(ctx);
   }
   console.log(players.player);
