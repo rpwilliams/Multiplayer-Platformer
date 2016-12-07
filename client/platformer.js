@@ -35,7 +35,7 @@ window.onload = function() {
 
   // Handle movement updates from the server
   socket.on('move', function(players){
-    //updateCamera(players.player, camera);
+    updateCamera(players.player);
     renderPlayers(players, ctx);
   });
 
@@ -111,12 +111,12 @@ function renderBackground(ctx) {
 
   // Render the background
   ctx.save();
-  //ctx.translate(-camera.position.x, 0);
+  ctx.translate(-camera_position.x - .25, 0);
   ctx.drawImage(images[0], 0, 0, images[0].width, HEIGHT);
   ctx.restore();
 
   ctx.save();
-  //ctx.translate(-camera.position.x, 0);
+  ctx.translate(-camera_position.x - .25, 0);
   ctx.drawImage(images[1], 0, 0, images[1].width, HEIGHT);
   ctx.restore();
 }
@@ -146,25 +146,32 @@ function renderPlayers(players, ctx) {
 //   xMax = 500;
 //   xOff = 500;
 // }
+/* Camera variables */
+var camera_position = {x:0, y:0};
+var camera_width = canvas.width;
+var camera_height = canvas.height;
+var camera_xMin = 100;
+var camera_xMax = 500;
+var camera_xOff = 450;
 
 /**
  * @function update
  * Updates the camera based on the supplied target
  * @param {Vector} target what the camera is looking at
  */
-var updateCamera = function(target, camera) {
+var updateCamera = function(target) {
   // TODO: Align camera with player
-  camera.xOff += target.velocity.x;
+  camera_xOff += target.velocity.x;
   //console.log(self.xOff, self.xMax, self.xOff > self.xMax);
-  if(camera.xOff > camera.xMax) {
-    camera.position.x += camera.xOff - camera.xMax;
-    camera.xOff = camera.xMax;
+  if(camera_xOff > camera_xMax) {
+    camera_position.x += camera_xOff - camera_xMax;
+    camera_xOff = camera_xMax;
   }
-  if(camera.xOff < camera.xMin) {
-    camera.position.x -= camera.xMin - camera.xOff;
-    camera.xOff = camera.xMin;
+  if(camera_xOff < camera_xMin) {
+    camera_position.x -= camera_xMin - camera_xOff;
+    camera_xOff = camera_xMin;
   }
 
-  if(camera.position.x < 0) camera.position.x = 0;
-  console.log("Camera: (" + camera.position.x + "," + camera.position.y + ")");
+  if(camera_position.x < 0) camera_position.x = 0;
+  console.log("Camera: (" + camera_position.x + "," + camera_position.y + ")");
 }

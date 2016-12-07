@@ -75,28 +75,28 @@ Player.prototype.update = function() {
 	//track movment than change velocity and animation
 	if (this.jumping==false && this.falling==false)
 	{
-		if(this.position.direction=="left"){
+		if(this.position.direction=="left") {
 		this.velocity.x -= PLAYER_RUN_VELOCITY;
 		this.changeAnimation("moving left");
 		this.facing = "left";
 		}
-		else if(this.position.direction=="right"){
+		else if(this.position.direction=="right") {
 			this.velocity.x += PLAYER_RUN_VELOCITY;
 			this.changeAnimation("moving right");
 			this.facing = "right";
 		}
-    else if(this.position.direction=="none"){
+    	else if(this.position.direction=="none") {
 			//this.velocity.x += PLAYER_RUN_VELOCITY;
 			this.changeAnimation("stand still");
 		}
 		else if(this.velocity.x>0) {
 			this.velocity.x -=PLAYER_RUN_VELOCITY;
 		}
-		else if(this.velocity.x<0){
+		else if(this.velocity.x<0) {
 			this.velocity.x +=PLAYER_RUN_VELOCITY;
 		}
 	}
-	else{
+	else {
 		this.changeAnimation("moving up");
 	}
 
@@ -118,13 +118,13 @@ Player.prototype.update = function() {
 		}
 		if (this.facing=="left")
 		{
-			if(this.position.direction=="right"){
+			if(this.position.direction=="right") {
 				this.velocity.x += PLAYER_JUMP_BREAK_VELOCITY;
 			}
 		}
 		else if (this.facing=="right")
 		{
-			if(this.position.direction=="left"){
+			if(this.position.direction=="left") {
 			this.velocity.x -= PLAYER_JUMP_BREAK_VELOCITY;
 			}
 		}
@@ -151,34 +151,34 @@ Player.prototype.update = function() {
 
 
 	//if (!(this.animation=="stand still" && this.tookAstep=="yes"))
-  this.animationTimer++;
-  if (this.animationTimer>this.frameLength)
-  {
+	this.animationTimer++;
+	if (this.animationTimer>this.frameLength)
+	{
 	  if(this.animation=="stand still") this.animationCounter=0;
 	  else if(this.animation!="moving up"){
 		this.animationCounter++;
 
 	  }
 	  this.animationTimer = 0;
-  }
+	}
 
-  if (this.animationCounter>=this.numberOfSpirtes){
+	if (this.animationCounter>=this.numberOfSpirtes){
 		if(this.animation!="stand still"){
 			this.animationCounter = 3;
 		}
 		else{
 		this.animationCounter = 0;
 		}
-  }
-  if(this.jumping==true) this.xPlaceInImage = this.spirteWidth*7;
+	}
+	if(this.jumping==true) this.xPlaceInImage = this.spirteWidth*7;
 	else if(this.falling==true) this.xPlaceInImage = this.spirteWidth*8;
 	else this.xPlaceInImage = 0;
 
-  this.send = {x: this.position.x, y: this.position.y, direction: 'none',
-  sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
-  swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
-  height:this.heightInGame, animation:this.animationCounter,
-  velocity:this.velocity};
+	this.send = {x: this.position.x, y: this.position.y, direction: 'none',
+	sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
+	swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
+	height:this.heightInGame, animation:this.animationCounter,
+	velocity:this.velocity};
 }
 
 
