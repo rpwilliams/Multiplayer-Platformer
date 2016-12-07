@@ -129,9 +129,12 @@ function renderPlayers(players, ctx) {
   console.log(players.player);
   ctx.fillStyle = 'red';
   //ctx.fillRect(players.player.x, players.player.y, 5, 5);
+  ctx.save();
+  ctx.translate(-camera_position.x, players.player.y);
   ctx.drawImage( images[2],players.player.sx ,
    players.player.sy, players.player.swidth, players.player.sheight,
    players.player.x, players.player.y, players.player.width, players.player.height);
+  ctx.restore();
 
   ctx.fillStyle = 'blue';
   ctx.fillRect(players.enemy.x, players.enemy.y, 5, 5);
@@ -160,18 +163,18 @@ var camera_xOff = 100;
  * @param {Vector} target what the camera is looking at
  */
 var updateCamera = function(target) {
-  // TODO: Align camera with player
-  camera_xOff += target.velocity.x;
-  //console.log(self.xOff, self.xMax, self.xOff > self.xMax);
-  if(camera_xOff > camera_xMax) {
-    camera_position.x += camera_xOff - camera_xMax;
-    camera_xOff = camera_xMax;
-  }
-  if(camera_xOff < camera_xMin) {
-    camera_position.x -= camera_xMin - camera_xOff;
-    camera_xOff = camera_xMin;
-  }
+  // // TODO: Align camera with player
+  camera_position.x = target.x;
+  // //console.log(self.xOff, self.xMax, self.xOff > self.xMax);
+  // if(camera_xOff > camera_xMax) {
+  //   camera_position.x += camera_xOff - camera_xMax;
+  //   camera_xOff = camera_xMax;
+  // }
+  // if(camera_xOff < camera_xMin) {
+  //   camera_position.x -= camera_xMin - camera_xOff;
+  //   camera_xOff = camera_xMin;
+  // }
 
-  if(camera_position.x < 0) camera_position.x = 0;
-  console.log("Camera: (" + camera_position.x + "," + camera_position.y + ")");
+  // if(camera_position.x < 0) camera_position.x = 0;
+  // console.log("Camera: (" + camera_position.x + "," + camera_position.y + ")");
 }
