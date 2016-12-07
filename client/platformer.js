@@ -95,7 +95,7 @@ window.onload = function() {
       case 40:
       case 83:
         socket.emit('steer', 'stop');
-        sounds["moving"].play();
+        // sounds["moving"].play();
         break;
     }
   }

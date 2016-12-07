@@ -84,13 +84,16 @@ module.exports = (function (){
       return undefined;  
     var tilemapX = Math.floor(x / tileWidth);
     var tilemapY = Math.floor(y / tileHeight);
+    console.log(tilemapX, tilemapY);
     return tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1];
   }
   
   // Expose the module's public API
   return {
     load: load,
-    tileAt: tileAt
+    tileAt: tileAt,
+    tileWidth: 64,
+    tileHeight: 64 
   }
   
 })();

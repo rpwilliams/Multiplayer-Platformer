@@ -89,31 +89,31 @@ Game.prototype.update = function() {
   this.players.forEach(function(player, i, players) {
   var tilemapX = Math.floor(player.position.x / 64);
   var tilemapY = Math.floor(player.position.y / 64);
-  console.log(tilemapX * tilemapY);
     var otherPlayer = players[(i+1)%2];
 
     // Move in current direction
-    switch(player.direction) {
-      case 'left':
-        player.position.x-=5;
-        player.position.direction = 'left';
-        break;
-      case 'right':
-        player.position.x+=5;
-        player.position.direction = 'right';
-        break;
-      case 'down':
-	if (player.hitGround(Tilemap)) break;
-        player.position.y+=5;
-        player.position.direction = 'down';
-        break;
-      case 'up':
-        player.position.y-=5;
-        player.position.direction = 'up';
-        break;
-      case 'stop':
-        player.position.direction = 'none';
-        break;
+    if (!player.hitSolid(Tilemap)) {
+      switch(player.direction) {
+        case 'left':
+          player.position.x-=5;
+          player.position.direction = 'left';
+          break;
+        case 'right':
+          player.position.x+=5;
+          player.position.direction = 'right';
+          break;
+        case 'down':
+          player.position.y+=5;
+          player.position.direction = 'down';
+          break;
+        case 'up':
+          player.position.y-=5;
+          player.position.direction = 'up';
+          break;
+        case 'stop':
+          player.position.direction = 'none';
+          break;
+      }
     }
 
     // Check for collision with walls
