@@ -15,8 +15,8 @@ var images = [
   new Image()
 ];
 
-images[0].src = 'backgrounds/background-layer.png'; // Background
-images[1].src = 'backgrounds/foreground-layer.png'; // Foreground
+images[0].src = 'level.png'; // Background
+images[1].src = 'stars.jpg'; // Foreground
 images[2].src = 'fumiko2.png';  // Player
 
 
@@ -110,14 +110,17 @@ window.onload = function() {
 function renderBackground(ctx) {
 
   // Render the background
+
+  // Da stars
+  ctx.save();
+  //ctx.translate(-camera_position.x, 0);
+  ctx.drawImage(images[1], 0, 0, images[1].width, HEIGHT);
+  ctx.restore();
+
+  // Da background
   ctx.save();
   ctx.translate(-camera_position.x, 0);
   ctx.drawImage(images[0], 0, 0, images[0].width, HEIGHT);
-  ctx.restore();
-
-  ctx.save();
-  ctx.translate(-camera_position.x, 0);
-  ctx.drawImage(images[1], 0, 0, images[1].width, HEIGHT);
   ctx.restore();
 }
 
