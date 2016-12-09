@@ -19,7 +19,7 @@ function Camera(screen) {
   this.width = screen.width;
   this.height = screen.height;
   this.xMin = 100;
-  this.xMax = 1000;
+  this.xMax = 500;
   this.xOff = 500;
 }
 

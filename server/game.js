@@ -1,4 +1,4 @@
-const WIDTH = 5121;
+const WIDTH = 1024;
 const HEIGHT = 786;
 
 module.exports = exports = Game;
@@ -19,7 +19,8 @@ function Game(io, sockets, room) {
   this.state = new Uint8Array(WIDTH * HEIGHT);
 
   this.players = [];
-
+	var enemyFire = [];
+	var enemyBombs = [];
     // Initialize the player
   this.players.push(new Player(
       {x: 90, y: 250},
@@ -54,7 +55,7 @@ function Game(io, sockets, room) {
   // Place player on the screen
   this.io.to(this.room).emit('move', {
     player: this.players[0].send,
-    enemy: this.players[1].position
+    enemy: this.players[1].send
   });
 
   // Start the game
@@ -95,10 +96,40 @@ Game.prototype.update = function() {
       clearInterval(interval);
     }
   });
-
+   
+   //update fire 
+  for (var i = 0 ; i < enemyFire.length ; i++)
+  {
+	  enemyFire[i].update(elapsedTime);
+	  
+	  //remove the shot at this condtion, it could be hitting an opject or going out of the screen
+	  if (enemyFire[i].timer>40)
+	  {
+		  enemyFire.splice(i,1);
+		  i--;
+	  }
+  }
+  
+  //update bomb 
+  for (var i = 0 ; i < enemyBombs.length ; i++)
+  {
+	  enemyBombs[i].update(elapsedTime);
+	  
+	  //explode at this condtion, it could be hitting an opject or going out of the screen
+	  if (enemyBombs[i].timer>40 && enemyBombs[i].state=="falling")
+	  {
+			  enemyBombs[i].explode();
+	  }
+	  if (enemyBombs[i].state=="finished")
+	   {
+		enemyBombs.splice(i,1);
+		i--; 
+	   }
+  }
+   
   // Broadcast updated game state
   io.to(room).emit('move', {
     player: this.players[0].send,
-    enemy: this.players[1].position
+    enemy: this.players[1].send
   });
 }

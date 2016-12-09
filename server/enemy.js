@@ -8,6 +8,12 @@ const Enemy_FALL_VELOCITY = 0.25;
 const Enemy_JUMP_SPEED = 6;
 const Enemy_JUMP_BREAK_VELOCITY= 0.20;
 
+const EnemyFire = require('./enemyFire');
+const EnemyBomb = require('./enemyBomb');
+const Vector = require('./vector');
+
+const FIRE_SPEED = 7;
+
 /**
  * @module Enemy
  * A class representing a Enemy's helicopter
@@ -280,5 +286,58 @@ Enemy.prototype.changeAnimation = function(x)
 		}
 		
 	}
+	
+}
+
+Enemy.prototype.fire = function(direction,enemyFire)
+{
+	
+	 var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
+	 
+	 if ( this.lazerCooldown<1)
+  {
+	  
+	  var p = Vector.add(this.position, {x:0, y:0});
+	  var laz = new EnemyFire(p,"left","lazer");
+	 // if (this.facing == "right")
+	  {
+		   //p.x += this.widthInGame;
+		   laz =  new EnemyFire(p,velocity);
+	  }
+		 
+	 
+	  
+	  enemyFire.push(laz);
+	  
+	  this.lazerCooldown = 15;
+	  
+  }
+}
+
+
+Enemy.prototype.bomb = function(direction,enemyBombs)
+{
+	var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
+	if ( this.bombCooldown<1)
+  {
+	  
+	  //var p = {x : this.position.x+this.widthInGame/2, y: this.position.y+this.heightInGame - this.heightInGame/3}
+	  var p =  Vector.add(this.position, {x:15, y:15});
+	  //var position = Vector.add(this.position, {x:30, y:30});
+	  var bomb = new EnemyBomb(p,velocity);
+	  /*
+	  if (this.facing == "right")
+	  {
+		   //p.x += this.widthInGame;
+		   bomb =  new EnemyBomb(p,velocity);
+	  }
+		*/ 
+	 
+	  
+	  enemyBombs.push(bomb);
+	  
+	  this.bombCooldown = 30;
+	  
+  }
 	
 }
