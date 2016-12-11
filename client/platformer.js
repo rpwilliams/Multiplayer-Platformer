@@ -19,6 +19,13 @@ var images = [
   new Image()
 ];
 
+var sounds = {
+  "moving": (function(){var audio = new Audio("sounds/moving.mp3"); 
+	                    audio.volume = .2; 
+			    audio.playbackRate = .5; 
+			    return audio})()
+};
+
 images[0].src = 'level.png'; // Background
 images[1].src = 'stars.png'; // Foreground
 images[2].src = 'fumiko2.png';  // Player
@@ -122,7 +129,8 @@ window.onload = function() {
       case 68:
       case 40:
       case 83:
-        socket.emit('steer', 'none');
+        socket.emit('steer', 'stop');
+        // sounds["moving"].play();
         break;
     }
   }

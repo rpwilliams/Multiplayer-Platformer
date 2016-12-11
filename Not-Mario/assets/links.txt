@@ -26,6 +26,12 @@ UFO (whatever "hunter" is supposed to be) laser/tractor beam:
     (actually a microwave, could sound like a tractor beam)
     (could be used as UFO's 'flying around' ambient sound)
 
+Lasers:
+
+Missles:
+
+Explosions:
+
 Game Over, hunter wins:
   https://www.freesound.org/people/omarstone/sounds/196841 (monster)
 

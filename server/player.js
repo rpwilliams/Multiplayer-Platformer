@@ -19,43 +19,37 @@ module.exports = exports = Player;
  * Creates a player
  */
 function Player(position,socket ) {
-	this.animationTimer = 0;
-	this.animationCounter = 0;
-	this.frameLength = 8;
-	//animation dependent
-	this.numberOfSprites = 0; // how man y frames are there in the animation
-	this.spriteWidth = 23; // width of each frame
-	this.spriteHeight = 34; // height of each frame
-	this.widthInGame = 46;
-	this.heightInGame = 68;
-	this.xPlaceInImage = 0; // this should CHANGE for the same animation
-	this.yPlaceInImage = 0; // this should NOT change for the same animation
-	this.animation = "stand still"; // this will keep track of the animation
-	this.tookAstep = "no";
-	this.velocity = {x: 0, y: 0};
-	this.screenPos= {x: 512, y: position.y};
-	this.levelPos= {x: position.x, y: position.y};
-	this.direction = 'none'
-	this.id='player';
-	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
-	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
-	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
-	height:this.heightInGame, animation:this.animationCounter,
-<<<<<<< HEAD
-	velocity:this.velocity, wonGame:this.wonGame};
-=======
-	velocity:this.velocity,id:this.id};
->>>>>>> d07da7785a93e7ab9e659c66a1ec898861270340
+this.animationTimer = 0;
+this.animationCounter = 0;
+this.frameLength = 8;
+//animation dependent
+this.numberOfSprites = 0; // how man y frames are there in the animation
+this.spriteWidth = 23; // width of each frame
+this.spriteHeight = 34; // height of each frame
+this.widthInGame = 46;
+this.heightInGame = 68;
+this.xPlaceInImage = 0; // this should CHANGE for the same animation
+this.yPlaceInImage = 0; // this should NOT change for the same animation
+this.animation = "stand still"; // this will keep track of the animation
+this.tookAstep = "no";
+this.velocity = {x: 0, y: 0};
+this.screenPos= {x: 512, y: position.y};
+this.levelPos= {x: position.x, y: position.y};
+this.direction = 'none'
+this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
+sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
+swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
+height:this.heightInGame, animation:this.animationCounter,
+velocity:this.velocity};
 
-	this.socket = socket;
+this.socket = socket;
 
-	this.jumping = false;
-	this.falling=false;
-	this.crouching = "no";
-	this.floorYPostion = 610;
-	this.jumpingTime = 0;
-	this.facing = "left";
-	this.wonGame = false;
+this.jumping = false;
+this.falling=false;
+this.crouching = "no";
+this.floorYPostion = 610;
+this.jumpingTime = 0;
+this.facing = "left";
 }
 
 
@@ -67,10 +61,11 @@ function Player(position,socket ) {
  * @param {Input} input object defining input, must have
  * boolean properties: up, left, right, down
  */
-Player.prototype.update = function() {
+Player.prototype.update = function(tilemap) {
 // set the velocity
 	//this.velocity.x = 0;
 	//track movment than change velocity and animation
+	if(this.hitSolid(tilemap)) return;
 	if (this.jumping==false && this.falling==false)
 	{
 		if(this.direction=="left"){
@@ -85,7 +80,7 @@ Player.prototype.update = function() {
 			this.changeAnimation("moving right");
 			this.facing = "right";
 		}
-    	else if(this.direction=="none"){
+    else if(this.direction=="none"){
 			//this.velocity.x += PLAYER_RUN_VELOCITY;
 			this.velocity.x = 0;
 			this.changeAnimation("stand still");
@@ -140,62 +135,54 @@ Player.prototype.update = function() {
 			this.falling=false;
 			//this.animation="stand still";
 		}
+
 	}
+
+
 	/*
 	else if(input.down && this.jumping==false) this.crouching == true;//this.velocity.y += PLAYER_RUN_SPEED / 2;
 	*/
+
+
 	// move the player
+	//if (!this.hitSolid(tilemap)) {
 	if(this.velocity.x==0 && this.velocity.y==0) this.animation="stand still";
 	else{
-		this.levelPos.x += this.velocity.x;
-		this.levelPos.y += this.velocity.y;
-		this.screenPos.y += this.velocity.y;
+	this.levelPos.x += this.velocity.x;
+	this.levelPos.y += this.velocity.y;
+	this.screenPos.y += this.velocity.y;
 	}
+	//}
 
 	//if (!(this.animation=="stand still" && this.tookAstep=="yes"))
-	this.animationTimer++;
-	if (this.animationTimer>this.frameLength)
-	{
+  this.animationTimer++;
+  if (this.animationTimer>this.frameLength)
+  {
 	  if(this.animation=="stand still") this.animationCounter=0;
 	  else if(this.animation!="moving up"){
 		this.animationCounter++;
 
 	  }
 	  this.animationTimer = 0;
-	}
+  }
 
-	if (this.animationCounter>=this.numberOfSprites){
+  if (this.animationCounter>=this.numberOfSprites){
 		if(this.animation!="stand still"){
 			this.animationCounter = 3;
 		}
 		else{
 		this.animationCounter = 0;
 		}
-	}
-	if(this.jumping==true) this.xPlaceInImage = this.spriteWidth*5;
+  }
+  if(this.jumping==true) this.xPlaceInImage = this.spriteWidth*5;
 	else if(this.falling==true) this.xPlaceInImage = this.spriteWidth*6;
 	else this.xPlaceInImage = 0;
 
-<<<<<<< HEAD
-	// Check if player 1 won the game
-	if(Math.floor(this.levelPos.x) > 11200)
-	{
-		this.wonGame = true;
-    	//console.log('Player 1 wins!');
-  	}
-
-	this.send = { levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
-	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
-	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
-	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,wonGame:this.wonGame };
-=======
-	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
-	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
-	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
-	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,id:this.id};
->>>>>>> d07da7785a93e7ab9e659c66a1ec898861270340
+  this.send = { levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
+  sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
+  swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
+  height:this.heightInGame, animation:this.animationCounter,
+  velocity:this.velocity};
 }
 
 
@@ -243,4 +230,57 @@ Player.prototype.changeAnimation = function(x)
 			break;
 		}
 	}
+}
+
+Player.prototype.hitSolid = function(tilemap) {
+  var tile1;
+  var tile2;
+  console.log(this.direction)
+  switch(this.direction) {
+    case "right":
+      console.log("right")
+      tile1 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 0);
+      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 0);
+      console.log(tile1);
+      if (tile1.solid || tile2.solid) {
+        this.levelPos.x -= ((this.levelPos.x + this.widthInGame) % tilemap.tileWidth) - 1;
+	this.direction = "none";
+        return true;
+      }
+      break;
+    case "left":
+      console.log("left")
+      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y, 0);
+      tile2 = tilemap.tileAt(this.levelPos.x, this.levelPos.y + this.heightInGame, 0);
+      console.log(tile1);
+      if (tile1.solid || tile2.solid) {
+        this.levelPos.x += tilemap.tileWidth - ((this.levelPos.x) % tilemap.tileWidth) + 1;
+	this.direction = "none";
+        return true;
+      }
+      break;
+    case "up":
+      console.log("up")
+      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y, 0);
+      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 0);
+      console.log(tile1);
+      if (tile1.solid || tile2.solid) {
+        this.levelPos.y += tilemap.tileHeight - ((this.levelPos.y) % tilemap.tileHeight) + 1;
+	this.direction = "none";
+        return true;
+      }
+      break;
+    case "down":
+      console.log("down")
+      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y + this.heightInGame, 0);
+      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 0) - 1;
+      console.log(tile1);
+      if (tile1.solid || tile2.solid) {
+        this.levelPos.y -= ((this.levelPos.y + this.widthInGame) % tilemap.tileHeight);
+	this.direction = "none";
+        return true;
+      }
+      break;
+  }
+  return false;
 }

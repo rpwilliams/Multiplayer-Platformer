@@ -137,6 +137,10 @@ function isPassible(x, y) {
  * the number of milliseconds passed since the last frame.
  */
 function update(elapsedTime) {
+//console.log(tilemap.tileAt(.position.x, player.position.y, 0));
+//console.log(tilemap.tileAt(0, 0, 0));
+//console.log(player.position.x, player.position.y, 0);
+console.log(tilemap.tileAt(300,300,0));
 if(player.falling==true){
 	if(isPassible(player.position.x,player.position.y)){
 		player.velocity.y=0;
@@ -160,7 +164,7 @@ if(player.falling==true){
 function render(elapsedTime, ctx) {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, 1024, 786);
- tilemap.render(ctx);
+  tilemap.render(ctx);
   player.render(elapsedTime, ctx);
   //ctx.drawImage( img,xPlaceInImage+spriteWidth*animationCounter , yPlaceInImage, spriteWidth,spriteHeight, 50, 50, widthInGame,heightInGame);
   ctx.save();

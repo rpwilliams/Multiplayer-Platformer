@@ -3,8 +3,11 @@ const HEIGHT = 786;
 
 module.exports = exports = Game;
 
+const fs = require('fs');
+
 const Player = require('./player.js');
 const Enemy = require('./enemy.js');
+const Tilemap = require('./tilemap.js');
 const HidingObjects = require('./hiding-objects.js');
 
 /**
@@ -18,6 +21,9 @@ function Game(io, sockets, room) {
   this.io = io;
   this.room = room;
   this.state = new Uint8Array(WIDTH * HEIGHT);
+
+  Tilemap.load(JSON.parse(fs.readFileSync('./server/assets/tilemap.json')), {});
+
   this.time = Date.now();
   
   this.players = [];
@@ -89,13 +95,11 @@ Game.prototype.update = function(newTime) {
   
   // Update players
   this.players.forEach(function(player, i, players) {
-    var otherPlayer = players[(i+1)%2];
+  var tilemapX = Math.floor(player.levelPos.x / 64);
+  var tilemapY = Math.floor(player.levelPos.y / 64);
+  var otherPlayer = players[(i+1)%2];
 
-
-
-      player.update();
-	
-
+  player.update(Tilemap);
 
     // Check for collision with walls
     // if(player.position.x < 0 || player.position.x > WIDTH || player.position.y < 0 || player.position.y > HEIGHT) {
