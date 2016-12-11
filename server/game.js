@@ -22,12 +22,13 @@ function Game(io, sockets, room) {
   this.state = new Uint8Array(WIDTH * HEIGHT);
 
   this.tilemap = Tilemap.load(JSON.parse(fs.readFileSync('./server/assets/tilemap.json')), {});
+  console.log(this.tilemap);
 
   this.players = [];
 
     // Initialize the player
   this.players.push(new Player(
-      {x: 50, y: 50},
+      {x: 200, y: 250},
       sockets[0]
   ));
 
@@ -48,7 +49,7 @@ function Game(io, sockets, room) {
 
     // Handle steering events
     player.socket.on('steer', function(direction) {
-      player.direction = direction;
+      player.position.direction = direction;
     });
 
     //return player;
@@ -58,7 +59,7 @@ function Game(io, sockets, room) {
 
   // Place player on the screen
   this.io.to(this.room).emit('move', {
-    player: this.players[0].position,
+    player: this.players[0].send,
     enemy: this.players[1].position
   });
 
@@ -91,30 +92,7 @@ Game.prototype.update = function() {
   var tilemapY = Math.floor(player.position.y / 64);
     var otherPlayer = players[(i+1)%2];
 
-    // Move in current direction
-    if (!player.hitSolid(Tilemap)) {
-      switch(player.direction) {
-        case 'left':
-          player.position.x-=5;
-          player.position.direction = 'left';
-          break;
-        case 'right':
-          player.position.x+=5;
-          player.position.direction = 'right';
-          break;
-        case 'down':
-          player.position.y+=5;
-          player.position.direction = 'down';
-          break;
-        case 'up':
-          player.position.y-=5;
-          player.position.direction = 'up';
-          break;
-        case 'stop':
-          player.position.direction = 'none';
-          break;
-      }
-    }
+      player.update(this.tilemap);
 
     // Check for collision with walls
     if(player.position.x < 0 || player.position.x > WIDTH || player.position.y < 0 || player.position.y > HEIGHT) {
@@ -127,7 +105,7 @@ Game.prototype.update = function() {
 
   // Broadcast updated game state
   io.to(room).emit('move', {
-    player: this.players[0].position,
+    player: this.players[0].send,
     enemy: this.players[1].position
   });
 }

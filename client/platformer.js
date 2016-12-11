@@ -1,17 +1,30 @@
+"use strict";
+
 const WIDTH = 1024;
 const HEIGHT = 786;
+//const Camera = require('./camera');
 
+/* Global variables */
+var canvas = document.getElementById('screen');
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+//var camera = new Camera(canvas);
 var images = [
+  new Image(),
   new Image(),
   new Image()
 ];
 
 var sounds = {
-  "moving": new Audio("sounds/moving.mp3") //will make this anon function to initalize volume, length of clip, etc...
+  "moving": (function(){var audio = new Audio("sounds/moving.mp3"); 
+	                    audio.volume = .2; 
+			    audio.playbackRate = .5; 
+			    return audio})()
 };
 
-images[0].src = 'backgrounds/background-layer.png';
-images[1].src = 'backgrounds/foreground-layer.png';
+images[0].src = 'backgrounds/background-layer.png'; // Background
+images[1].src = 'backgrounds/foreground-layer.png'; // Foreground
+images[2].src = 'Fumiko2.png';  // Player
 
 
 // Start the game after all files have loaded
@@ -29,6 +42,7 @@ window.onload = function() {
 
   // Handle movement updates from the server
   socket.on('move', function(players){
+    updateCamera(players.player);
     renderPlayers(players, ctx);
   });
 
@@ -105,25 +119,59 @@ function renderBackground(ctx) {
 
   // Render the background
   ctx.save();
-  //ctx.translate(-camera.position.x, 0);
-  ctx.drawImage(images[0], 0, 0, WIDTH, HEIGHT);
+  ctx.translate(-camera_position.x, 0);
+  ctx.drawImage(images[0], 0, 0, images[0].width, HEIGHT);
   ctx.restore();
 
   ctx.save();
-  //ctx.translate(-camera.position.x, 0);
-  ctx.drawImage(images[1], 0, 0, WIDTH, HEIGHT);
+  ctx.translate(-camera_position.x, 0);
+  ctx.drawImage(images[1], 0, 0, images[1].width, HEIGHT);
   ctx.restore();
 }
 
 function renderPlayers(players, ctx) {
   // Draw the canvas backgrounds
-  if(players.player.direction != 'none' || players.enemy.direction != 'none') {
+  if(players.player.direction == 'none' || players.enemy.direction == 'none') {
     renderBackground(ctx);
   }
+  ctx.drawImage( images[2],players.player.sx ,
+  players.player.sy, players.player.swidth, players.player.sheight,
+  players.player.x, players.player.y, players.player.width, players.player.height);
+}
 
-  ctx.fillStyle = 'red';
-  ctx.fillRect(players.player.x, players.player.y, 5, 5);
+// TODO: FIX THIS
+// var camera = {
+//   //position:{x:0, y:0};
+//   width : canvas.width;
+//   height = canvas.height;
+//   xMin = 100;
+//   xMax = 500;
+//   xOff = 500;
+// }
+/* Camera variables */
+var camera_position = {x:0, y:0};
+var camera_width = canvas.width;
+var camera_height = canvas.height;
+var camera_xMin = 100;
+var camera_xMax = 500;
+var camera_xOff = 100;
 
-  ctx.fillStyle = 'blue';
-  ctx.fillRect(players.enemy.x, players.enemy.y, 5, 5);
+/**
+ * @function update
+ * Updates the camera based on the supplied target
+ * @param {Vector} target what the camera is looking at
+ */
+var updateCamera = function(target) {
+  // TODO: Align camera with player
+  camera_xOff += target.velocity.x;
+  if(camera_xOff > camera_xMax) {
+    camera_position.x += camera_xOff - camera_xMax;
+    camera_xOff = camera_xMax;
+  }
+  if(camera_xOff < camera_xMin) {
+    camera_position.x -= camera_xMin - camera_xOff;
+    camera_xOff = camera_xMin;
+  }
+
+  if(camera_position.x < 0) camera_position.x = 0;
 }

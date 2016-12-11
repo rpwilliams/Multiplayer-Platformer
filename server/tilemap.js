@@ -1,7 +1,7 @@
 //Tilemap.js was retrieved from Nathan H Bean's public github repository at: https://github.com/zombiepaladin/tilemap/blob/master/src/tilemap.js
 
 // Tilemap engine defined using the Module pattern
-module.exports = (function (){
+module.exports = exports = (function (){
   var tiles = [],
       tilesets = [],
       layers = [],
@@ -84,16 +84,16 @@ module.exports = (function (){
       return undefined;  
     var tilemapX = Math.floor(x / tileWidth);
     var tilemapY = Math.floor(y / tileHeight);
-    console.log(tilemapX, tilemapY);
     return tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1];
   }
   
   // Expose the module's public API
-  return {
+  var return_val = {
     load: load,
     tileAt: tileAt,
     tileWidth: 64,
     tileHeight: 64 
   }
+  return return_val;
   
 })();
