@@ -157,6 +157,12 @@ function renderPlayers(players, ctx) {
   ctx.fillText('level: (' + Math.floor(players.other.levelPos.x) + ',' + Math.floor(players.other.levelPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 30);
   ctx.fillText('screen: (' + Math.floor(players.other.screenPos.x)+ ',' + Math.floor(players.other.screenPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 10);  
   
+  // Check if the player won the game
+  if(Math.floor(players.current.levelPos.x) > 11200)
+  {
+    console.log('Player 1 wins!');
+  }
+
   // Draw current player's sprite
   ctx.drawImage( images[2],players.current.sx ,
    players.current.sy, players.current.swidth, players.current.sheight,
