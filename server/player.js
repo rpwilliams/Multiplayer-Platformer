@@ -44,7 +44,6 @@ velocity:this.velocity};
 
 this.socket = socket;
 
-
 this.jumping = false;
 this.falling=false;
 this.crouching = "no";

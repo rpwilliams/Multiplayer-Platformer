@@ -12,12 +12,14 @@ canvas.height = canvas.offsetHeight;
 var images = [
   new Image(),
   new Image(),
+  new Image(),
   new Image()
 ];
 
 images[0].src = 'level.png'; // Background
 images[1].src = 'stars.jpg'; // Foreground
 images[2].src = 'fumiko2.png';  // Player
+images[3].src = 'BrownBox.png'; // Brown box
 
 
 // Start the game after all files have loaded
@@ -34,8 +36,9 @@ window.onload = function() {
   });
 
   // Handle movement updates from the server
-  socket.on('render', function(players){
+  socket.on('render', function(players, hidingObjects){
     // updateCamera(players.player);
+	renderHidingObjects(players, hidingObjects, ctx);
     renderPlayers(players, ctx);
   });
 
@@ -136,10 +139,6 @@ function renderBackground(ctx, current) {
 }
 
 function renderPlayers(players, ctx) {
-  // Draw the canvas backgrounds
-  if(players.current.direction == 'none' || players.other.direction == 'none') {
-    renderBackground(ctx, players.current);
-  }
   //console.log(players.player);
   //ctx.fillRect(players.player.x, players.player.y, 5, 5);
   ctx.save();
@@ -150,7 +149,7 @@ function renderPlayers(players, ctx) {
   ctx.fillText('screen: (' + Math.floor(players.current.screenPos.x)+ ',' + Math.floor(players.current.screenPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 10);
   ctx.fillText('level: (' + Math.floor(players.other.levelPos.x) + ',' + Math.floor(players.other.levelPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 30);
   ctx.fillText('screen: (' + Math.floor(players.other.screenPos.x)+ ',' + Math.floor(players.other.screenPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 10);  
-
+  
   // Draw current player's sprite
   ctx.drawImage( images[2],players.current.sx ,
    players.current.sy, players.current.swidth, players.current.sheight,
@@ -159,11 +158,24 @@ function renderPlayers(players, ctx) {
   // Draw other player's sprite
   ctx.drawImage( images[2],players.other.sx ,
    players.other.sy, players.other.swidth, players.other.sheight,
-   players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);
-
+   players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);   
 
   ctx.restore();
 }
+
+function renderHidingObjects (players, hidingObjects, ctx)
+{
+  // Draw the canvas backgrounds
+  if(players.current.direction == 'none' || players.other.direction == 'none') {
+    renderBackground(ctx, players.current);
+  }
+	
+  // Draw hiding objects
+  ctx.save();
+  ctx.drawImage(images[3],  hidingObjects.objects[0].position.x + (players.current.screenPos.x - players.current.levelPos.x), hidingObjects.objects[0].position.y, images[3].width * 2, images[3].height * 2);
+  ctx.restore();
+}
+
 // function renderPlayerView(players, ctx) {
 //   // Draw the canvas backgrounds
 //   if(players.player.direction == 'none' || players.enemy.direction == 'none') {

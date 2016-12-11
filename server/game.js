@@ -5,6 +5,7 @@ module.exports = exports = Game;
 
 const Player = require('./player.js');
 const Enemy = require('./enemy.js');
+const HidingObjects = require('./hiding-objects.js');
 
 /**
  * @class Game
@@ -19,6 +20,7 @@ function Game(io, sockets, room) {
   this.state = new Uint8Array(WIDTH * HEIGHT);
 
   this.players = [];
+  this.hidingObjects = new HidingObjects();
 
     // Initialize the player
   this.players.push(new Player(
@@ -30,8 +32,12 @@ function Game(io, sockets, room) {
     {x: 700, y: 610},
     sockets[1]
   ));
+  
+  // Initialize hiding objects throughout level
+  this.hidingObjects.add(610,0);
 
   this.players.forEach(function(player) {
+	  
     // Join the room
     player.socket.join(room);
 
@@ -86,7 +92,7 @@ Game.prototype.update = function() {
 
 
       player.update();
-
+	
 
 
     // Check for collision with walls
@@ -97,7 +103,6 @@ Game.prototype.update = function() {
     //   clearInterval(interval);
     // }
   });
-
   // Broadcast updated game state
   // io.to(room).emit('move', {
   //   player: this.players[0].send,
@@ -107,10 +112,10 @@ Game.prototype.update = function() {
   this.players[0].socket.emit('render', {
     current: this.players[0].send,
     other: this.players[1].send
-  });
+  }, this.hidingObjects);
 
   this.players[1].socket.emit('render', {
     other: this.players[0].send,
     current: this.players[1].send
-  });
+  }, this.hidingObjects);
 }
