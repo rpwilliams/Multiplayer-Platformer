@@ -16,7 +16,7 @@ var images = [
 ];
 
 images[0].src = 'level.png'; // Background
-images[1].src = 'stars.jpg'; // Foreground
+images[1].src = 'stars.png'; // Foreground
 images[2].src = 'fumiko2.png';  // Player
 
 
