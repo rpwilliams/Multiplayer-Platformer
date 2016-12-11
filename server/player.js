@@ -183,13 +183,7 @@ Player.prototype.update = function() {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,wonGame:this.wonGame };
-
-	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
-	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
-	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
-	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,id:this.id};
+	velocity:this.velocity,wonGame:this.wonGame, id:this.id};
 }
 
 

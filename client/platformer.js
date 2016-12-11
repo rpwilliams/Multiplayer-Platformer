@@ -48,7 +48,7 @@ window.onload = function() {
 	
 	// Render the normal objects, followed by the player and then the objects that the player is hiding behind
 	renderHidingObjects(players, hidingObjects, ctx, false);
-    renderPlayers(players, ctx);
+  renderPlayers(players, ctx);
 	renderHidingObjects(players, hidingObjects, ctx, true);
   });
 
@@ -192,8 +192,9 @@ else{
 }
   ctx.restore();
 }
+}
 
-function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
+function renderHidingObjects(players, hidingObjects, ctx, renderDelayedObjs)
 {
   // Draw the canvas backgrounds
   if((players.current.direction == 'none' || players.other.direction == 'none') && renderDelayedObjs == false) {
@@ -309,12 +310,12 @@ var camera_xMin = 100;
 var camera_xMax = 500;
 var camera_xOff = 100;
 
-/**
- * @function update
- * Updates the camera based on the supplied target
- * @param {Vector} target what the camera is looking at
- */
-var updateCamera = function(target) {
+  /**
+  * @function update
+  * Updates the camera based on the supplied target
+  * @param {Vector} target what the camera is looking at
+  */
+  var updateCamera = function(target) {
   // // TODO: Align camera with player
   camera_position.x = target.x;
   // //console.log(self.xOff, self.xMax, self.xOff > self.xMax);
@@ -329,4 +330,4 @@ var updateCamera = function(target) {
 
   if(camera_position.x < 0) camera_position.x = 0;
   // console.log("Camera: (" + camera_position.x + "," + camera_position.y + ")");
-}
+  }
