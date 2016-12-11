@@ -379,7 +379,7 @@ function render(elapsedTime, ctx) {
  
   player.render(elapsedTime, ctx);
   enemy.render(elapsedTime, ctx);
-  //ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
+  //ctx.drawImage( img,xPlaceInImage+spriteWidth*animationCounter , yPlaceInImage, spriteWidth,spriteHeight, 50, 50, widthInGame,heightInGame);
   ctx.save();
    
   ctx.restore();
@@ -528,9 +528,9 @@ this.animationTimer = 0;
 this.animationCounter = 0;
 this.frameLength = 9;
 //animation dependent
-this.numberOfSpirtes = 0; // how many frames are there in the animation
-this.spirteWidth = 42; // width of each frame
-this.spirteHeight = 23; // height of each frame
+this.numberOfsprites = 0; // how many frames are there in the animation
+this.spriteWidth = 42; // width of each frame
+this.spriteHeight = 23; // height of each frame
 this.widthInGame = 80;   
 this.heightInGame = 68;
 this.xPlaceInImage = 0; // this should CHANGE for the same animation 
@@ -538,8 +538,8 @@ this.yPlaceInImage = 0; // this should NOT change for the same animation
 
 //specific animation information for this enemy
 //while it is still
-this.stillHeight = this.spirteHeight;
-this.stillWidth = this.spirteWidth;
+this.stillHeight = this.spriteHeight;
+this.stillWidth = this.spriteWidth;
 this.stillWidthInGame = this.widthInGame;   
 this.stillHeightInGame = this.heightInGame;
 //while it is moving
@@ -649,7 +649,7 @@ Enemy.prototype.update = function(elapsedTime, input,enemyFire,enemyBombs) {
 	  }
 	  this.animationTimer = 0;
   }
-  if (this.animationCounter>=this.numberOfSpirtes){
+  if (this.animationCounter>=this.numberOfsprites){
 		if(this.animation!="stand still"){
 			this.animationCounter = 0;
 		}
@@ -674,8 +674,8 @@ Enemy.prototype.update = function(elapsedTime, input,enemyFire,enemyBombs) {
  * @param {CanvasRenderingContext2D} ctx
  */
 Enemy.prototype.render = function(elapasedTime, ctx) {
-   ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter , 
-   this.yPlaceInImage, this.spirteWidth,this.spirteHeight, 
+   ctx.drawImage( this.img,this.xPlaceInImage+this.spriteWidth*this.animationCounter , 
+   this.yPlaceInImage, this.spriteWidth,this.spriteHeight, 
    this.position.x, this.position.y, this.widthInGame,this.heightInGame);
    this.xPlaceInImage=0;
   
@@ -689,13 +689,13 @@ Enemy.prototype.changeAnimation = function(x)
 	{
 		//if (animationTimer == 0)
 		//{
-			this.numberOfSpirtes = 0;
+			this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			//this.tookAstep = "yes";
 		//}
-			this.spirteHeight = this.stillHeight;
-			this.spirteWidth = this.stillWidth;
+			this.spriteHeight = this.stillHeight;
+			this.spriteWidth = this.stillWidth;
 			this.widthInGame = this.stillWidthInGame;   
 			this.heightInGame = this.stillHeightInGame;
 			
@@ -703,34 +703,34 @@ Enemy.prototype.changeAnimation = function(x)
 			this.position.y+=this.offPostion;
 			
 			if (this.facing=="right")
-				this.yPlaceInImage = this.spirteHeight*0;
+				this.yPlaceInImage = this.spriteHeight*0;
 			else
-				this.yPlaceInImage = this.spirteHeight*1;
-			this.xPlaceInImage = this.spirteWidth*0;
+				this.yPlaceInImage = this.spriteHeight*1;
+			this.xPlaceInImage = this.spriteWidth*0;
 		
 		
 	}
 	else
 	{
-		this.numberOfSpirtes = 3;
+		this.numberOfsprites = 3;
 		this.heightInGame = 68;
 		//tookAstep = "no";  
 		switch(this.animation)
 		{
 			case "moving up unused":
 			
-				//this.xPlaceInImage =this.spirteWidth*7;
-			this.numberOfSpirtes = 0;
+				//this.xPlaceInImage =this.spriteWidth*7;
+			this.numberOfsprites = 0;
 			this.animationTimer = 0;
 			this.animationCounter = 0;
 			
 			break;
 			
 			case "moving down unused":
-			//this.yPlaceInImage =this.spirteHeight*0;
-			//this.numberOfSpirtes = 0;
+			//this.yPlaceInImage =this.spriteHeight*0;
+			//this.numberOfsprites = 0;
 			
-			this.numberOfSpirtes = 0;
+			this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			//this.tookAstep = "yes";
@@ -740,8 +740,8 @@ Enemy.prototype.changeAnimation = function(x)
 			case "moving left":
 			
 			this.yPlaceInImage = 84; 
-			this.spirteHeight = this.movingHeight;
-			this.spirteWidth = this.movingWidth;
+			this.spriteHeight = this.movingHeight;
+			this.spriteWidth = this.movingWidth;
 			
 			this.widthInGame = this.movingWidthInGame;   
 			this.heightInGame = this.movingHeightInGame;
@@ -757,8 +757,8 @@ Enemy.prototype.changeAnimation = function(x)
 			case "moving right":
 			
 			this.yPlaceInImage = 48; 
-			this.spirteHeight = this.movingHeight;
-			this.spirteWidth = this.movingWidth;
+			this.spriteHeight = this.movingHeight;
+			this.spriteWidth = this.movingWidth;
 			
 			this.widthInGame = this.movingWidthInGame;   
 			this.heightInGame = this.movingHeightInGame;
@@ -1116,9 +1116,9 @@ this.animationTimer = 0;
 this.animationCounter = 0;
 this.frameLength = 9;
 //animation dependent
-this.numberOfSpirtes = 0; // how man y frames are there in the animation
-this.spirteWidth = 23; // width of each frame
-this.spirteHeight = 34; // height of each frame
+this.numberOfsprites = 0; // how man y frames are there in the animation
+this.spriteWidth = 23; // width of each frame
+this.spriteHeight = 34; // height of each frame
 this.widthInGame = 46;   
 this.heightInGame = 68;
 this.xPlaceInImage = 0; // this should CHANGE for the same animation 
@@ -1277,7 +1277,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	  }
 	  this.animationTimer = 0;
   }
-  if (this.animationCounter>=this.numberOfSpirtes){
+  if (this.animationCounter>=this.numberOfsprites){
 		if(this.animation!="stand still"){
 			this.animationCounter = 3;
 		}
@@ -1299,7 +1299,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	  break;
 	  case "stand still":
 	  if (this.animationTimer == 0){
-		  this.numberOfSpirtes = 0;
+		  this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			this.tookAstep = "yes";
@@ -1327,8 +1327,8 @@ Player.prototype.update = function(elapsedTime, input) {
  * @param {CanvasRenderingContext2D} ctx
  */
 Player.prototype.render = function(elapasedTime, ctx) {
-   ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter , 
-   this.yPlaceInImage, this.spirteWidth,this.spirteHeight, 
+   ctx.drawImage( this.img,this.xPlaceInImage+this.spriteWidth*this.animationCounter , 
+   this.yPlaceInImage, this.spriteWidth,this.spriteHeight, 
    this.position.x, this.position.y, this.widthInGame,this.heightInGame);
    this.xPlaceInImage=0;
 }
@@ -1341,7 +1341,7 @@ Player.prototype.changeAnimation = function(x)
 	{
 		//if (animationTimer == 0)
 		//{
-			this.numberOfSpirtes = 0;
+			this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			//this.tookAstep = "yes";
@@ -1351,22 +1351,22 @@ Player.prototype.changeAnimation = function(x)
 	}
 	else
 	{
-		this.numberOfSpirtes = 7;
+		this.numberOfsprites = 7;
 		this.heightInGame = 68;
 		//tookAstep = "no";  
 		switch(this.animation)
 		{
 			case "moving up":
 			
-				this.xPlaceInImage =this.spirteWidth*7;
+				this.xPlaceInImage =this.spriteWidth*7;
 			
 			break;
 			
 			case "moving down":
-			//this.yPlaceInImage =this.spirteHeight*0;
-			//this.numberOfSpirtes = 0;
+			//this.yPlaceInImage =this.spriteHeight*0;
+			//this.numberOfsprites = 0;
 			
-			this.numberOfSpirtes = 0;
+			this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			//this.tookAstep = "yes";
@@ -1374,11 +1374,11 @@ Player.prototype.changeAnimation = function(x)
 			break;
 			
 			case "moving left":
-			this.yPlaceInImage =this.spirteHeight*1;
+			this.yPlaceInImage =this.spriteHeight*1;
 			break;
 			
 			case "moving right":
-			this.yPlaceInImage =this.spirteHeight*0;
+			this.yPlaceInImage =this.spriteHeight*0;
 			break;
 			
 			case "standing":

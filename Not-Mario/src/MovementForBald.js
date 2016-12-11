@@ -22,9 +22,9 @@ var animationTimer = 0;
 var animationCounter = 0;
 var frameLength = 9;
 //animation dependent
-var numberOfSpirtes = 0; // how man y frames are there in the animation
-var spirteWidth = 64.33333333333333; // width of each frame
-var spirteHeight = 64; // height of each frame
+var numberOfsprites = 0; // how man y frames are there in the animation
+var spriteWidth = 64.33333333333333; // width of each frame
+var spriteHeight = 64; // height of each frame
 var widthInGame = 128;   
 var heightInGame = 128;
 var xPlaceInImage = 0; // this should CHANGE for the same animation 
@@ -138,7 +138,7 @@ function update(elapsedTime) {
 	  animationCounter++;
 	  animationTimer = 0;
   }
-  if (animationCounter>numberOfSpirtes){
+  if (animationCounter>numberOfsprites){
 	  animationCounter = 0;
   }
   
@@ -154,7 +154,7 @@ function update(elapsedTime) {
 	  break;
 	  case "stand still":
 	  if (animationTimer == 0){
-		  numberOfSpirtes = 0;
+		  numberOfsprites = 0;
 		    animationTimer = 0;
 			animationCounter = 0;
 			tookAstep = "yes";
@@ -177,7 +177,7 @@ function render(elapsedTime, ctx) {
   ctx.fillRect(0, 0, 1024, 786);
  
   
-  ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
+  ctx.drawImage( img,xPlaceInImage+spriteWidth*animationCounter , yPlaceInImage, spriteWidth,spriteHeight, 50, 50, widthInGame,heightInGame);
   ctx.save();
    
   ctx.restore();
@@ -193,7 +193,7 @@ function changeAnimation (x)
 	{
 		//if (animationTimer == 0)
 		//{
-			numberOfSpirtes = 0;
+			numberOfsprites = 0;
 		    animationTimer = 0;
 			animationCounter = 0;
 			tookAstep = "yes";
@@ -204,29 +204,29 @@ function changeAnimation (x)
 	}
 	else
 	{
-		numberOfSpirtes = 8;
+		numberOfsprites = 8;
 		//tookAstep = "no";
 		xPlaceInImage = 0;
 		switch(x)
 		{
 			case "moving up":
 			
-			yPlaceInImage =spirteHeight*0;
+			yPlaceInImage =spriteHeight*0;
 			
 			break;
 			
 			case "moving down":
-			yPlaceInImage =spirteHeight*2;
-			xPlaceInImage = spirteWidth;
-			numberOfSpirtes = 7;
+			yPlaceInImage =spriteHeight*2;
+			xPlaceInImage = spriteWidth;
+			numberOfsprites = 7;
 			break;
 			
 			case "moving left":
-			yPlaceInImage =spirteHeight*1;
+			yPlaceInImage =spriteHeight*1;
 			break;
 			
 			case "moving right":
-			yPlaceInImage =spirteHeight*3;
+			yPlaceInImage =spriteHeight*3;
 			break;
 		}
 		

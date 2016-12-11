@@ -378,7 +378,7 @@ function render(elapsedTime, ctx) {
  
   player.render(elapsedTime, ctx);
   enemy.render(elapsedTime, ctx);
-  //ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
+  //ctx.drawImage( img,xPlaceInImage+spriteWidth*animationCounter , yPlaceInImage, spriteWidth,spriteHeight, 50, 50, widthInGame,heightInGame);
   ctx.save();
    
   ctx.restore();

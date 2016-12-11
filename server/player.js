@@ -1,7 +1,7 @@
 "use strict";
 
 /* Constants */
-var PLAYER_RUN_VELOCITY = 0.25;
+var PLAYER_RUN_VELOCITY = 3;
 var PLAYER_RUN_SPEED = 5;
 var PLAYER_RUN_MAX = 3;
 var PLAYER_FALL_VELOCITY = 0.25;
@@ -21,11 +21,11 @@ module.exports = exports = Player;
 function Player(position,socket ) {
 this.animationTimer = 0;
 this.animationCounter = 0;
-this.frameLength = 9;
+this.frameLength = 8;
 //animation dependent
-this.numberOfSpirtes = 0; // how man y frames are there in the animation
-this.spirteWidth = 23; // width of each frame
-this.spirteHeight = 34; // height of each frame
+this.numberOfSprites = 0; // how man y frames are there in the animation
+this.spriteWidth = 23; // width of each frame
+this.spriteHeight = 34; // height of each frame
 this.widthInGame = 46;
 this.heightInGame = 68;
 this.xPlaceInImage = 0; // this should CHANGE for the same animation
@@ -33,21 +33,14 @@ this.yPlaceInImage = 0; // this should NOT change for the same animation
 this.animation = "stand still"; // this will keep track of the animation
 this.tookAstep = "no";
 this.velocity = {x: 0, y: 0};
-this.position={x: position.x, y: position.y};
-this.send = {x: this.position.x, y: this.position.y, direction: 'none',
-sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
-swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
+this.screenPos= {x: 512, y: position.y};
+this.levelPos= {x: position.x, y: position.y};
+this.direction = 'none'
+this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
+sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
+swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 height:this.heightInGame, animation:this.animationCounter,
 velocity:this.velocity};
-
-
-/*
-
-ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter ,
-this.yPlaceInImage, this.spirteWidth,this.spirteHeight,
-this.position.x, this.position.y, this.widthInGame,this.heightInGame);
-
-*/
 
 this.socket = socket;
 
@@ -55,7 +48,7 @@ this.socket = socket;
 this.jumping = false;
 this.falling=false;
 this.crouching = "no";
-this.floorYPostion = 600;
+this.floorYPostion = 610;
 this.jumpingTime = 0;
 this.facing = "left";
 }
@@ -75,36 +68,39 @@ Player.prototype.update = function() {
 	//track movment than change velocity and animation
 	if (this.jumping==false && this.falling==false)
 	{
-		if(this.position.direction=="left"){
-			this.velocity.x -= PLAYER_RUN_VELOCITY;
+		if(this.direction=="left"){
+			this.velocity.x = -PLAYER_RUN_VELOCITY;
+			// this.velocity.x -= PLAYER_RUN_VELOCITY;
 			this.changeAnimation("moving left");
 			this.facing = "left";
 		}
-		else if(this.position.direction=="right"){
-			this.velocity.x += PLAYER_RUN_VELOCITY;
+		else if(this.direction=="right"){
+			this.velocity.x = PLAYER_RUN_VELOCITY;
+			// this.velocity.x += PLAYER_RUN_VELOCITY;
 			this.changeAnimation("moving right");
 			this.facing = "right";
 		}
-    else if(this.position.direction=="none"){
+    else if(this.direction=="none"){
 			//this.velocity.x += PLAYER_RUN_VELOCITY;
+			this.velocity.x = 0;
 			this.changeAnimation("stand still");
 		}
-		else if(this.velocity.x>0) {
-			this.velocity.x -=PLAYER_RUN_VELOCITY;
-		}
-		else if(this.velocity.x<0){
-			this.velocity.x +=PLAYER_RUN_VELOCITY;
-		}
+		// else if(this.velocity.x>0) {
+		// 	this.velocity.x -=PLAYER_RUN_VELOCITY;
+		// }
+		// else if(this.velocity.x<0){
+		// 	this.velocity.x +=PLAYER_RUN_VELOCITY;
+		// }
 	}
 	else{
 		this.changeAnimation("moving up");
 	}
 
 	// set a maximum run speed
-	if(this.velocity.x < -PLAYER_RUN_MAX) this.velocity.x=-PLAYER_RUN_MAX;
-	if(this.velocity.x > PLAYER_RUN_MAX) this.velocity.x=PLAYER_RUN_MAX;
+	// if(this.velocity.x < -PLAYER_RUN_MAX) this.velocity.x=-PLAYER_RUN_MAX;
+	// if(this.velocity.x > PLAYER_RUN_MAX) this.velocity.x=PLAYER_RUN_MAX;
 
-	if(this.position.direction=="up" && this.jumping==false && this.falling==false) {
+	if(this.direction=="up" && this.jumping==false && this.falling==false) {
 		this.velocity.y -= PLAYER_JUMP_SPEED;
 		this.jumping=true;
 
@@ -118,25 +114,26 @@ Player.prototype.update = function() {
 		}
 		if (this.facing=="left")
 		{
-			if(this.position.direction=="right" && this.velocity.x!=0){
+			if(this.direction=="right" && this.velocity.x!=0){
 				this.velocity.x += PLAYER_JUMP_BREAK_VELOCITY;
 			}
 		}
 		else if (this.facing=="right")
 		{
-			if(this.position.direction=="left" && this.velocity.x!=0){
+			if(this.direction=="left" && this.velocity.x!=0){
 				this.velocity.x -= PLAYER_JUMP_BREAK_VELOCITY;
 			}
 			
 		}
-		if (this.position.y > this.floorYPostion - 4)
+		if (this.levelPos.y > this.floorYPostion)
 		{
-			this.position.y = this.floorYPostion;
+			this.levelPos.y = this.floorYPostion;
+			this.screenPos.y = this.floorYPostion;
 			this.velocity.y = 0;
-			this.velocity.x=0; // HAVE THE PLAYER STOP ALL MOMENTUM WHEN HIT GROUND
+			//this.velocity.x=0; // HAVE THE PLAYER STOP ALL MOMENTUM WHEN HIT GROUND
 			this.jumping = false;
 			this.falling=false;
-			this.animation="stand still";
+			//this.animation="stand still";
 		}
 
 	}
@@ -150,8 +147,9 @@ Player.prototype.update = function() {
 	// move the player
 	if(this.velocity.x==0 && this.velocity.y==0) this.animation="stand still";
 	else{
-	this.position.x += this.velocity.x;
-	this.position.y += this.velocity.y;
+	this.levelPos.x += this.velocity.x;
+	this.levelPos.y += this.velocity.y;
+	this.screenPos.y += this.velocity.y;
 	}
 
 	//if (!(this.animation=="stand still" && this.tookAstep=="yes"))
@@ -166,7 +164,7 @@ Player.prototype.update = function() {
 	  this.animationTimer = 0;
   }
 
-  if (this.animationCounter>=this.numberOfSpirtes){
+  if (this.animationCounter>=this.numberOfSprites){
 		if(this.animation!="stand still"){
 			this.animationCounter = 3;
 		}
@@ -174,13 +172,13 @@ Player.prototype.update = function() {
 		this.animationCounter = 0;
 		}
   }
-  if(this.jumping==true) this.xPlaceInImage = this.spirteWidth*7;
-	else if(this.falling==true) this.xPlaceInImage = this.spirteWidth*8;
+  if(this.jumping==true) this.xPlaceInImage = this.spriteWidth*5;
+	else if(this.falling==true) this.xPlaceInImage = this.spriteWidth*6;
 	else this.xPlaceInImage = 0;
 
-  this.send = {x: this.position.x, y: this.position.y, direction: 'none',
-  sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
-  swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
+  this.send = { levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
+  sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
+  swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
   height:this.heightInGame, animation:this.animationCounter,
   velocity:this.velocity};
 }
@@ -194,7 +192,7 @@ Player.prototype.changeAnimation = function(x)
 	{
 		//if (animationTimer == 0)
 		//{
-			this.numberOfSpirtes = 0;
+			this.numberOfSprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			this.tookAstep = "yes";
@@ -204,29 +202,29 @@ Player.prototype.changeAnimation = function(x)
 	}
 	else
 	{
-		this.numberOfSpirtes = 7;
+		this.numberOfSprites = 5;
 		//tookAstep = "no";
 		switch(this.animation)
 		{
 			case "moving up":
 				this.animationCounter=0;
-				//this.xPlaceInImage =this.spirteWidth*7;
+				//this.xPlaceInImage =this.spriteWidth*7;
 
 			break;
 
 			case "moving down":
-  			this.yPlaceInImage =this.spirteHeight*0;
+  			this.yPlaceInImage =this.spriteHeight*0;
   			break;
 
 			case "moving left":
 
 				  if(this.jumping==false && this.falling==false){
-            this.yPlaceInImage =this.spirteHeight*1;
+            this.yPlaceInImage =this.spriteHeight*1;
 
           }
 			     break;
 			case "moving right":
-			this.yPlaceInImage =this.spirteHeight*0;
+			this.yPlaceInImage =this.spriteHeight*0;
 			break;
 		}
 	}

@@ -34,10 +34,16 @@ window.onload = function() {
   });
 
   // Handle movement updates from the server
-  socket.on('move', function(players){
-    updateCamera(players.player);
+  socket.on('render', function(players){
+    // updateCamera(players.player);
     renderPlayers(players, ctx);
   });
+
+  // // Handle movement updates from the server
+  // socket.on('moveEnemy', function(players){
+  //   // updateCamera(players.player);
+  //   renderEnemyView(players, ctx);
+  // });  
 
   // Handle game on events
   socket.on('game on', function() {
@@ -69,6 +75,7 @@ window.onload = function() {
     switch(event.keyCode) {
       // UP
       case 38:
+      case 32:
       case 87:
         socket.emit('steer', 'up');
         break;
@@ -95,53 +102,126 @@ window.onload = function() {
     switch(event.keyCode) {
       case 38:
       case 87:
+      case 32:
       case 37:
       case 65:
       case 39:
       case 68:
       case 40:
       case 83:
-        socket.emit('steer', 'stop');
+        socket.emit('steer', 'none');
         break;
     }
   }
 }
 
-function renderBackground(ctx) {
+function renderBackground(ctx, current) {
 
   // Render the background
 
   // Da stars
   ctx.save();
   //ctx.translate(-camera_position.x, 0);
-  ctx.drawImage(images[1], 0, 0, images[1].width, HEIGHT);
+  ctx.drawImage(images[1], 0, 0, 2600, 2600/images[1].width*images[1].height);
   ctx.restore();
 
   // Da background
   ctx.save();
-  ctx.translate(-camera_position.x, 0);
-  ctx.drawImage(images[0], 0, 0, images[0].width, HEIGHT);
+  //TODO: magic numbers. 19200 = width of level image in pixels. 11229 = canvas height/image height * image width
+  ctx.drawImage(images[0],
+                (19200/11229)*(current.levelPos.x - current.screenPos.x), 0, images[0].width, images[0].height,
+                0, 0, 11229, HEIGHT);
+  // ctx.drawImage(images[0], 0, 0, images[0].width, HEIGHT);
   ctx.restore();
 }
 
 function renderPlayers(players, ctx) {
   // Draw the canvas backgrounds
-  if(players.player.direction == 'none' || players.enemy.direction == 'none') {
-    renderBackground(ctx);
+  if(players.current.direction == 'none' || players.other.direction == 'none') {
+    renderBackground(ctx, players.current);
   }
-  console.log(players.player);
-  ctx.fillStyle = 'red';
+  //console.log(players.player);
   //ctx.fillRect(players.player.x, players.player.y, 5, 5);
   ctx.save();
-  ctx.translate(-camera_position.x, players.player.y);
-  ctx.drawImage( images[2],players.player.sx ,
-   players.player.sy, players.player.swidth, players.player.sheight,
-   players.player.x, players.player.y, players.player.width, players.player.height);
-  ctx.restore();
+  // ctx.translate(-camera_position.x, players.player.y);
+  ctx.fillStyle = 'white';
+  ctx.font="20px Verdana";
+  ctx.fillText('level: (' + Math.floor(players.current.levelPos.x) + ',' + Math.floor(players.current.levelPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 30);
+  ctx.fillText('screen: (' + Math.floor(players.current.screenPos.x)+ ',' + Math.floor(players.current.screenPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 10);
+  ctx.fillText('level: (' + Math.floor(players.other.levelPos.x) + ',' + Math.floor(players.other.levelPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 30);
+  ctx.fillText('screen: (' + Math.floor(players.other.screenPos.x)+ ',' + Math.floor(players.other.screenPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 10);  
 
-  ctx.fillStyle = 'blue';
-  ctx.fillRect(players.enemy.x, players.enemy.y, 5, 5);
+  // Draw current player's sprite
+  ctx.drawImage( images[2],players.current.sx ,
+   players.current.sy, players.current.swidth, players.current.sheight,
+   players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
+
+  // Draw other player's sprite
+  ctx.drawImage( images[2],players.other.sx ,
+   players.other.sy, players.other.swidth, players.other.sheight,
+   players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);
+
+
+  ctx.restore();
 }
+// function renderPlayerView(players, ctx) {
+//   // Draw the canvas backgrounds
+//   if(players.player.direction == 'none' || players.enemy.direction == 'none') {
+//     renderBackground(ctx, players.player);
+//   }
+//   //console.log(players.player);
+//   //ctx.fillRect(players.player.x, players.player.y, 5, 5);
+//   ctx.save();
+//   // ctx.translate(-camera_position.x, players.player.y);
+//   ctx.fillStyle = 'white';
+//   ctx.font="20px Verdana";
+//   ctx.fillText('level: (' + Math.floor(players.player.levelPos.x) + ',' + Math.floor(players.player.levelPos.y) + ')', players.player.screenPos.x, players.player.screenPos.y - 30);
+//   ctx.fillText('screen: (' + Math.floor(players.player.screenPos.x)+ ',' + Math.floor(players.player.screenPos.y) + ')', players.player.screenPos.x, players.player.screenPos.y - 10);
+//   ctx.fillText('level: (' + Math.floor(players.enemy.levelPos.x) + ',' + Math.floor(players.enemy.levelPos.y) + ')', players.enemy.levelPos.x - players.player.levelPos.x + players.player.screenPos.x, players.enemy.screenPos.y - 30);
+//   ctx.fillText('screen: (' + Math.floor(players.enemy.screenPos.x)+ ',' + Math.floor(players.enemy.screenPos.y) + ')', players.enemy.levelPos.x - players.player.levelPos.x + players.player.screenPos.x, players.enemy.screenPos.y - 10);  
+
+//   // Draw player sprite
+//   ctx.drawImage( images[2],players.player.sx ,
+//    players.player.sy, players.player.swidth, players.player.sheight,
+//    players.player.screenPos.x, players.player.screenPos.y, players.player.width, players.player.height);
+
+//   // Draw enemy sprite
+//   ctx.drawImage( images[2],players.enemy.sx ,
+//    players.enemy.sy, players.enemy.swidth, players.enemy.sheight,
+//    players.enemy.levelPos.x - players.player.levelPos.x + players.player.screenPos.x, players.enemy.screenPos.y, players.enemy.width, players.enemy.height);
+
+
+//   ctx.restore();
+// }
+
+// function renderEnemyView(players, ctx) {
+//   // Draw the canvas backgrounds
+//   if(players.player.direction == 'none' || players.enemy.direction == 'none') {
+//     renderBackground(ctx, players.enemy);
+//   }
+//   //console.log(players.player);
+//   //ctx.fillRect(players.player.x, players.player.y, 5, 5);
+//   ctx.save();
+//   // ctx.translate(-camera_position.x, players.player.y);
+//   ctx.fillStyle = 'white';
+//   ctx.font="20px Verdana";
+//   ctx.fillText('level: (' + Math.floor(players.enemy.levelPos.x) + ',' + Math.floor(players.enemy.levelPos.y) + ')', players.enemy.screenPos.x, players.enemy.screenPos.y - 30);
+//   ctx.fillText('screen: (' + Math.floor(players.enemy.screenPos.x)+ ',' + Math.floor(players.enemy.screenPos.y) + ')', players.enemy.screenPos.x, players.enemy.screenPos.y - 10);
+//   ctx.fillText('level: (' + Math.floor(players.player.levelPos.x) + ',' + Math.floor(players.player.levelPos.y) + ')', players.player.levelPos.x - players.enemy.levelPos.x + players.enemy.screenPos.x, players.player.screenPos.y - 30);
+//   ctx.fillText('screen: (' + Math.floor(players.player.screenPos.x)+ ',' + Math.floor(players.player.screenPos.y) + ')', players.player.levelPos.x - players.enemy.levelPos.x + players.enemy.screenPos.x, players.player.screenPos.y - 10);  
+
+//   // Draw enemy sprite
+//   ctx.drawImage( images[2],players.enemy.sx ,
+//    players.enemy.sy, players.enemy.swidth, players.enemy.sheight,
+//    players.enemy.screenPos.x, players.enemy.screenPos.y, players.enemy.width, players.enemy.height);
+
+//   // Draw player sprite
+//   ctx.drawImage( images[2],players.player.sx ,
+//    players.player.sy, players.player.swidth, players.player.sheight,
+//    players.player.levelPos.x - players.enemy.levelPos.x + players.enemy.screenPos.x, players.player.screenPos.y, players.player.width, players.player.height);
+
+//   ctx.restore();
+// }
 
 // TODO: FIX THIS
 // var camera = {
