@@ -21,8 +21,8 @@ function Game(io, sockets, room) {
   this.room = room;
   this.state = new Uint8Array(WIDTH * HEIGHT);
 
-  this.tilemap = Tilemap.load(JSON.parse(fs.readFileSync('./server/assets/tilemap.json')), {});
-  console.log(this.tilemap);
+  Tilemap.load(JSON.parse(fs.readFileSync('./server/assets/tilemap.json')), {});
+  console.log(Tilemap);
 
   this.players = [];
 
@@ -92,7 +92,7 @@ Game.prototype.update = function() {
   var tilemapY = Math.floor(player.position.y / 64);
     var otherPlayer = players[(i+1)%2];
 
-      player.update(this.tilemap);
+      player.update(Tilemap);
 
     // Check for collision with walls
     if(player.position.x < 0 || player.position.x > WIDTH || player.position.y < 0 || player.position.y > HEIGHT) {

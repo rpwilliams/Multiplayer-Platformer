@@ -241,17 +241,17 @@ Player.prototype.hitSolid = function(tilemap) {
   switch(this.position.direction) {
     case "right":
       console.log("right")
-      tile1 = tilemap.tileAt(this.position.x + this.width, this.position.y, 0);
-      tile2 = tilemap.tileAt(this.position.x + this.width, this.position.y + this.height, 0);
+      tile1 = tilemap.tileAt(this.position.x + this.widthInGame, this.position.y, 0);
+      tile2 = tilemap.tileAt(this.position.x + this.widthInGame, this.position.y + this.heightInGame, 0);
       if (tile1.solid || tile2.solid) {
-        this.position.x -= ((this.position.x + this.width) % tilemap.tileWidth) - 1;
+        this.position.x -= ((this.position.x + this.widthInGame) % tilemap.tileWidth) - 1;
         return true;
       }
       break;
     case "left":
       console.log("left")
       tile1 = tilemap.tileAt(this.position.x, this.position.y, 0);
-      tile2 = tilemap.tileAt(this.position.x, this.position.y + this.height, 0);
+      tile2 = tilemap.tileAt(this.position.x, this.position.y + this.heightInGame, 0);
       if (tile1.solid || tile2.solid) {
         this.position.x += tilemap.tileWidth - ((this.position.x) % tilemap.tileWidth) + 1;
         return true;
@@ -260,7 +260,7 @@ Player.prototype.hitSolid = function(tilemap) {
     case "up":
       console.log("up")
       tile1 = tilemap.tileAt(this.position.x, this.position.y, 0);
-      tile2 = tilemap.tileAt(this.position.x + this.width, this.position.y, 0);
+      tile2 = tilemap.tileAt(this.position.x + this.widthInGame, this.position.y, 0);
       if (tile1.solid || tile2.solid) {
         this.position.y += tilemap.tileHeight - ((this.position.y) % tilemap.tileHeight) + 1;
         return true;
@@ -268,10 +268,10 @@ Player.prototype.hitSolid = function(tilemap) {
       break;
     case "down":
       console.log("down")
-      tile1 = tilemap.tileAt(this.position.x, this.position.y + this.height, 0);
-      tile2 = tilemap.tileAt(this.position.x + this.width, this.position.y + this.height, 0) - 1;
+      tile1 = tilemap.tileAt(this.position.x, this.position.y + this.heightInGame, 0);
+      tile2 = tilemap.tileAt(this.position.x + this.widthInGame, this.position.y + this.heightInGame, 0) - 1;
       if (tile1.solid || tile2.solid) {
-        this.position.y -= ((this.position.y + this.width) % tilemap.tileHeight);
+        this.position.y -= ((this.position.y + this.widthInGame) % tilemap.tileHeight);
         return true;
       }
       break;

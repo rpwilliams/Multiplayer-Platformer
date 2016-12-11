@@ -84,6 +84,7 @@ module.exports = exports = (function (){
       return undefined;  
     var tilemapX = Math.floor(x / tileWidth);
     var tilemapY = Math.floor(y / tileHeight);
+
     return tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1];
   }
   
@@ -91,8 +92,8 @@ module.exports = exports = (function (){
   var return_val = {
     load: load,
     tileAt: tileAt,
-    tileWidth: 64,
-    tileHeight: 64 
+    tileWidth: 46,
+    tileHeight: 68 
   }
   return return_val;
   
