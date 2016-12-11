@@ -15,18 +15,24 @@ var images = [
   new Image(),
   new Image(),
   new Image(),
-  new Image(),
   new Image()
 ];
 
 images[0].src = 'level.png'; // Background
-images[1].src = 'stars.png'; // Foreground
+images[1].src = 'stars.jpg'; // Foreground
 images[2].src = 'fumiko2.png';  // Player
-images[3].src = 'DownArrow.png'; // Down arrow above hiding objects
-images[4].src = 'BrownBox.png'; // Brown box
-images[5].src = 'GrayBox.png'; // Gray box
-images[6].src = 'Enemy_Ship.png'; // enemy
 
+var hidingObjImages = [
+new Image(),
+new Image(),
+new Image(),
+new Image()
+];
+
+hidingObjImages[0].src = 'DownArrow.png'; // Down arrow above hiding objects
+hidingObjImages[1].src = 'BrownBox.png'; // Brown box
+hidingObjImages[2].src = 'GrayBox.png'; // Gray box
+hidingObjImages[3].src = 'BrownBox.png'; // Brown box
 
 
 // Start the game after all files have loaded
@@ -48,7 +54,7 @@ window.onload = function() {
 	
 	// Render the normal objects, followed by the player and then the objects that the player is hiding behind
 	renderHidingObjects(players, hidingObjects, ctx, false);
-  renderPlayers(players, ctx);
+    renderPlayers(players, ctx);
 	renderHidingObjects(players, hidingObjects, ctx, true);
   });
 
@@ -159,42 +165,21 @@ function renderPlayers(players, ctx) {
   ctx.fillText('screen: (' + Math.floor(players.current.screenPos.x)+ ',' + Math.floor(players.current.screenPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 10);
   ctx.fillText('level: (' + Math.floor(players.other.levelPos.x) + ',' + Math.floor(players.other.levelPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 30);
   ctx.fillText('screen: (' + Math.floor(players.other.screenPos.x)+ ',' + Math.floor(players.other.screenPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 10);  
-  if(players.current.id=='player') {
-	  // Draw current player's sprite
-	  ctx.drawImage( images[2],players.current.sx ,
-	   players.current.sy, players.current.swidth, players.current.sheight,
-	   players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
-
-  // Check if the player won the game
-  if(Math.floor(players.current.wonGame))
-  {
-    console.log('Player 1 wins!');
-    ctx.fillStyle = 'white';
-    ctx.font="72px Verdana";
-    ctx.fillText('Player 1 wins!', players.current.screenPos.x - 40, players.current.screenPos.y - 100);
-    // document.getElementById('player-win').innerHTML = "Player 1 wins!";
-
-  // Draw other player's sprite
-  ctx.drawImage( images[6],players.other.sx ,
-   players.other.sy, players.other.swidth, players.other.sheight,
-   players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);   
-  }
-else{
-	console.log(players.current);
-	ctx.drawImage( images[6],players.current.sx ,
-	   players.current.sy, players.current.swidth, players.current.sheight,
-	   players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
   
+  // Draw current player's sprite
+  ctx.drawImage( images[2],players.current.sx ,
+   players.current.sy, players.current.swidth, players.current.sheight,
+   players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
+
   // Draw other player's sprite
   ctx.drawImage( images[2],players.other.sx ,
    players.other.sy, players.other.swidth, players.other.sheight,
-   players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);
-}
+   players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);   
+
   ctx.restore();
 }
-}
 
-function renderHidingObjects(players, hidingObjects, ctx, renderDelayedObjs)
+function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 {
   // Draw the canvas backgrounds
   if((players.current.direction == 'none' || players.other.direction == 'none') && renderDelayedObjs == false) {
@@ -210,8 +195,8 @@ function renderHidingObjects(players, hidingObjects, ctx, renderDelayedObjs)
 	  {
 		  if(hidingObjects.objects[i].delayRender == false)
 		  {
-			ctx.drawImage(images[4 + hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
-			hidingObjects.objects[i].position.y, images[4 + hidingObjects.objects[i].type].width * 2, images[4 + hidingObjects.objects[i].type].height * 2); 
+			ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
+			hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type].width * 2, hidingObjImages[hidingObjects.objects[i].type].height * 2); 
 		  }
 	  }
 	  // Now render those being hid behind
@@ -219,15 +204,15 @@ function renderHidingObjects(players, hidingObjects, ctx, renderDelayedObjs)
 	  {
 		  if(hidingObjects.objects[i].delayRender == true)
 		  {
-			ctx.drawImage(images[4 + hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
-			hidingObjects.objects[i].position.y, images[4 + hidingObjects.objects[i].type ].width * 2, images[4 + hidingObjects.objects[i].type].height * 2); 
+			ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
+			hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type ].width * 2, hidingObjImages[hidingObjects.objects[i].type].height * 2); 
 		  }
 	  }
 	  
 	 // Display animated down arrow if on top of a object that can be hid behind
 	 if(hidingObjects.objects[i].displayArrow == true)
 	{
-		ctx.drawImage(images[3],hidingObjects.arrowFrame * 130, 0, 128, 175,  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x) + 16, hidingObjects.objects[i].position.y - 95, 30, 45);
+		ctx.drawImage(hidingObjImages[0],hidingObjects.arrowFrame * 130, 0, 128, 175,  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x) + 16, hidingObjects.objects[i].position.y - 95, 30, 45);
 	}
   }
   ctx.restore();
@@ -310,12 +295,12 @@ var camera_xMin = 100;
 var camera_xMax = 500;
 var camera_xOff = 100;
 
-  /**
-  * @function update
-  * Updates the camera based on the supplied target
-  * @param {Vector} target what the camera is looking at
-  */
-  var updateCamera = function(target) {
+/**
+ * @function update
+ * Updates the camera based on the supplied target
+ * @param {Vector} target what the camera is looking at
+ */
+var updateCamera = function(target) {
   // // TODO: Align camera with player
   camera_position.x = target.x;
   // //console.log(self.xOff, self.xMax, self.xOff > self.xMax);
@@ -330,4 +315,4 @@ var camera_xOff = 100;
 
   if(camera_position.x < 0) camera_position.x = 0;
   // console.log("Camera: (" + camera_position.x + "," + camera_position.y + ")");
-  }
+}
