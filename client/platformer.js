@@ -148,7 +148,7 @@ function renderBackground(ctx, current) {
   ctx.save();
   //TODO: magic numbers. 19200 = width of level image in pixels. 11229 = canvas height/image height * image width
   ctx.drawImage(images[0],
-                (19200/11229)*(current.levelPos.x - current.screenPos.x), 0, images[0].width, images[0].height,
+                (images[0].width/(canvas.height/(images[0].height)*images[0].width))*(current.levelPos.x - current.screenPos.x), 0, images[0].width, images[0].height,
                 0, 0, 11229, HEIGHT);
   // ctx.drawImage(images[0], 0, 0, images[0].width, HEIGHT);
   ctx.restore();
