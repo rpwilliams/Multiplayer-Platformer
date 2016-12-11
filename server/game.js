@@ -22,10 +22,10 @@ function Game(io, sockets, room) {
   this.room = room;
   this.state = new Uint8Array(WIDTH * HEIGHT);
 
-  Tilemap.load(JSON.parse(fs.readFileSync('./server/assets/tilemap.json')), {});
+  Tilemap.load(JSON.parse(fs.readFileSync('./server/assets/level.json')), {});
 
   this.time = Date.now();
-  
+
   this.players = [];
   this.hidingObjects = new HidingObjects();
 
@@ -41,7 +41,7 @@ function Game(io, sockets, room) {
   ));
 
   this.players.forEach(function(player) {
-	  
+
     // Join the room
     player.socket.join(room);
 
@@ -88,11 +88,11 @@ Game.prototype.update = function(newTime) {
   var interval = this.interval;
   var room = this.room;
   var io = this.io;
-  
+
   //Update hiding objects
   this.hidingObjects.update(this.players[0], this.time);
   this.time = Date.now();
-  
+
   // Update players
   this.players.forEach(function(player, i, players) {
   var tilemapX = Math.floor(player.levelPos.x / 64);

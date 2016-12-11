@@ -18,7 +18,7 @@
 
     },
  "renderorder":"right-down",
- "tileheight":64,
+ "tileheight":32,
  "tilesets":[
         {
          "firstgid":1,
@@ -32,7 +32,7 @@
 
             },
          "spacing":0,
-         "tileheight":64,
+         "tileheight":32,
          "tileproperties":
             {
              "95":
@@ -44,5 +44,5 @@
         }],
  "tilewidth":32,
  "version":1,
- "width":1900
+ "width":11229
 }

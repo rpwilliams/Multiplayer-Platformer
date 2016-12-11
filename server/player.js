@@ -123,7 +123,7 @@ Player.prototype.update = function(tilemap) {
 			if(this.direction=="left" && this.velocity.x!=0){
 				this.velocity.x -= PLAYER_JUMP_BREAK_VELOCITY;
 			}
-			
+
 		}
 		if (this.levelPos.y > this.floorYPostion)
 		{
@@ -239,21 +239,22 @@ Player.prototype.hitSolid = function(tilemap) {
   switch(this.direction) {
     case "right":
       console.log("right")
-      tile1 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 0);
-      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 0);
+      tile1 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 2);
+      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 2);
+			
       console.log(tile1);
-      if (tile1.solid || tile2.solid) {
+      if (tile1.Solid || tile2.Solid) {
         this.levelPos.x -= ((this.levelPos.x + this.widthInGame) % tilemap.tileWidth) - 1;
-	this.direction = "none";
+				this.direction = "none";
         return true;
       }
       break;
     case "left":
       console.log("left")
-      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y, 0);
-      tile2 = tilemap.tileAt(this.levelPos.x, this.levelPos.y + this.heightInGame, 0);
+      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y, 2);
+      tile2 = tilemap.tileAt(this.levelPos.x, this.levelPos.y + this.heightInGame, 2);
       console.log(tile1);
-      if (tile1.solid || tile2.solid) {
+      if (tile1.Solid || tile2.Solid) {
         this.levelPos.x += tilemap.tileWidth - ((this.levelPos.x) % tilemap.tileWidth) + 1;
 	this.direction = "none";
         return true;
@@ -261,10 +262,10 @@ Player.prototype.hitSolid = function(tilemap) {
       break;
     case "up":
       console.log("up")
-      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y, 0);
-      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 0);
+      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y, 2);
+      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 2);
       console.log(tile1);
-      if (tile1.solid || tile2.solid) {
+      if (tile1.Solid || tile2.Solid) {
         this.levelPos.y += tilemap.tileHeight - ((this.levelPos.y) % tilemap.tileHeight) + 1;
 	this.direction = "none";
         return true;
@@ -272,10 +273,10 @@ Player.prototype.hitSolid = function(tilemap) {
       break;
     case "down":
       console.log("down")
-      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y + this.heightInGame, 0);
-      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 0) - 1;
+      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y + this.heightInGame, 2);
+      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 2) - 1;
       console.log(tile1);
-      if (tile1.solid || tile2.solid) {
+      if (tile1.Solid || tile2.Solid) {
         this.levelPos.y -= ((this.levelPos.y + this.widthInGame) % tilemap.tileHeight);
 	this.direction = "none";
         return true;
