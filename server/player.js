@@ -40,7 +40,7 @@ function Player(position,socket ) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity};
+	velocity:this.velocity, wonGame:this.wonGame};
 
 	this.socket = socket;
 
@@ -50,6 +50,7 @@ function Player(position,socket ) {
 	this.floorYPostion = 610;
 	this.jumpingTime = 0;
 	this.facing = "left";
+	this.wonGame = false;
 }
 
 
@@ -170,11 +171,18 @@ Player.prototype.update = function() {
 	else if(this.falling==true) this.xPlaceInImage = this.spriteWidth*6;
 	else this.xPlaceInImage = 0;
 
+	// Check if player 1 won the game
+	if(Math.floor(this.levelPos.x) > 11200)
+	{
+		this.wonGame = true;
+    	//console.log('Player 1 wins!');
+  	}
+
 	this.send = { levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity};
+	velocity:this.velocity,wonGame:this.wonGame };
 }
 
 

@@ -158,9 +158,13 @@ function renderPlayers(players, ctx) {
   ctx.fillText('screen: (' + Math.floor(players.other.screenPos.x)+ ',' + Math.floor(players.other.screenPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 10);  
   
   // Check if the player won the game
-  if(Math.floor(players.current.levelPos.x) > 11200)
+  if(Math.floor(players.current.wonGame))
   {
     console.log('Player 1 wins!');
+    ctx.fillStyle = 'white';
+    ctx.font="72px Verdana";
+    ctx.fillText('Player 1 wins!', players.current.screenPos.x - 40, players.current.screenPos.y - 100);
+    // document.getElementById('player-win').innerHTML = "Player 1 wins!";
   }
 
   // Draw current player's sprite
