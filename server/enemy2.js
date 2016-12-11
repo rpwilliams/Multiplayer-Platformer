@@ -1,12 +1,12 @@
 "use strict";
 
 /* Constants */
-var PLAYER_RUN_VELOCITY = 5;
-var PLAYER_RUN_SPEED = 5;
-var PLAYER_RUN_MAX = 3;
-var PLAYER_FALL_VELOCITY = 0.25;
-var PLAYER_JUMP_SPEED = 6;
-var PLAYER_JUMP_BREAK_VELOCITY= 0.10;
+const Enemy_RUN_VELOCITY = 0.25;
+const Enemy_RUN_SPEED = 5;
+const Enemy_RUN_MAX = 3;
+const Enemy_FALL_VELOCITY = 0.25;
+const Enemy_JUMP_SPEED = 6;
+const Enemy_JUMP_BREAK_VELOCITY= 0.20;
 
 /**
  * @module exports the Player class
@@ -63,118 +63,81 @@ this.facing = "left";
  * boolean properties: up, left, right, down
  */
 Enemy.prototype.update = function() {
-// set the velocity
-	//this.velocity.x = 0;
-	//track movment than change velocity and animation
-	if (this.jumping==false && this.falling==false)
-	{
-		if(this.direction=="left"){
-			this.velocity.x = -PLAYER_RUN_VELOCITY;
-			// this.velocity.x -= PLAYER_RUN_VELOCITY;
+if(this.direction =="left"){
+		//if (!input.down)
+		{
+			this.velocity.x -= Enemy_RUN_VELOCITY;
+			this.velocity.x -= Enemy_RUN_VELOCITY;
 			this.changeAnimation("moving left");
 			this.facing = "left";
-		}
-		else if(this.direction=="right"){
-			this.velocity.x = PLAYER_RUN_VELOCITY;
-			// this.velocity.x += PLAYER_RUN_VELOCITY;
-			this.changeAnimation("moving right");
-			this.facing = "right";
-		}
-    else if(this.direction=="none"){
-			//this.velocity.x += PLAYER_RUN_VELOCITY;
-			this.velocity.x = 0;
-			this.changeAnimation("stand still");
-		}
-		// else if(this.velocity.x>0) {
-		// 	this.velocity.x -=PLAYER_RUN_VELOCITY;
-		// }
-		// else if(this.velocity.x<0){
-		// 	this.velocity.x +=PLAYER_RUN_VELOCITY;
-		// }
-	}
-	else{
-		this.changeAnimation("moving up");
-	}
-
-	// set a maximum run speed
-	// if(this.velocity.x < -PLAYER_RUN_MAX) this.velocity.x=-PLAYER_RUN_MAX;
-	// if(this.velocity.x > PLAYER_RUN_MAX) this.velocity.x=PLAYER_RUN_MAX;
-
-	if(this.direction=="up" && this.jumping==false && this.falling==false) {
-		this.velocity.y -= PLAYER_JUMP_SPEED;
-		this.jumping=true;
-
-		//this.jumpingTime+=elapsedTime;
-	}
-	else if(this.jumping==true || this.falling==true) {
-		this.velocity.y += PLAYER_FALL_VELOCITY;
-		if(this.velocity.y>0) {
-			this.jumping=false;
-			this.falling=true;
-		}
-		if (this.facing=="left")
-		{
-			if(this.direction=="right" && this.velocity.x!=0){
-				this.velocity.x += PLAYER_JUMP_BREAK_VELOCITY;
-			}
-		}
-		else if (this.facing=="right")
-		{
-			if(this.direction=="left" && this.velocity.x!=0){
-				this.velocity.x -= PLAYER_JUMP_BREAK_VELOCITY;
-			}
 			
+		
 		}
-		if (this.levelPos.y > this.floorYPostion)
-		{
-			this.levelPos.y = this.floorYPostion;
-			this.screenPos.y = this.floorYPostion;
-			this.velocity.y = 0;
-			//this.velocity.x=0; // HAVE THE PLAYER STOP ALL MOMENTUM WHEN HIT GROUND
-			this.jumping = false;
-			this.falling=false;
-			//this.animation="stand still";
-		}
-
+					
 	}
-
+	else if(this.direction =="right"){
+		this.velocity.x += Enemy_RUN_VELOCITY;
+		this.velocity.x += Enemy_RUN_VELOCITY;
+		this.changeAnimation("moving right");
+		
+			
+		
+		this.facing = "right";
+	}
+	else this.changeAnimation("stand still");
+	if(this.velocity.x>0) {
+		this.velocity.x -=Enemy_RUN_VELOCITY;
+	}
+	if(this.velocity.x<0){
+		this.velocity.x +=Enemy_RUN_VELOCITY
+	}
+	
+	if(this.velocity.x < -Enemy_RUN_MAX) this.velocity.x=-Enemy_RUN_MAX;
+	if(this.velocity.x > Enemy_RUN_MAX) this.velocity.x=Enemy_RUN_MAX;
 
 	/*
-	else if(input.down && this.jumping==false) this.crouching == true;//this.velocity.y += PLAYER_RUN_SPEED / 2;
+	if(this.position.direction =="up")
+	{
+		
+		this.velocity.y-=Enemy_RUN_VELOCITY;
+		if(this.velocity.y < -Enemy_RUN_MAX) this.velocity.y=-Enemy_RUN_MAX;
+	}
+	else if (this.position.direction =="down")
+	{
+	
+		this.velocity.y+=Enemy_RUN_VELOCITY;
+		if(this.velocity.y > Enemy_RUN_MAX) this.velocity.y=Enemy_RUN_MAX;		
+	}
+    else{
+		if(this.velocity.y>0)this.velocity.y-=Enemy_RUN_VELOCITY;
+		else if(this.velocity.y<0)this.velocity.y+=Enemy_RUN_VELOCITY;
+	}
 	*/
 
-
-	// move the player
-	if(this.velocity.x==0 && this.velocity.y==0) this.animation="stand still";
-	else{
 	this.levelPos.x += this.velocity.x;
 	this.levelPos.y += this.velocity.y;
 	this.screenPos.y += this.velocity.y;
-	}
-
+	//this.position.y += this.velocity.y;
+	
+	
 	//if (!(this.animation=="stand still" && this.tookAstep=="yes"))
   this.animationTimer++;
   if (this.animationTimer>this.frameLength)
   {
-	  if(this.animation=="stand still") this.animationCounter=0;
-	  else if(this.animation!="moving up"){
+	  if(this.animation!="moving up"){
 		this.animationCounter++;
-
+		
 	  }
 	  this.animationTimer = 0;
   }
-
-  if (this.animationCounter>=this.numberOfSprites){
+  if (this.animationCounter>=this.numberOfSpirtes){
 		if(this.animation!="stand still"){
-			this.animationCounter = 3;
+			this.animationCounter = 0;
 		}
 		else{
 		this.animationCounter = 0;
 		}
   }
-  if(this.jumping==true) this.xPlaceInImage = this.spriteWidth*5;
-	else if(this.falling==true) this.xPlaceInImage = this.spriteWidth*6;
-	else this.xPlaceInImage = 0;
 
   this.send = { levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
   sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
@@ -192,40 +155,97 @@ Enemy.prototype.changeAnimation = function(x)
 	{
 		//if (animationTimer == 0)
 		//{
-			this.numberOfSprites = 0;
+			this.numberOfSpirtes = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
-			this.tookAstep = "yes";
+			//this.tookAstep = "yes";
 		//}
-
-
+			this.spirteHeight = this.stillHeight;
+			this.spirteWidth = this.stillWidth;
+			this.widthInGame = this.stillWidthInGame;   
+			this.heightInGame = this.stillHeightInGame;
+			
+			this.moving = false;
+			//this.position.y+=this.offPostion;
+			
+			if (this.facing=="right")
+				this.yPlaceInImage = this.spirteHeight*0;
+			else
+				this.yPlaceInImage = this.spirteHeight*1;
+			this.xPlaceInImage = this.spirteWidth*0;
+			//this.velocity.y=0;
+		
 	}
 	else
 	{
-		this.numberOfSprites = 5;
-		//tookAstep = "no";
+		this.numberOfSpirtes = 3;
+		this.heightInGame = 68;
+		//tookAstep = "no";  
 		switch(this.animation)
 		{
-			case "moving up":
-				this.animationCounter=0;
-				//this.xPlaceInImage =this.spriteWidth*7;
-
+			case "moving up unused":
+			
+				//this.xPlaceInImage =this.spirteWidth*7;
+			this.numberOfSpirtes = 0;
+			this.animationTimer = 0;
+			this.animationCounter = 0;
+			
 			break;
-
-			case "moving down":
-  			this.yPlaceInImage =this.spriteHeight*0;
-  			break;
-
+			
+			case "moving down unused":
+			//this.yPlaceInImage =this.spirteHeight*0;
+			//this.numberOfSpirtes = 0;
+			
+			this.numberOfSpirtes = 0;
+		    this.animationTimer = 0;
+			this.animationCounter = 0;
+			//this.tookAstep = "yes";
+			
+			break;
+			
 			case "moving left":
+			
+			this.yPlaceInImage = 84; 
+			this.spirteHeight = this.movingHeight;
+			this.spirteWidth = this.movingWidth;
+			
+			this.widthInGame = this.movingWidthInGame;   
+			this.heightInGame = this.movingHeightInGame;
+			
+			if (!this.moving)
+				{
+					this.moving = true;
+					//this.position.y-=this.offPostion;
+				}
 
-				  if(this.jumping==false && this.falling==false){
-            this.yPlaceInImage =this.spriteHeight*1;
-
-          }
-			     break;
-			case "moving right":
-			this.yPlaceInImage =this.spriteHeight*0;
 			break;
+			
+			case "moving right":
+			
+			this.yPlaceInImage = 48; 
+			this.spirteHeight = this.movingHeight;
+			this.spirteWidth = this.movingWidth;
+			
+			this.widthInGame = this.movingWidthInGame;   
+			this.heightInGame = this.movingHeightInGame;
+			if (!this.moving)
+				{
+					this.moving = true;
+					//this.position.y-=this.offPostion;
+				}
+			
+			break;
+			
+			case "standing":
+			
+			break;
+			
+			case "dashing":
+			
+			break;
+			
+			
 		}
+		
 	}
 }
