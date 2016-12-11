@@ -230,7 +230,7 @@ Enemy.prototype.changeAnimation = function(x)
 	}
 }
 
-Player.prototype.hitSolid = function(tilemap) {
+Enemy.prototype.hitSolid = function(tilemap) {
   var tile1;
   var tile2;
   switch(this.direction) {
