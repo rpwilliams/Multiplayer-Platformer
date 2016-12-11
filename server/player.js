@@ -36,11 +36,12 @@ function Player(position,socket ) {
 	this.screenPos= {x: 512, y: position.y};
 	this.levelPos= {x: position.x, y: position.y};
 	this.direction = 'none'
+	this.id='player';
 	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity};
+	velocity:this.velocity,id:this.id};
 
 	this.socket = socket;
 
@@ -170,11 +171,11 @@ Player.prototype.update = function() {
 	else if(this.falling==true) this.xPlaceInImage = this.spriteWidth*6;
 	else this.xPlaceInImage = 0;
 
-	this.send = { levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
+	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity};
+	velocity:this.velocity,id:this.id};
 }
 
 
