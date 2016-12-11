@@ -216,7 +216,7 @@ function render(elapsedTime, ctx) {
   ctx.fillRect(0, 0, 1024, 786);
   tilemap.render(ctx);
   player.render(elapsedTime, ctx);
-  //ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
+  //ctx.drawImage( img,xPlaceInImage+spriteWidth*animationCounter , yPlaceInImage, spriteWidth,spriteHeight, 50, 50, widthInGame,heightInGame);
   ctx.save();
    
   ctx.restore();
@@ -313,9 +313,9 @@ this.animationTimer = 0;
 this.animationCounter = 0;
 this.frameLength = 9;
 //animation dependent
-this.numberOfSpirtes = 0; // how man y frames are there in the animation
-this.spirteWidth = 23; // width of each frame
-this.spirteHeight = 34; // height of each frame
+this.numberOfsprites = 0; // how man y frames are there in the animation
+this.spriteWidth = 23; // width of each frame
+this.spriteHeight = 34; // height of each frame
 this.widthInGame = 46;   
 this.heightInGame = 68;
 this.xPlaceInImage = 0; // this should CHANGE for the same animation 
@@ -449,7 +449,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	  this.animationTimer = 0;
   }
   
-  if (this.animationCounter>=this.numberOfSpirtes){
+  if (this.animationCounter>=this.numberOfsprites){
 		if(this.animation!="stand still"){
 			this.animationCounter = 3;
 		}
@@ -457,8 +457,8 @@ Player.prototype.update = function(elapsedTime, input) {
 		this.animationCounter = 0;
 		}
   }
-  if(this.jumping==true) this.xPlaceInImage = this.spirteWidth*7;
-	else if(this.falling==true) this.xPlaceInImage = this.spirteWidth*8;
+  if(this.jumping==true) this.xPlaceInImage = this.spriteWidth*7;
+	else if(this.falling==true) this.xPlaceInImage = this.spriteWidth*8;
 	else this.xPlaceInImage = 0;
   /*
   switch(this.animation)
@@ -473,7 +473,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	  break;
 	  case "stand still":
 	  if (this.animationTimer == 0){
-		  this.numberOfSpirtes = 0;
+		  this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			this.tookAstep = "yes";
@@ -491,8 +491,8 @@ Player.prototype.update = function(elapsedTime, input) {
  */
 Player.prototype.render = function(elapasedTime, ctx) {
 	console.log(this.animationCounter);
-   ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter , 
-   this.yPlaceInImage, this.spirteWidth,this.spirteHeight, 
+   ctx.drawImage( this.img,this.xPlaceInImage+this.spriteWidth*this.animationCounter , 
+   this.yPlaceInImage, this.spriteWidth,this.spriteHeight, 
    this.position.x, this.position.y, this.widthInGame,this.heightInGame);
    //this.xPlaceInImage=0;
 }
@@ -505,7 +505,7 @@ Player.prototype.changeAnimation = function(x)
 	{
 		//if (animationTimer == 0)
 		//{
-			this.numberOfSpirtes = 0;
+			this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			this.tookAstep = "yes";
@@ -515,27 +515,27 @@ Player.prototype.changeAnimation = function(x)
 	}
 	else
 	{
-		this.numberOfSpirtes = 7;
+		this.numberOfsprites = 7;
 		//tookAstep = "no";  
 		switch(this.animation)
 		{
 			case "moving up":
 				this.animationCounter=0;
-				//this.xPlaceInImage =this.spirteWidth*7;
+				//this.xPlaceInImage =this.spriteWidth*7;
 			
 			break;
 			
 			case "moving down":
-			this.yPlaceInImage =this.spirteHeight*0;
+			this.yPlaceInImage =this.spriteHeight*0;
 			break;
 			
 			case "moving left":
 			
-				if(this.jumping==false && this.falling==false)this.yPlaceInImage =this.spirteHeight*1;
+				if(this.jumping==false && this.falling==false)this.yPlaceInImage =this.spriteHeight*1;
 			break;
 			
 			case "moving right":
-			this.yPlaceInImage =this.spirteHeight*0;
+			this.yPlaceInImage =this.spriteHeight*0;
 			break;
 		}
 		

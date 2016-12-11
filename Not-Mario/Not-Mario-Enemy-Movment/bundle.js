@@ -5,10 +5,13 @@
 const Game = require('./game');
 const Player = require('./player');
 const Enemy = require('./enemy');
-
+const Vector = require('./vector');
+const Camera = require('./camera');
 
 /* Global variables */
 var canvas = document.getElementById('screen');
+
+var camera = new Camera(canvas);
 var game = new Game(canvas, update, render);
 var input = {
   up: false,
@@ -32,11 +35,62 @@ var enemyInput = {
   attack: false,
   hide: false,
   crouch: false,
-  dash: false
+  dash: false,
+  lazer: false,
+  bomb: false
 }
 var enemy = new Enemy();
+var enemyFire = [];
+var enemyBombs = [];
+
+var reticule = {
+  x: 0,
+  y: 0
+}
 
 
+/**
+ * @function onmousemove
+ * Handles mouse move events
+ */
+window.onmousemove = function(event) {
+  event.preventDefault();
+  reticule.x = event.offsetX;
+  reticule.y = event.offsetY;
+}
+
+/**
+ * @function onmousedown
+ * Handles mouse left-click events
+ */
+window.onmousedown = function(event) {
+  event.preventDefault();
+    if(event.button == 0) {
+    reticule.x = event.offsetX;
+    reticule.y = event.offsetY;
+    var direction = Vector.subtract(
+      reticule,
+      camera.toScreenCoordinates(enemy.position)
+    );
+    enemy.fire(direction,enemyFire);
+  }
+}
+
+/**
+ * @function oncontextmenu
+ * Handles mouse right-click events
+ */
+canvas.oncontextmenu = function(event) {
+  event.preventDefault();
+  reticule.x = event.offsetX;
+  reticule.y = event.offsetY;
+  
+   var direction = Vector.subtract(
+      reticule,
+      camera.toScreenCoordinates(enemy.position)
+    );
+  enemy.bomb(direction,enemyBombs);
+}
 
  
 /**
@@ -142,7 +196,11 @@ window.onkeydown = function(event) {
    switch(event.key) {
 	  
 	  case "p":
-	  enemyInput.dash = true;
+	  enemyInput.lazer = true;
+	  break;
+	  
+	  case "o":
+	  enemyInput.bomb = true;
 	  break;
 	  
 	  case "h":
@@ -228,8 +286,14 @@ window.onkeyup = function(event) {
       break;
 	  
 	case "p":
-	  enemyInput.dash=false;
-	  enemy.changeAnimation("stand still");
+	  enemyInput.lazer=false;
+	   
+      event.preventDefault();
+      break;
+	  
+	case "o":
+	  enemyInput.bomb=false;
+	   
       event.preventDefault();
       break;
 	
@@ -261,7 +325,43 @@ function update(elapsedTime) {
    
   
   player.update(elapsedTime,input);
-  enemy.update(elapsedTime,enemyInput);
+  enemy.update(elapsedTime,enemyInput,enemyFire,enemyBombs);
+  
+  //update fire 
+  for (var i = 0 ; i < enemyFire.length ; i++)
+  {
+	  
+	  enemyFire[i].update(elapsedTime);
+	  
+	  //remove the shot at this condtion, it could be hitting an opject or going out of the screen
+	  if (enemyFire[i].timer>40)
+	  {
+		  
+		  enemyFire.splice(i,1);
+		  i--;
+	  }
+  }
+  
+  //update bomb 
+  for (var i = 0 ; i < enemyBombs.length ; i++)
+  {
+	  
+	  enemyBombs[i].update(elapsedTime);
+	  
+	  //explode at this condtion, it could be hitting an opject or going out of the screen
+	  if (enemyBombs[i].timer>40 && enemyBombs[i].state=="falling")
+	  {
+		  
+			  enemyBombs[i].explode();
+	  }
+	  
+	  if (enemyBombs[i].state=="finished")
+	   {
+		enemyBombs.splice(i,1);
+		i--; 
+	   }
+	   
+  }
  
    
 }
@@ -279,12 +379,37 @@ function render(elapsedTime, ctx) {
  
   player.render(elapsedTime, ctx);
   enemy.render(elapsedTime, ctx);
-  //ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
+  //ctx.drawImage( img,xPlaceInImage+spriteWidth*animationCounter , yPlaceInImage, spriteWidth,spriteHeight, 50, 50, widthInGame,heightInGame);
   ctx.save();
    
   ctx.restore();
- 
+  
+  //draw fire
+  for (var i = 0 ; i < enemyFire.length ; i++)
+  {
+	  
+	  enemyFire[i].render(elapsedTime, ctx);
+  }
+  
+  //draw bomb
+  for (var i = 0 ; i < enemyBombs.length ; i++)
+  {
+	  
+	  enemyBombs[i].render(elapsedTime, ctx);
+  }
    
+   // Render the reticule
+  ctx.save();
+  ctx.translate(reticule.x, reticule.y);
+  ctx.beginPath();
+  ctx.arc(0, 0, 10, 0, 2*Math.PI);
+  ctx.moveTo(0, 15);
+  ctx.lineTo(0, -15);
+  ctx.moveTo(15, 0);
+  ctx.lineTo(-15, 0);
+  ctx.strokeStyle = '#00ff00';
+  ctx.stroke();
+  ctx.restore();
 }
 
 
@@ -297,7 +422,75 @@ function render(elapsedTime, ctx) {
   */
  
 
-},{"./enemy":2,"./game":3,"./player":4}],2:[function(require,module,exports){
+},{"./camera":2,"./enemy":3,"./game":6,"./player":7,"./vector":8}],2:[function(require,module,exports){
+"use strict";
+
+/* Classes and Libraries */
+const Vector = require('./vector');
+
+/**
+ * @module Camera
+ * A class representing a simple camera
+ */
+module.exports = exports = Camera;
+
+/**
+ * @constructor Camera
+ * Creates a camera
+ * @param {Rect} screen the bounds of the screen
+ */
+function Camera(screen) {
+  this.x = 0;
+  this.y = 0;
+  this.width = screen.width;
+  this.height = screen.height;
+}
+
+/**
+ * @function update
+ * Updates the camera based on the supplied target
+ * @param {Vector} target what the camera is looking at
+ */
+Camera.prototype.update = function(target) {
+  this.x = target.x - 200;
+}
+
+/**
+ * @function onscreen
+ * Determines if an object is within the camera's gaze
+ * @param {Vector} target a point in the world
+ * @return true if target is on-screen, false if not
+ */
+Camera.prototype.onScreen = function(target) {
+  return (
+     target.x > this.x &&
+     target.x < this.x + this.width &&
+     target.y > this.y &&
+     target.y < this.y + this.height
+   );
+}
+
+/**
+ * @function toScreenCoordinates
+ * Translates world coordinates into screen coordinates
+ * @param {Vector} worldCoordinates
+ * @return the tranformed coordinates
+ */
+Camera.prototype.toScreenCoordinates = function(worldCoordinates) {
+  return Vector.subtract(worldCoordinates, this);
+}
+
+/**
+ * @function toWorldCoordinates
+ * Translates screen coordinates into world coordinates
+ * @param {Vector} screenCoordinates
+ * @return the tranformed coordinates
+ */
+Camera.prototype.toWorldCoordinates = function(screenCoordinates) {
+  return Vector.add(screenCoordinates, this);
+}
+
+},{"./vector":8}],3:[function(require,module,exports){
 
 "use strict";
 
@@ -311,6 +504,12 @@ const Enemy_RUN_MAX = 3;
 const Enemy_FALL_VELOCITY = 0.25;
 const Enemy_JUMP_SPEED = 6;
 const Enemy_JUMP_BREAK_VELOCITY= 0.20;
+
+const EnemyFire = require('./enemyFire');
+const EnemyBomb = require('./enemyBomb');
+const Vector = require('./vector');
+
+const FIRE_SPEED = 7;
 
 /**
  * @module Enemy
@@ -329,9 +528,9 @@ this.animationTimer = 0;
 this.animationCounter = 0;
 this.frameLength = 9;
 //animation dependent
-this.numberOfSpirtes = 0; // how many frames are there in the animation
-this.spirteWidth = 42; // width of each frame
-this.spirteHeight = 23; // height of each frame
+this.numberOfsprites = 0; // how many frames are there in the animation
+this.spriteWidth = 42; // width of each frame
+this.spriteHeight = 23; // height of each frame
 this.widthInGame = 80;   
 this.heightInGame = 68;
 this.xPlaceInImage = 0; // this should CHANGE for the same animation 
@@ -339,8 +538,8 @@ this.yPlaceInImage = 0; // this should NOT change for the same animation
 
 //specific animation information for this enemy
 //while it is still
-this.stillHeight = this.spirteHeight;
-this.stillWidth = this.spirteWidth;
+this.stillHeight = this.spriteHeight;
+this.stillWidth = this.spriteWidth;
 this.stillWidthInGame = this.widthInGame;   
 this.stillHeightInGame = this.heightInGame;
 //while it is moving
@@ -366,8 +565,12 @@ this.floorYPostion = 600;
 this.moving = false;
 
 
-this.facing = "left";
+this.facing = "right";
 this.dashing = false;
+
+this.lazerCooldown = 0;
+this.bombCooldown = 0;
+//this.lazers = this.lazer(1);
 
 }
 
@@ -382,7 +585,7 @@ this.dashing = false;
  * @param {Input} input object defining input, must have
  * boolean properties: up, left, right, down
  */
-Enemy.prototype.update = function(elapsedTime, input) {
+Enemy.prototype.update = function(elapsedTime, input,enemyFire,enemyBombs) {
 
 	
 	if(input.left){
@@ -446,7 +649,7 @@ Enemy.prototype.update = function(elapsedTime, input) {
 	  }
 	  this.animationTimer = 0;
   }
-  if (this.animationCounter>=this.numberOfSpirtes){
+  if (this.animationCounter>=this.numberOfsprites){
 		if(this.animation!="stand still"){
 			this.animationCounter = 0;
 		}
@@ -455,8 +658,12 @@ Enemy.prototype.update = function(elapsedTime, input) {
 		}
   }
   
+   
+   
   
+ this.lazerCooldown--;
  
+ this.bombCooldown--;
   
 }
 
@@ -467,10 +674,11 @@ Enemy.prototype.update = function(elapsedTime, input) {
  * @param {CanvasRenderingContext2D} ctx
  */
 Enemy.prototype.render = function(elapasedTime, ctx) {
-   ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter , 
-   this.yPlaceInImage, this.spirteWidth,this.spirteHeight, 
+   ctx.drawImage( this.img,this.xPlaceInImage+this.spriteWidth*this.animationCounter , 
+   this.yPlaceInImage, this.spriteWidth,this.spriteHeight, 
    this.position.x, this.position.y, this.widthInGame,this.heightInGame);
    this.xPlaceInImage=0;
+  
 }
  
  
@@ -481,13 +689,13 @@ Enemy.prototype.changeAnimation = function(x)
 	{
 		//if (animationTimer == 0)
 		//{
-			this.numberOfSpirtes = 0;
+			this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			//this.tookAstep = "yes";
 		//}
-			this.spirteHeight = this.stillHeight;
-			this.spirteWidth = this.stillWidth;
+			this.spriteHeight = this.stillHeight;
+			this.spriteWidth = this.stillWidth;
 			this.widthInGame = this.stillWidthInGame;   
 			this.heightInGame = this.stillHeightInGame;
 			
@@ -495,34 +703,34 @@ Enemy.prototype.changeAnimation = function(x)
 			this.position.y+=this.offPostion;
 			
 			if (this.facing=="right")
-				this.yPlaceInImage = this.spirteHeight*0;
+				this.yPlaceInImage = this.spriteHeight*0;
 			else
-				this.yPlaceInImage = this.spirteHeight*1;
-			this.xPlaceInImage = this.spirteWidth*0;
+				this.yPlaceInImage = this.spriteHeight*1;
+			this.xPlaceInImage = this.spriteWidth*0;
 		
 		
 	}
 	else
 	{
-		this.numberOfSpirtes = 3;
+		this.numberOfsprites = 3;
 		this.heightInGame = 68;
 		//tookAstep = "no";  
 		switch(this.animation)
 		{
 			case "moving up unused":
 			
-				//this.xPlaceInImage =this.spirteWidth*7;
-			this.numberOfSpirtes = 0;
+				//this.xPlaceInImage =this.spriteWidth*7;
+			this.numberOfsprites = 0;
 			this.animationTimer = 0;
 			this.animationCounter = 0;
 			
 			break;
 			
 			case "moving down unused":
-			//this.yPlaceInImage =this.spirteHeight*0;
-			//this.numberOfSpirtes = 0;
+			//this.yPlaceInImage =this.spriteHeight*0;
+			//this.numberOfsprites = 0;
 			
-			this.numberOfSpirtes = 0;
+			this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			//this.tookAstep = "yes";
@@ -532,8 +740,8 @@ Enemy.prototype.changeAnimation = function(x)
 			case "moving left":
 			
 			this.yPlaceInImage = 84; 
-			this.spirteHeight = this.movingHeight;
-			this.spirteWidth = this.movingWidth;
+			this.spriteHeight = this.movingHeight;
+			this.spriteWidth = this.movingWidth;
 			
 			this.widthInGame = this.movingWidthInGame;   
 			this.heightInGame = this.movingHeightInGame;
@@ -549,8 +757,8 @@ Enemy.prototype.changeAnimation = function(x)
 			case "moving right":
 			
 			this.yPlaceInImage = 48; 
-			this.spirteHeight = this.movingHeight;
-			this.spirteWidth = this.movingWidth;
+			this.spriteHeight = this.movingHeight;
+			this.spriteWidth = this.movingWidth;
 			
 			this.widthInGame = this.movingWidthInGame;   
 			this.heightInGame = this.movingHeightInGame;
@@ -576,7 +784,249 @@ Enemy.prototype.changeAnimation = function(x)
 	}
 	
 }
-},{}],3:[function(require,module,exports){
+
+Enemy.prototype.fire = function(direction,enemyFire)
+{
+	
+	 var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
+	 
+	 if ( this.lazerCooldown<1)
+  {
+	  
+	  var p = Vector.add(this.position, {x:0, y:0});
+	  var laz = new EnemyFire(p,"left","lazer");
+	 // if (this.facing == "right")
+	  {
+		   //p.x += this.widthInGame;
+		   laz =  new EnemyFire(p,velocity);
+	  }
+		 
+	 
+	  
+	  enemyFire.push(laz);
+	  
+	  this.lazerCooldown = 15;
+	  
+  }
+}
+
+
+Enemy.prototype.bomb = function(direction,enemyBombs)
+{
+	var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
+	if ( this.bombCooldown<1)
+  {
+	  
+	  //var p = {x : this.position.x+this.widthInGame/2, y: this.position.y+this.heightInGame - this.heightInGame/3}
+	  var p =  Vector.add(this.position, {x:15, y:15});
+	  //var position = Vector.add(this.position, {x:30, y:30});
+	  var bomb = new EnemyBomb(p,velocity);
+	  /*
+	  if (this.facing == "right")
+	  {
+		   //p.x += this.widthInGame;
+		   bomb =  new EnemyBomb(p,velocity);
+	  }
+		*/ 
+	 
+	  
+	  enemyBombs.push(bomb);
+	  
+	  this.bombCooldown = 30;
+	  
+  }
+	
+}
+
+
+
+
+},{"./enemyBomb":4,"./enemyFire":5,"./vector":8}],4:[function(require,module,exports){
+"use strict";
+ 
+/* Constants */
+const FIRE_SPEED = 7;
+
+/**
+ *  
+ */
+module.exports = exports = EnemyBomb;
+
+function EnemyBomb(position,velocity) {
+  this.position = {x: position.x, y:position.y}
+  
+   //this.direction = direction;
+   //this.kind = kind;
+   this.width = 14*2;
+   this.height = 32*2;
+   
+   this.inGameExplosionWidth = 96*1.5;
+   this.inGameExplosionHeight = 96*1.5;
+   
+   this.explosionImageWidth = 96
+   this.explosionImageHeight = 96;
+   
+   this.animationTimer = 0;
+   this.explosionAnimation = 0;
+   
+   
+   this.timer = 0;
+  //this.angle = 180;
+  this.img = new Image()
+  this.img.src = 'assets/enemyBomb.png';
+  
+  this.img2 = new Image()
+  this.img2.src = 'assets/Explosion.png';
+  
+  this.state = "falling";
+  
+  //this.angle = angle;
+  
+  this.velocity = velocity;
+  this.angle = Math.atan2(velocity.x, velocity.y);
+   
+}
+
+EnemyBomb.prototype.update = function(elapsedTime)
+{
+	
+	switch(this.state)
+	{
+		case "falling":
+		this.position.x+=this.velocity.x;
+		this.position.y+=this.velocity.y;
+		break;
+		
+		case "exploding":
+		this.animationTimer++;
+		
+		if (this.animationTimer>5)
+		{
+			this.animationTimer = 0;
+			this.explosionAnimation++;
+		}
+		
+		if (this.timer>60 )
+			this.state = "finished"
+		break;
+		
+	}
+	
+	
+	 
+
+	this.timer++;
+}
+
+EnemyBomb.prototype.render = function(elapasedTime, ctx) {
+    ctx.save();
+	ctx.translate(this.position.x,this.position.y);
+	//ctx.rotate(this.angle);// should be just for the bobmb stage
+	switch(this.state)
+	{
+		
+		case "falling":
+		 ctx.rotate(-this.angle);//console.log(this.angle);
+		 ctx.drawImage( this.img,0,0 , 14,32 ,0,0,this.width ,this.height );
+		break;
+		
+		case "exploding":
+		 ctx.drawImage( this.img2,this.explosionAnimation*this.explosionImageWidth,0 , this.explosionImageWidth,this.explosionImageHeight ,0,0,this.width ,this.height );
+		break;
+		
+	}
+	ctx.restore();
+	
+  
+}
+
+EnemyBomb.prototype.explode = function() 
+{
+	this.state = "exploding"
+	this.timer = 0;
+	
+	this.width =  this.inGameExplosionWidth;
+    this.height = this.inGameExplosionHeight;
+	
+	this.position.y-=this.height/4;
+	this.position.x -=this.width/3;
+   
+}
+},{}],5:[function(require,module,exports){
+"use strict";
+ 
+/* Constants */
+const FIRE_SPEED = 7;
+
+/**
+ *  
+ */
+module.exports = exports = EnemyFire;
+
+function EnemyFire(position,velocity) {
+   this.position = {x: position.x, y:position.y}
+   //this.velocity = {x: velocity.x, y:velocity.y}
+   //this.direction = direction;
+   //this.kind = kind;
+   this.width = 10;
+   this.height = 10;
+   this.lazerSize = 3;
+   this.widthOverlap = this.width*0.30;
+   this.heightOverlap = this.height*0.60;
+   
+   this.timer = 0;
+  //this.angle = 180;
+  //this.img = new Image()
+  //this.img.src = 'assets/helicopter.png';
+  
+  this.velocity = velocity;//console.log(this.velocity);
+  this.angle = Math.atan2(velocity.x, velocity.y);
+   
+}
+
+EnemyFire.prototype.update = function(elapsedTime)
+{
+	/*
+	this.position.y+=FIRE_SPEED;
+	
+	if (this.direction == "right")
+	this.position.x+=FIRE_SPEED;
+	
+	if (this.direction == "left")
+	this.position.x-=FIRE_SPEED;
+	*/
+
+	this.position.x+=this.velocity.x;
+	this.position.y+=this.velocity.y;
+	
+	this.timer++;
+}
+
+EnemyFire.prototype.render = function(elapasedTime, ctx) {
+    
+  ctx.save();
+  ctx.translate(this.position.x, this.position.y);
+	
+  ctx.fillStyle = "violet";
+  /*
+  for (var i = 0 ; i < this.lazerSize; i++)
+  {
+	  //ctx.rotate(2);
+	  ctx.rotate(this.angle);
+	  //if (this.direction == "right")
+		ctx.fillRect(i*this.widthOverlap, i*this.heightOverlap, this.width, this.height);
+	
+	//if (this.direction == "left")
+		//ctx.fillRect(i*(-this.widthOverlap), i*this.heightOverlap, this.width, this.height);
+  }
+  */
+  ctx.rotate(-this.angle);
+  ctx.fillRect(0,0, this.width, this.height*3);
+  
+  
+  ctx.restore();
+}
+},{}],6:[function(require,module,exports){
 "use strict";
 
 /**
@@ -634,7 +1084,7 @@ Game.prototype.loop = function(newTime) {
   this.frontCtx.drawImage(this.backBuffer, 0, 0);
 }
 
-},{}],4:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 "use strict";
 
@@ -666,9 +1116,9 @@ this.animationTimer = 0;
 this.animationCounter = 0;
 this.frameLength = 9;
 //animation dependent
-this.numberOfSpirtes = 0; // how man y frames are there in the animation
-this.spirteWidth = 23; // width of each frame
-this.spirteHeight = 34; // height of each frame
+this.numberOfsprites = 0; // how man y frames are there in the animation
+this.spriteWidth = 23; // width of each frame
+this.spriteHeight = 34; // height of each frame
 this.widthInGame = 46;   
 this.heightInGame = 68;
 this.xPlaceInImage = 0; // this should CHANGE for the same animation 
@@ -827,7 +1277,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	  }
 	  this.animationTimer = 0;
   }
-  if (this.animationCounter>=this.numberOfSpirtes){
+  if (this.animationCounter>=this.numberOfsprites){
 		if(this.animation!="stand still"){
 			this.animationCounter = 3;
 		}
@@ -849,7 +1299,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	  break;
 	  case "stand still":
 	  if (this.animationTimer == 0){
-		  this.numberOfSpirtes = 0;
+		  this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			this.tookAstep = "yes";
@@ -877,8 +1327,8 @@ Player.prototype.update = function(elapsedTime, input) {
  * @param {CanvasRenderingContext2D} ctx
  */
 Player.prototype.render = function(elapasedTime, ctx) {
-   ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter , 
-   this.yPlaceInImage, this.spirteWidth,this.spirteHeight, 
+   ctx.drawImage( this.img,this.xPlaceInImage+this.spriteWidth*this.animationCounter , 
+   this.yPlaceInImage, this.spriteWidth,this.spriteHeight, 
    this.position.x, this.position.y, this.widthInGame,this.heightInGame);
    this.xPlaceInImage=0;
 }
@@ -891,7 +1341,7 @@ Player.prototype.changeAnimation = function(x)
 	{
 		//if (animationTimer == 0)
 		//{
-			this.numberOfSpirtes = 0;
+			this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			//this.tookAstep = "yes";
@@ -901,22 +1351,22 @@ Player.prototype.changeAnimation = function(x)
 	}
 	else
 	{
-		this.numberOfSpirtes = 7;
+		this.numberOfsprites = 7;
 		this.heightInGame = 68;
 		//tookAstep = "no";  
 		switch(this.animation)
 		{
 			case "moving up":
 			
-				this.xPlaceInImage =this.spirteWidth*7;
+				this.xPlaceInImage =this.spriteWidth*7;
 			
 			break;
 			
 			case "moving down":
-			//this.yPlaceInImage =this.spirteHeight*0;
-			//this.numberOfSpirtes = 0;
+			//this.yPlaceInImage =this.spriteHeight*0;
+			//this.numberOfsprites = 0;
 			
-			this.numberOfSpirtes = 0;
+			this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			//this.tookAstep = "yes";
@@ -924,11 +1374,11 @@ Player.prototype.changeAnimation = function(x)
 			break;
 			
 			case "moving left":
-			this.yPlaceInImage =this.spirteHeight*1;
+			this.yPlaceInImage =this.spriteHeight*1;
 			break;
 			
 			case "moving right":
-			this.yPlaceInImage =this.spirteHeight*0;
+			this.yPlaceInImage =this.spriteHeight*0;
 			break;
 			
 			case "standing":
@@ -945,4 +1395,101 @@ Player.prototype.changeAnimation = function(x)
 	}
 	
 }
+},{}],8:[function(require,module,exports){
+"use strict";
+
+/**
+ * @module Vector
+ * A library of vector functions.
+ */
+module.exports = exports = {
+  add: add,
+  subtract: subtract,
+  scale: scale,
+  rotate: rotate,
+  dotProduct: dotProduct,
+  magnitude: magnitude,
+  normalize: normalize
+}
+
+
+/**
+ * @function rotate
+ * Scales a vector
+ * @param {Vector} a - the vector to scale
+ * @param {float} scale - the scalar to multiply the vector by
+ * @returns a new vector representing the scaled original
+ */
+function scale(a, scale) {
+ return {x: a.x * scale, y: a.y * scale};
+}
+
+/**
+ * @function add
+ * Computes the sum of two vectors
+ * @param {Vector} a the first vector
+ * @param {Vector} b the second vector
+ * @return the computed sum
+*/
+function add(a, b) {
+ return {x: a.x + b.x, y: a.y + b.y};
+}
+
+/**
+ * @function subtract
+ * Computes the difference of two vectors
+ * @param {Vector} a the first vector
+ * @param {Vector} b the second vector
+ * @return the computed difference
+ */
+function subtract(a, b) {
+  return {x: a.x - b.x, y: a.y - b.y};
+}
+
+/**
+ * @function rotate
+ * Rotates a vector about the Z-axis
+ * @param {Vector} a - the vector to rotate
+ * @param {float} angle - the angle to roatate by (in radians)
+ * @returns a new vector representing the rotated original
+ */
+function rotate(a, angle) {
+  return {
+    x: a.x * Math.cos(angle) - a.y * Math.sin(angle),
+    y: a.x * Math.sin(angle) + a.y * Math.cos(angle)
+  }
+}
+
+/**
+ * @function dotProduct
+ * Computes the dot product of two vectors
+ * @param {Vector} a the first vector
+ * @param {Vector} b the second vector
+ * @return the computed dot product
+ */
+function dotProduct(a, b) {
+  return a.x * b.x + a.y * b.y
+}
+
+/**
+ * @function magnitude
+ * Computes the magnitude of a vector
+ * @param {Vector} a the vector
+ * @returns the calculated magnitude
+ */
+function magnitude(a) {
+  return Math.sqrt(a.x * a.x + a.y * a.y);
+}
+
+/**
+ * @function normalize
+ * Normalizes the vector
+ * @param {Vector} a the vector to normalize
+ * @returns a new vector that is the normalized original
+ */
+function normalize(a) {
+  var mag = magnitude(a);
+  return {x: a.x / mag, y: a.y / mag};
+}
+
 },{}]},{},[1]);

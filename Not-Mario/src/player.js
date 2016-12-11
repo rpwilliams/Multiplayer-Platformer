@@ -23,37 +23,33 @@ module.exports = exports = Player;
  * @param {BulletPool} bullets the bullet pool
  */
 function Player( ) {
-   
-this.animationTimer = 0;
-this.animationCounter = 0;
-this.frameLength = 9;
-//animation dependent
-this.numberOfSpirtes = 0; // how man y frames are there in the animation
-this.spirteWidth = 23; // width of each frame
-this.spirteHeight = 34; // height of each frame
-this.widthInGame = 46;   
-this.heightInGame = 68;
-this.xPlaceInImage = 0; // this should CHANGE for the same animation 
-this.yPlaceInImage = 0; // this should NOT change for the same animation
+   this.animationTimer = 0;
+	this.animationCounter = 0;
+	this.frameLength = 9;
+	//animation dependent
+	this.numberOfsprites = 0; // how man y frames are there in the animation
+	this.spriteWidth = 23; // width of each frame
+	this.spriteHeight = 34; // height of each frame
+	this.widthInGame = 46;   
+	this.heightInGame = 68;
+	this.xPlaceInImage = 0; // this should CHANGE for the same animation 
+	this.yPlaceInImage = 0; // this should NOT change for the same animation
 
-this.animation = "stand still" // this will keep track of the animation
-this.tookAstep = "no"
-this.img = new Image()
-this.img.src = 'assets/fumiko2.png';
+	this.animation = "stand still" // this will keep track of the animation
+	this.tookAstep = "no"
+	this.img = new Image()
+	this.img.src = 'assets/fumiko2.png';
 
 
-this.position = {x: 50, y: 600};
-this.velocity = {x: 0, y: 0};
-this.jumping = false;
-this.falling=false;
-this.crouching = "no"
-this.floorYPostion = 600;
-this.jumpingTime = 0;
-this.facing = "left";
-
+	this.position = {x: 50, y: 600};
+	this.velocity = {x: 0, y: 0};
+	this.jumping = false;
+	this.falling=false;
+	this.crouching = "no"
+	this.floorYPostion = 600;
+	this.jumpingTime = 0;
+	this.facing = "left";
 }
-
-
 
 /**
  * @function update
@@ -63,7 +59,7 @@ this.facing = "left";
  * boolean properties: up, left, right, down
  */
 Player.prototype.update = function(elapsedTime, input) {
-// set the velocity
+	// set the velocity
 	//this.velocity.x = 0;
 	
 	//track movment than change velocity and animation 
@@ -106,23 +102,16 @@ Player.prototype.update = function(elapsedTime, input) {
 			this.jumping=false;
 			this.falling=true;
 		}
-			
 		if (this.facing=="left")
-		{
-			
+		{	
 			if(input.right){
 				this.velocity.x += PLAYER_JUMP_BREAK_VELOCITY;
 			}
-			
 		}
-		
 		else if (this.facing=="right")
-		{
-			
-			
+		{	
 			if(input.left){
-			this.velocity.x -= PLAYER_JUMP_BREAK_VELOCITY;
-			 
+				this.velocity.x -= PLAYER_JUMP_BREAK_VELOCITY; 
 			}
 		}
 		if (this.position.y > this.floorYPostion - 4)
@@ -133,23 +122,18 @@ Player.prototype.update = function(elapsedTime, input) {
 			this.falling=false;
 			this.animation="stand still";
 		}
-		
 	}
-	
-	
 	/*
 	else if(input.down && this.jumping==false) this.crouching == true;//this.velocity.y += PLAYER_RUN_SPEED / 2;
 	*/
-
-
 	// move the player
 	this.position.x += this.velocity.x;
 	this.position.y += this.velocity.y;
 	//if(this.velocity.y>0) this.jumping=true;
 	if(this.velocity.y<0) {
-		//this.jumping=false;
-		//this.falling=true;
-		//this.velocity.y=0;
+	//this.jumping=false;
+	//this.falling=true;
+	//this.velocity.y=0;
 	}
 	
 	//if (!(this.animation=="stand still" && this.tookAstep=="yes"))
@@ -164,7 +148,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	  this.animationTimer = 0;
   }
   
-  if (this.animationCounter>=this.numberOfSpirtes){
+  if (this.animationCounter>=this.numberOfsprites){
 		if(this.animation!="stand still"){
 			this.animationCounter = 3;
 		}
@@ -172,8 +156,8 @@ Player.prototype.update = function(elapsedTime, input) {
 		this.animationCounter = 0;
 		}
   }
-  if(this.jumping==true) this.xPlaceInImage = this.spirteWidth*7;
-	else if(this.falling==true) this.xPlaceInImage = this.spirteWidth*8;
+  if(this.jumping==true) this.xPlaceInImage = this.spriteWidth*7;
+	else if(this.falling==true) this.xPlaceInImage = this.spriteWidth*8;
 	else this.xPlaceInImage = 0;
   /*
   switch(this.animation)
@@ -188,7 +172,7 @@ Player.prototype.update = function(elapsedTime, input) {
 	  break;
 	  case "stand still":
 	  if (this.animationTimer == 0){
-		  this.numberOfSpirtes = 0;
+		  this.numberOfsprites = 0;
 		    this.animationTimer = 0;
 			this.animationCounter = 0;
 			this.tookAstep = "yes";
@@ -205,9 +189,9 @@ Player.prototype.update = function(elapsedTime, input) {
  * @param {CanvasRenderingContext2D} ctx
  */
 Player.prototype.render = function(elapasedTime, ctx) {
-	console.log(this.animationCounter);
-   ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter , 
-   this.yPlaceInImage, this.spirteWidth,this.spirteHeight, 
+	//console.log(this.animationCounter);
+   ctx.drawImage( this.img,this.xPlaceInImage+this.spriteWidth*this.animationCounter , 
+   this.yPlaceInImage, this.spriteWidth,this.spriteHeight, 
    this.position.x, this.position.y, this.widthInGame,this.heightInGame);
    //this.xPlaceInImage=0;
 }
@@ -220,42 +204,32 @@ Player.prototype.changeAnimation = function(x)
 	{
 		//if (animationTimer == 0)
 		//{
-			this.numberOfSpirtes = 0;
-		    this.animationTimer = 0;
-			this.animationCounter = 0;
-			this.tookAstep = "yes";
+		this.numberOfsprites = 0;
+	    this.animationTimer = 0;
+		this.animationCounter = 0;
+		this.tookAstep = "yes";
 		//}
-		
-		
 	}
 	else
 	{
-		this.numberOfSpirtes = 7;
+		this.numberOfsprites = 7;
 		//tookAstep = "no";  
 		switch(this.animation)
 		{
 			case "moving up":
 				this.animationCounter=0;
-				//this.xPlaceInImage =this.spirteWidth*7;
-			
+				//this.xPlaceInImage =this.spriteWidth*7;
 			break;
 			
 			case "moving down":
-			this.yPlaceInImage =this.spirteHeight*0;
-			break;
-			
+				this.yPlaceInImage =this.spriteHeight*0;
+				break;
 			case "moving left":
-			
-				if(this.jumping==false && this.falling==false)this.yPlaceInImage =this.spirteHeight*1;
+				if(this.jumping==false && this.falling==false)this.yPlaceInImage =this.spriteHeight*1;
 			break;
-			
 			case "moving right":
-			this.yPlaceInImage =this.spirteHeight*0;
-			break;
+				this.yPlaceInImage =this.spriteHeight*0;
+				break;
 		}
-		
-		
-	}
-	
-	
+	}	
 }

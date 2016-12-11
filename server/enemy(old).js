@@ -1,8 +1,4 @@
-
 "use strict";
-
-/* Classes and Libraries */
- 
 
 /* Constants */
 const Enemy_RUN_VELOCITY = 0.25;
@@ -11,12 +7,6 @@ const Enemy_RUN_MAX = 3;
 const Enemy_FALL_VELOCITY = 0.25;
 const Enemy_JUMP_SPEED = 6;
 const Enemy_JUMP_BREAK_VELOCITY= 0.20;
-
-const EnemyFire = require('./enemyFire');
-const EnemyBomb = require('./enemyBomb');
-const Vector = require('./vector');
-
-const FIRE_SPEED = 7;
 
 /**
  * @module Enemy
@@ -29,7 +19,7 @@ module.exports = exports = Enemy;
  * Creates a Enemy
  * @param {BulletPool} bullets the bullet pool
  */
-function Enemy( ) {
+function Enemy(position,socket ) {
    
 this.animationTimer = 0;
 this.animationCounter = 0;
@@ -58,11 +48,14 @@ this.movingHeightInGame = 90;
 this.offPostion = 8;
 
 
-this.animation = "stand still" // this will keep track of the animation
-this.tookAstep = "no"
-this.img = new Image()
-this.img.src = 'assets/Ship - Copy2.png';
-
+this.animation = "stand still"; // this will keep track of the animation
+this.tookAstep = "no";
+this.position={x: position.x, y: position.y};
+this.send = {x: this.position.x, y: this.position.y, direction: 'none',
+sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter,sy:this.yPlaceInImage,
+swidth:this.spriteWidth,sheight:this.spriteHeight,width:this.widthInGame,
+height:this.heightInGame};
+this.socket = socket;
 
 this.position = {x: 500, y: 400};
 this.velocity = {x: 0, y: 0};
@@ -72,12 +65,8 @@ this.floorYPostion = 600;
 this.moving = false;
 
 
-this.facing = "right";
+this.facing = "left";
 this.dashing = false;
-
-this.lazerCooldown = 0;
-this.bombCooldown = 0;
-//this.lazers = this.lazer(1);
 
 }
 
@@ -92,58 +81,62 @@ this.bombCooldown = 0;
  * @param {Input} input object defining input, must have
  * boolean properties: up, left, right, down
  */
-Enemy.prototype.update = function(elapsedTime, input,enemyFire,enemyBombs) {
+Enemy.prototype.update = function(elapsedTime, input) {
 
 	
-	if(input.left){
-				//if (!input.down)
-				{
-					this.velocity.x -= Enemy_RUN_VELOCITY;
-					this.velocity.x -= Enemy_RUN_VELOCITY;
-					this.changeAnimation("moving left");
-					this.facing = "left";
-					
-				
-				}
-					
-			}
-			else if(input.right){
-				this.velocity.x += Enemy_RUN_VELOCITY;
-				this.velocity.x += Enemy_RUN_VELOCITY;
-				this.changeAnimation("moving right");
-				
-					
-				
-				this.facing = "right";
-			}
-
-			if(this.velocity.x>0) {
-				this.velocity.x -=Enemy_RUN_VELOCITY;
-			}
-			if(this.velocity.x<0){
-				this.velocity.x +=Enemy_RUN_VELOCITY
-			}
-			
-			if(this.velocity.x < -Enemy_RUN_MAX) this.velocity.x=-Enemy_RUN_MAX;
-			if(this.velocity.x > Enemy_RUN_MAX) this.velocity.x=Enemy_RUN_MAX;
-	
-	
-		if(input.up)
+	if(this.position.direction =="left"){
+		//if (!input.down)
 		{
+			this.velocity.x -= Enemy_RUN_VELOCITY;
+			this.velocity.x -= Enemy_RUN_VELOCITY;
+			this.changeAnimation("moving left");
+			this.facing = "left";
 			
-			this.velocity.y-=Enemy_RUN_VELOCITY;
-			if(this.velocity.y < -Enemy_RUN_MAX) this.velocity.y=-Enemy_RUN_MAX;
-		}
-		else if (input.down)
-		{
 		
-			this.velocity.y+=Enemy_RUN_VELOCITY;
-			if(this.velocity.y > Enemy_RUN_MAX) this.velocity.y=Enemy_RUN_MAX;		
 		}
+					
+	}
+	else if(this.position.direction =="right"){
+		this.velocity.x += Enemy_RUN_VELOCITY;
+		this.velocity.x += Enemy_RUN_VELOCITY;
+		this.changeAnimation("moving right");
+		
+			
+		
+		this.facing = "right";
+	}
+	else this.changeAnimation("stand still");
+	if(this.velocity.x>0) {
+		this.velocity.x -=Enemy_RUN_VELOCITY;
+	}
+	if(this.velocity.x<0){
+		this.velocity.x +=Enemy_RUN_VELOCITY
+	}
+	
+	if(this.velocity.x < -Enemy_RUN_MAX) this.velocity.x=-Enemy_RUN_MAX;
+	if(this.velocity.x > Enemy_RUN_MAX) this.velocity.x=Enemy_RUN_MAX;
 
-	// move the Enemy
+	/*
+	if(this.position.direction =="up")
+	{
+		
+		this.velocity.y-=Enemy_RUN_VELOCITY;
+		if(this.velocity.y < -Enemy_RUN_MAX) this.velocity.y=-Enemy_RUN_MAX;
+	}
+	else if (this.position.direction =="down")
+	{
+	
+		this.velocity.y+=Enemy_RUN_VELOCITY;
+		if(this.velocity.y > Enemy_RUN_MAX) this.velocity.y=Enemy_RUN_MAX;		
+	}
+    else{
+		if(this.velocity.y>0)this.velocity.y-=Enemy_RUN_VELOCITY;
+		else if(this.velocity.y<0)this.velocity.y+=Enemy_RUN_VELOCITY;
+	}
+	*/
+
 	this.position.x += this.velocity.x;
-	this.position.y += this.velocity.y;
+	//this.position.y += this.velocity.y;
 	
 	
 	//if (!(this.animation=="stand still" && this.tookAstep=="yes"))
@@ -165,13 +158,12 @@ Enemy.prototype.update = function(elapsedTime, input,enemyFire,enemyBombs) {
 		}
   }
   
-   
-   
   
- this.lazerCooldown--;
  
- this.bombCooldown--;
-  
+  this.send = {x: this.position.x, y: this.position.y, direction: 'none',
+	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter,sy:this.yPlaceInImage,
+	swidth:this.spriteWidth,sheight:this.spriteHeight,width:this.widthInGame,
+	height:this.heightInGame};
 }
 
 /**
@@ -179,15 +171,14 @@ Enemy.prototype.update = function(elapsedTime, input,enemyFire,enemyBombs) {
  * Renders the Enemy helicopter in world coordinates
  * @param {DOMHighResTimeStamp} elapsedTime
  * @param {CanvasRenderingContext2D} ctx
- */
+ 
 Enemy.prototype.render = function(elapasedTime, ctx) {
    ctx.drawImage( this.img,this.xPlaceInImage+this.spriteWidth*this.animationCounter , 
    this.yPlaceInImage, this.spriteWidth,this.spriteHeight, 
    this.position.x, this.position.y, this.widthInGame,this.heightInGame);
    this.xPlaceInImage=0;
-  
 }
- 
+ */
  
 Enemy.prototype.changeAnimation = function(x)
 {
@@ -207,14 +198,14 @@ Enemy.prototype.changeAnimation = function(x)
 			this.heightInGame = this.stillHeightInGame;
 			
 			this.moving = false;
-			this.position.y+=this.offPostion;
+			//this.position.y+=this.offPostion;
 			
 			if (this.facing=="right")
 				this.yPlaceInImage = this.spriteHeight*0;
 			else
 				this.yPlaceInImage = this.spriteHeight*1;
 			this.xPlaceInImage = this.spriteWidth*0;
-		
+			//this.velocity.y=0;
 		
 	}
 	else
@@ -256,7 +247,7 @@ Enemy.prototype.changeAnimation = function(x)
 			if (!this.moving)
 				{
 					this.moving = true;
-					this.position.y-=this.offPostion;
+					//this.position.y-=this.offPostion;
 				}
 
 			break;
@@ -272,7 +263,7 @@ Enemy.prototype.changeAnimation = function(x)
 			if (!this.moving)
 				{
 					this.moving = true;
-					this.position.y-=this.offPostion;
+					//this.position.y-=this.offPostion;
 				}
 			
 			break;
@@ -291,59 +282,3 @@ Enemy.prototype.changeAnimation = function(x)
 	}
 	
 }
-
-Enemy.prototype.fire = function(direction,enemyFire)
-{
-	
-	 var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
-	 
-	 if ( this.lazerCooldown<1)
-  {
-	  
-	  var p = Vector.add(this.position, {x:0, y:0});
-	  var laz = new EnemyFire(p,"left","lazer");
-	 // if (this.facing == "right")
-	  {
-		   //p.x += this.widthInGame;
-		   laz =  new EnemyFire(p,velocity);
-	  }
-		 
-	 
-	  
-	  enemyFire.push(laz);
-	  
-	  this.lazerCooldown = 15;
-	  
-  }
-}
-
-
-Enemy.prototype.bomb = function(direction,enemyBombs)
-{
-	var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
-	if ( this.bombCooldown<1)
-  {
-	  
-	  //var p = {x : this.position.x+this.widthInGame/2, y: this.position.y+this.heightInGame - this.heightInGame/3}
-	  var p =  Vector.add(this.position, {x:15, y:15});
-	  //var position = Vector.add(this.position, {x:30, y:30});
-	  var bomb = new EnemyBomb(p,velocity);
-	  /*
-	  if (this.facing == "right")
-	  {
-		   //p.x += this.widthInGame;
-		   bomb =  new EnemyBomb(p,velocity);
-	  }
-		*/ 
-	 
-	  
-	  enemyBombs.push(bomb);
-	  
-	  this.bombCooldown = 30;
-	  
-  }
-	
-}
-
-
-

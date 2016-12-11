@@ -4,10 +4,13 @@
 const Game = require('./game');
 const Player = require('./player');
 const Enemy = require('./enemy');
-
+const Vector = require('./vector');
+const Camera = require('./camera');
 
 /* Global variables */
 var canvas = document.getElementById('screen');
+
+var camera = new Camera(canvas);
 var game = new Game(canvas, update, render);
 var input = {
   up: false,
@@ -31,11 +34,62 @@ var enemyInput = {
   attack: false,
   hide: false,
   crouch: false,
-  dash: false
+  dash: false,
+  lazer: false,
+  bomb: false
 }
 var enemy = new Enemy();
+var enemyFire = [];
+var enemyBombs = [];
+
+var reticule = {
+  x: 0,
+  y: 0
+}
 
 
+/**
+ * @function onmousemove
+ * Handles mouse move events
+ */
+window.onmousemove = function(event) {
+  event.preventDefault();
+  reticule.x = event.offsetX;
+  reticule.y = event.offsetY;
+}
+
+/**
+ * @function onmousedown
+ * Handles mouse left-click events
+ */
+window.onmousedown = function(event) {
+  event.preventDefault();
+    if(event.button == 0) {
+    reticule.x = event.offsetX;
+    reticule.y = event.offsetY;
+    var direction = Vector.subtract(
+      reticule,
+      camera.toScreenCoordinates(enemy.position)
+    );
+    enemy.fire(direction,enemyFire);
+  }
+}
+
+/**
+ * @function oncontextmenu
+ * Handles mouse right-click events
+ */
+canvas.oncontextmenu = function(event) {
+  event.preventDefault();
+  reticule.x = event.offsetX;
+  reticule.y = event.offsetY;
+  
+   var direction = Vector.subtract(
+      reticule,
+      camera.toScreenCoordinates(enemy.position)
+    );
+  enemy.bomb(direction,enemyBombs);
+}
 
  
 /**
@@ -99,7 +153,7 @@ window.onkeydown = function(event) {
   }
   
   
-  //enemy controls added these controls for the enemy********************************
+  //enemy controls
   switch(event.key) {
     case "i":
     case "i":
@@ -141,7 +195,11 @@ window.onkeydown = function(event) {
    switch(event.key) {
 	  
 	  case "p":
-	  enemyInput.dash = true;
+	  enemyInput.lazer = true;
+	  break;
+	  
+	  case "o":
+	  enemyInput.bomb = true;
 	  break;
 	  
 	  case "h":
@@ -151,7 +209,7 @@ window.onkeydown = function(event) {
 	  
 	  
 	  
-  }//***********************************************8
+  }
 }
 
 /**
@@ -197,7 +255,7 @@ window.onkeyup = function(event) {
 	
   }
   
-  //enemy  added controls for the enemy**************************8
+  //enemy
    switch(event.key) {
     case "i":
     case "i":
@@ -227,12 +285,18 @@ window.onkeyup = function(event) {
       break;
 	  
 	case "p":
-	  enemyInput.dash=false;
-	  enemy.changeAnimation("stand still");
+	  enemyInput.lazer=false;
+	   
+      event.preventDefault();
+      break;
+	  
+	case "o":
+	  enemyInput.bomb=false;
+	   
       event.preventDefault();
       break;
 	
-  } //****************************************************
+  }
   
 }
 
@@ -260,7 +324,43 @@ function update(elapsedTime) {
    
   
   player.update(elapsedTime,input);
-  enemy.update(elapsedTime,enemyInput);
+  enemy.update(elapsedTime,enemyInput,enemyFire,enemyBombs);
+  
+  //update fire 
+  for (var i = 0 ; i < enemyFire.length ; i++)
+  {
+	  
+	  enemyFire[i].update(elapsedTime);
+	  
+	  //remove the shot at this condtion, it could be hitting an opject or going out of the screen
+	  if (enemyFire[i].timer>40)
+	  {
+		  
+		  enemyFire.splice(i,1);
+		  i--;
+	  }
+  }
+  
+  //update bomb 
+  for (var i = 0 ; i < enemyBombs.length ; i++)
+  {
+	  
+	  enemyBombs[i].update(elapsedTime);
+	  
+	  //explode at this condtion, it could be hitting an opject or going out of the screen
+	  if (enemyBombs[i].timer>40 && enemyBombs[i].state=="falling")
+	  {
+		  
+			  enemyBombs[i].explode();
+	  }
+	  
+	  if (enemyBombs[i].state=="finished")
+	   {
+		enemyBombs.splice(i,1);
+		i--; 
+	   }
+	   
+  }
  
    
 }
@@ -278,12 +378,37 @@ function render(elapsedTime, ctx) {
  
   player.render(elapsedTime, ctx);
   enemy.render(elapsedTime, ctx);
-  //ctx.drawImage( img,xPlaceInImage+spirteWidth*animationCounter , yPlaceInImage, spirteWidth,spirteHeight, 50, 50, widthInGame,heightInGame);
+  //ctx.drawImage( img,xPlaceInImage+spriteWidth*animationCounter , yPlaceInImage, spriteWidth,spriteHeight, 50, 50, widthInGame,heightInGame);
   ctx.save();
    
   ctx.restore();
- 
+  
+  //draw fire
+  for (var i = 0 ; i < enemyFire.length ; i++)
+  {
+	  
+	  enemyFire[i].render(elapsedTime, ctx);
+  }
+  
+  //draw bomb
+  for (var i = 0 ; i < enemyBombs.length ; i++)
+  {
+	  
+	  enemyBombs[i].render(elapsedTime, ctx);
+  }
    
+   // Render the reticule
+  ctx.save();
+  ctx.translate(reticule.x, reticule.y);
+  ctx.beginPath();
+  ctx.arc(0, 0, 10, 0, 2*Math.PI);
+  ctx.moveTo(0, 15);
+  ctx.lineTo(0, -15);
+  ctx.moveTo(15, 0);
+  ctx.lineTo(-15, 0);
+  ctx.strokeStyle = '#00ff00';
+  ctx.stroke();
+  ctx.restore();
 }
 
 
