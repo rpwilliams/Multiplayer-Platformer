@@ -14,20 +14,24 @@ var images = [
   new Image(),
   new Image(),
   new Image(),
-  new Image(),
-  new Image(),
-  new Image()
 ];
 
 images[0].src = 'level.png'; // Background
 images[1].src = 'stars.png'; // Foreground
 images[2].src = 'fumiko2.png';  // Player
-images[3].src = 'DownArrow.png'; // Down arrow above hiding objects
-images[4].src = 'BrownBox.png'; // Brown box
-images[5].src = 'GrayBox.png'; // Gray box
-images[6].src = 'Enemy_Ship.png'; // enemy
+images[3].src = 'Enemy_Ship.png'; // enemy
 
+var hidingObjImages = [
+new Image(),
+new Image(),
+new Image(),
+new Image()
+];
 
+hidingObjImages[0].src = 'DownArrow.png'; // Down arrow above hiding objects
+hidingObjImages[1].src = 'BrownBox.png'; // Brown box
+hidingObjImages[2].src = 'GrayBox.png'; // Gray box
+hidingObjImages[3].src = 'BrownBox.png'; // Brown box
 
 // Start the game after all files have loaded
 window.onload = function() {
@@ -166,13 +170,13 @@ function renderPlayers(players, ctx) {
 	   players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
   
   // Draw other player's sprite
-  ctx.drawImage( images[6],players.other.sx ,
+  ctx.drawImage( images[3],players.other.sx ,
    players.other.sy, players.other.swidth, players.other.sheight,
    players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);   
   }
 else{
 	console.log(players.current);
-	ctx.drawImage( images[6],players.current.sx ,
+	ctx.drawImage( images[3],players.current.sx ,
 	   players.current.sy, players.current.swidth, players.current.sheight,
 	   players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
   
@@ -213,8 +217,8 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 	  {
 		  if(hidingObjects.objects[i].delayRender == false)
 		  {
-			ctx.drawImage(images[4 + hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
-			hidingObjects.objects[i].position.y, images[4 + hidingObjects.objects[i].type].width * 2, images[4 + hidingObjects.objects[i].type].height * 2); 
+			ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
+			hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type].width * 2, hidingObjImages[hidingObjects.objects[i].type].height * 2); 
 		  }
 	  }
 	  // Now render those being hid behind
@@ -222,15 +226,15 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 	  {
 		  if(hidingObjects.objects[i].delayRender == true)
 		  {
-			ctx.drawImage(images[4 + hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
-			hidingObjects.objects[i].position.y, images[4 + hidingObjects.objects[i].type ].width * 2, images[4 + hidingObjects.objects[i].type].height * 2); 
+			ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
+			hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type ].width * 2, hidingObjImages[hidingObjects.objects[i].type].height * 2); 
 		  }
 	  }
 	  
 	 // Display animated down arrow if on top of a object that can be hid behind
 	 if(hidingObjects.objects[i].displayArrow == true)
 	{
-		ctx.drawImage(images[3],hidingObjects.arrowFrame * 130, 0, 128, 175,  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x) + 16, hidingObjects.objects[i].position.y - 95, 30, 45);
+		ctx.drawImage(hidingObjImages[0],hidingObjects.arrowFrame * 130, 0, 128, 175,  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x) + 16, hidingObjects.objects[i].position.y - 95, 30, 45);
 	}
   }
   ctx.restore();
@@ -275,3 +279,5 @@ var updateCamera = function(target) {
   if(camera_position.x < 0) camera_position.x = 0;
   // console.log("Camera: (" + camera_position.x + "," + camera_position.y + ")");
 }
+Contact GitHub API Training Shop Blog About
+© 2016 GitHub, Inc. Terms Privacy Security Status Help
