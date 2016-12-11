@@ -55,10 +55,10 @@ function HidingObjects()
 	this.objects[30] = new SingleObject({x: 8700, y: 554}, 3);
 	this.objects[31] = new SingleObject({x: 9040, y: 554}, 3);
 	this.objects[32] = new SingleObject({x: 9620, y: 610}, 3);
-	this.objects[33] = new SingleObject({x: 10100, y: 495}, 3);
+	this.objects[33] = new SingleObject({x: 10100, y: 498}, 3);
 	this.objects[34] = new SingleObject({x: 10100, y: 435}, 3);
-	this.objects[35] = new SingleObject({x: 10160, y: 495}, 3);
-	this.objects[36] = new SingleObject({x: 10410, y: 495}, 3);
+	this.objects[35] = new SingleObject({x: 10160, y: 498}, 3);
+	this.objects[36] = new SingleObject({x: 10410, y: 498}, 3);
 	this.length = 37;
 }
 
@@ -74,7 +74,8 @@ HidingObjects.prototype.update = function(player, newTime)
 	// Check for player collision with each object
 	for(var i = 0; i < this.length; i++)
 	{
-		if (player.levelPos.x > (this.objects[i].position.x - 35) && player.levelPos.x < (this.objects[i].position.x + 50))
+		if (player.levelPos.x > (this.objects[i].position.x - 35) && player.levelPos.x < (this.objects[i].position.x + 50) 
+			&& player.levelPos.y <= (this.objects[i].position.y) && player.levelPos.y > (this.objects[i].position.y - 60))
 		{
 			// Check if pressing 'down' to hide
 			if (player.direction == 'down')
