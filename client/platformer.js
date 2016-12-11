@@ -279,5 +279,4 @@ var updateCamera = function(target) {
   if(camera_position.x < 0) camera_position.x = 0;
   // console.log("Camera: (" + camera_position.x + "," + camera_position.y + ")");
 }
-Contact GitHub API Training Shop Blog About
-© 2016 GitHub, Inc. Terms Privacy Security Status Help
+
