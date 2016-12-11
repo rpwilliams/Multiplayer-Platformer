@@ -13,13 +13,17 @@ var images = [
   new Image(),
   new Image(),
   new Image(),
+  new Image(),
+  new Image(),
   new Image()
 ];
 
 images[0].src = 'level.png'; // Background
 images[1].src = 'stars.jpg'; // Foreground
 images[2].src = 'fumiko2.png';  // Player
-images[3].src = 'BrownBox.png'; // Brown box
+images[3].src = 'DownArrow.png'; // Down arrow above hiding objects
+images[4].src = 'BrownBox.png'; // Brown box
+images[5].src = 'GrayBox.png'; // Gray box
 
 
 // Start the game after all files have loaded
@@ -38,8 +42,11 @@ window.onload = function() {
   // Handle movement updates from the server
   socket.on('render', function(players, hidingObjects){
     // updateCamera(players.player);
-	renderHidingObjects(players, hidingObjects, ctx);
+	
+	// Render the normal objects, followed by the player and then the objects that the player is hiding behind
+	renderHidingObjects(players, hidingObjects, ctx, false);
     renderPlayers(players, ctx);
+	renderHidingObjects(players, hidingObjects, ctx, true);
   });
 
   // // Handle movement updates from the server
@@ -163,17 +170,44 @@ function renderPlayers(players, ctx) {
   ctx.restore();
 }
 
-function renderHidingObjects (players, hidingObjects, ctx)
+function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 {
   // Draw the canvas backgrounds
-  if(players.current.direction == 'none' || players.other.direction == 'none') {
+  if((players.current.direction == 'none' || players.other.direction == 'none') && renderDelayedObjs == false) {
     renderBackground(ctx, players.current);
   }
 	
   // Draw hiding objects
-  ctx.save();
-  ctx.drawImage(images[3],  hidingObjects.objects[0].position.x + (players.current.screenPos.x - players.current.levelPos.x), hidingObjects.objects[0].position.y, images[3].width * 2, images[3].height * 2);
+  ctx.save(); 
+  for(var i = 0; i < hidingObjects.length; i++)
+  {
+	  // Render objects not being used to hide behind
+	  if(renderDelayedObjs == false)
+	  {
+		  if(hidingObjects.objects[i].delayRender == false)
+		  {
+			ctx.drawImage(images[4 + hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
+			hidingObjects.objects[i].position.y, images[4 + hidingObjects.objects[i].type].width * 2, images[4 + hidingObjects.objects[i].type].height * 2); 
+		  }
+	  }
+	  // Now render those being hid behind
+	  else
+	  {
+		  if(hidingObjects.objects[i].delayRender == true)
+		  {
+			ctx.drawImage(images[4 + hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
+			hidingObjects.objects[i].position.y, images[4 + hidingObjects.objects[i].type ].width * 2, images[4 + hidingObjects.objects[i].type].height * 2); 
+		  }
+	  }
+	  
+	 // Display animated down arrow if on top of a object that can be hid behind
+	 if(hidingObjects.objects[i].displayArrow == true)
+	{
+		ctx.drawImage(images[3],hidingObjects.arrowFrame * 130, 0, 128, 175,  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x) + 16, hidingObjects.objects[i].position.y - 95, 30, 45);
+	}
+  }
   ctx.restore();
+  
 }
 
 // function renderPlayerView(players, ctx) {

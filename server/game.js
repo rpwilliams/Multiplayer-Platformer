@@ -18,7 +18,8 @@ function Game(io, sockets, room) {
   this.io = io;
   this.room = room;
   this.state = new Uint8Array(WIDTH * HEIGHT);
-
+  this.time = Date.now();
+  
   this.players = [];
   this.hidingObjects = new HidingObjects();
 
@@ -32,9 +33,6 @@ function Game(io, sockets, room) {
     {x: 700, y: 610},
     sockets[1]
   ));
-  
-  // Initialize hiding objects throughout level
-  this.hidingObjects.add(610,0);
 
   this.players.forEach(function(player) {
 	  
@@ -79,12 +77,16 @@ function Game(io, sockets, room) {
  * Advances the game by one step, moving players
  * and determining crashes.
  */
-Game.prototype.update = function() {
+Game.prototype.update = function(newTime) {
   var state = this.state;
   var interval = this.interval;
   var room = this.room;
   var io = this.io;
-
+  
+  //Update hiding objects
+  this.hidingObjects.update(this.players[0], this.time);
+  this.time = Date.now();
+  
   // Update players
   this.players.forEach(function(player, i, players) {
     var otherPlayer = players[(i+1)%2];
