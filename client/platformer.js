@@ -15,6 +15,7 @@ var images = [
   new Image(),
   new Image(),
   new Image(),
+  new Image(),
   new Image()
 ];
 
@@ -24,6 +25,8 @@ images[2].src = 'fumiko2.png';  // Player
 images[3].src = 'DownArrow.png'; // Down arrow above hiding objects
 images[4].src = 'BrownBox.png'; // Brown box
 images[5].src = 'GrayBox.png'; // Gray box
+images[6].src = 'Enemy_Ship.png'; // enemy
+
 
 
 // Start the game after all files have loaded
@@ -156,7 +159,12 @@ function renderPlayers(players, ctx) {
   ctx.fillText('screen: (' + Math.floor(players.current.screenPos.x)+ ',' + Math.floor(players.current.screenPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 10);
   ctx.fillText('level: (' + Math.floor(players.other.levelPos.x) + ',' + Math.floor(players.other.levelPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 30);
   ctx.fillText('screen: (' + Math.floor(players.other.screenPos.x)+ ',' + Math.floor(players.other.screenPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 10);  
-  
+  if(players.current.id=='player') {
+	  // Draw current player's sprite
+	  ctx.drawImage( images[2],players.current.sx ,
+	   players.current.sy, players.current.swidth, players.current.sheight,
+	   players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
+
   // Check if the player won the game
   if(Math.floor(players.current.wonGame))
   {
@@ -165,18 +173,23 @@ function renderPlayers(players, ctx) {
     ctx.font="72px Verdana";
     ctx.fillText('Player 1 wins!', players.current.screenPos.x - 40, players.current.screenPos.y - 100);
     // document.getElementById('player-win').innerHTML = "Player 1 wins!";
+
+  // Draw other player's sprite
+  ctx.drawImage( images[6],players.other.sx ,
+   players.other.sy, players.other.swidth, players.other.sheight,
+   players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);   
   }
-
-  // Draw current player's sprite
-  ctx.drawImage( images[2],players.current.sx ,
-   players.current.sy, players.current.swidth, players.current.sheight,
-   players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
-
+else{
+	console.log(players.current);
+	ctx.drawImage( images[6],players.current.sx ,
+	   players.current.sy, players.current.swidth, players.current.sheight,
+	   players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
+  
   // Draw other player's sprite
   ctx.drawImage( images[2],players.other.sx ,
    players.other.sy, players.other.swidth, players.other.sheight,
-   players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);   
-
+   players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);
+}
   ctx.restore();
 }
 
