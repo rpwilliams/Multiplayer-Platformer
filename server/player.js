@@ -41,11 +41,7 @@ function Player(position,socket ) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-<<<<<<< HEAD
-	velocity:this.velocity, wonGame:this.wonGame};
-=======
-	velocity:this.velocity,id:this.id};
->>>>>>> d07da7785a93e7ab9e659c66a1ec898861270340
+	velocity:this.velocity, wonGame:this.wonGame,id:this.id};
 
 	this.socket = socket;
 
@@ -176,7 +172,6 @@ Player.prototype.update = function() {
 	else if(this.falling==true) this.xPlaceInImage = this.spriteWidth*6;
 	else this.xPlaceInImage = 0;
 
-<<<<<<< HEAD
 	// Check if player 1 won the game
 	if(Math.floor(this.levelPos.x) > 11200)
 	{
@@ -189,13 +184,12 @@ Player.prototype.update = function() {
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
 	velocity:this.velocity,wonGame:this.wonGame };
-=======
+
 	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
 	velocity:this.velocity,id:this.id};
->>>>>>> d07da7785a93e7ab9e659c66a1ec898861270340
 }
 
 
