@@ -53,18 +53,7 @@ EnemyFire.prototype.render = function(elapasedTime, ctx) {
   ctx.translate(this.position.x, this.position.y);
 	
   ctx.fillStyle = "violet";
-  /*
-  for (var i = 0 ; i < this.lazerSize; i++)
-  {
-	  //ctx.rotate(2);
-	  ctx.rotate(this.angle);
-	  //if (this.direction == "right")
-		ctx.fillRect(i*this.widthOverlap, i*this.heightOverlap, this.width, this.height);
-	
-	//if (this.direction == "left")
-		//ctx.fillRect(i*(-this.widthOverlap), i*this.heightOverlap, this.width, this.height);
-  }
-  */
+
   ctx.rotate(-this.angle);
   ctx.fillRect(0,0, this.width, this.height*3);
   
