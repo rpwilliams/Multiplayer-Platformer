@@ -30,7 +30,8 @@ images[6].src = 'Enemy_Ship.png'; // enemy
 var reticule = {
   x: 0,
   y: 0,
-  fire:false
+  fire:false,
+  canvas: canvas
 }
 /**
  * @function onmousemove
@@ -197,6 +198,23 @@ function renderPlayers(players, ctx) {
   ctx.drawImage( images[6],players.other.sx ,
    players.other.sy, players.other.swidth, players.other.sheight,
    players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);   
+  
+  for (var i = 0 ; i < players.other.enemyFire.length ; i++)
+  {
+	  console.log("ok");
+	  console.log(players.other.enemyFire);
+	  ctx.save();
+	  //ctx.translate(players.other.enemyFire[i].position.x+(Math.abs(players.other.enemyFire[i].position.x-players.other.enemyFire[i].levelPos.x)), players.other.enemyFire[i].position.y);
+		ctx.translate(players.other.enemyFire[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.other.enemyFire[i].position.y)
+	  ctx.fillStyle = "violet";
+
+	  ctx.rotate(-players.other.enemyFire[i].angle);
+	  ctx.fillRect(0,0, players.other.enemyFire[i].width, players.other.enemyFire[i].height*3);
+	  
+	  
+	  ctx.restore();
+	 
+  }
   }
 else{
 	//console.log(players.current);
@@ -226,9 +244,9 @@ else{
    for (var i = 0 ; i < players.current.enemyFire.length ; i++)
   {
 	  console.log("ok");
-	  console.log(players.current.enemyFire);
+	  console.log(players.current.woo);
 	  ctx.save();
-	  ctx.translate(players.current.enemyFire[i].position.x, players.current.enemyFire[i].position.y);
+	  ctx.translate(players.current.enemyFire[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.current.enemyFire[i].position.y);
 		
 	  ctx.fillStyle = "violet";
 
