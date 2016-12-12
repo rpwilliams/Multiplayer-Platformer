@@ -28,6 +28,23 @@ new Image(),
 new Image()
 ];
 
+var reticule = {
+  x: 0,
+  y: 0,
+  fire:false
+}
+/**
+ * @function onmousemove
+ * Handles mouse move events
+ */
+window.onmousemove = function(event) {
+	//if(players.current.id!="player"){
+	  event.preventDefault();
+	  reticule.x = event.offsetX;
+	  reticule.y = event.offsetY;
+	//}
+}
+
 hidingObjImages[0].src = 'DownArrow.png'; // Down arrow above hiding objects
 hidingObjImages[1].src = 'BrownBox.png'; // Brown box
 hidingObjImages[2].src = 'GrayBox.png'; // Gray box
@@ -130,6 +147,17 @@ window.onload = function() {
         break;
     }
   }
+  window.onmousedown = function(event) {
+  event.preventDefault();
+    if(event.button == 0) {
+		reticule.x = event.offsetX;
+		reticule.y = event.offsetY;
+		reticule.fire=true;
+		socket.emit('fire',reticule);
+		reticule.fire=false;
+		
+  }
+}
 }
 
 function renderBackground(ctx, current) {
@@ -278,4 +306,3 @@ var updateCamera = function(target) {
   if(camera_position.x < 0) camera_position.x = 0;
   // console.log("Camera: (" + camera_position.x + "," + camera_position.y + ")");
 }
-
