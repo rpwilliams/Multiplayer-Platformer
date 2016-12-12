@@ -25,8 +25,19 @@ var hidingObjImages = [
 new Image(),
 new Image(),
 new Image(),
+new Image(),
+new Image(),
+new Image(),
 new Image()
 ];
+
+hidingObjImages[0].src = 'DownArrow.png'; // Down arrow above hiding objects
+hidingObjImages[1].src = 'CrossBox.png'; // Brown box
+hidingObjImages[2].src = 'GrayBox.png'; // Gray box
+hidingObjImages[3].src = 'BrownBox.png'; // Brown box
+hidingObjImages[4].src = 'PlainBox.png'; // Plainbox
+hidingObjImages[5].src = 'Cabinet.png'; // Cabinet
+hidingObjImages[6].src = 'Cabinet2.png'; // Cabinet2
 
 var reticule = {
   x: 0,
@@ -44,11 +55,6 @@ window.onmousemove = function(event) {
 	  reticule.y = event.offsetY;
 	//}
 }
-
-hidingObjImages[0].src = 'DownArrow.png'; // Down arrow above hiding objects
-hidingObjImages[1].src = 'BrownBox.png'; // Brown box
-hidingObjImages[2].src = 'GrayBox.png'; // Gray box
-hidingObjImages[3].src = 'BrownBox.png'; // Brown box
 
 // Start the game after all files have loaded
 window.onload = function() {

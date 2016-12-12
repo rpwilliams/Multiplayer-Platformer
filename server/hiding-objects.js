@@ -17,13 +17,12 @@ function HidingObjects()
 	this.objects = [];
 	this.length;
 	this.arrowFrame = 5;
-	this.spaceBetweenFrames = 0;
 	this.oldTime = Date.now();
 	this.elapsedTime = 0;
 	
 	// Pre-made objects that will spawn in the same locations at the beginning of each game
-	this.objects[0] = new SingleObject({x: 1050, y: 610}, 3);
-	this.objects[1] = new SingleObject({x: 1150, y: 610}, 3);
+	this.objects[0] = new SingleObject({x: 1050, y: 610}, 1);
+	this.objects[1] = new SingleObject({x: 1150, y: 610}, 1);
 	this.objects[2] = new SingleObject({x: 1670, y: 555}, 3);
 	this.objects[3] = new SingleObject({x: 2170, y: 610}, 3);
 	this.objects[4] = new SingleObject({x: 2490, y: 555}, 3);
