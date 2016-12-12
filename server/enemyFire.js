@@ -1,14 +1,14 @@
 "use strict";
  
 /* Constants */
-var FIRE_SPEED = 7;
+var FIRE_SPEED = 1;
 
 /**
  *  
  */
 module.exports = exports = EnemyFire;
 
-function EnemyFire(position,velocity) {
+function EnemyFire(position,velocity,levelPos) {
    this.position = {x: position.x, y:position.y}
    //this.velocity = {x: velocity.x, y:velocity.y}
    //this.direction = direction;
@@ -18,6 +18,7 @@ function EnemyFire(position,velocity) {
    this.lazerSize = 3;
    this.widthOverlap = this.width*0.30;
    this.heightOverlap = this.height*0.60;
+   this.levelPos = {x: levelPos.x, y:levelPos.y}
    
    this.timer = 0;
   //this.angle = 180;
@@ -44,7 +45,7 @@ EnemyFire.prototype.update = function(elapsedTime)
 	this.position.x+=this.velocity.x;
 	this.position.y+=this.velocity.y;
 	
-	this.timer++;
+	this.timer+=1;
 }
 
 EnemyFire.prototype.render = function(elapasedTime, ctx) {

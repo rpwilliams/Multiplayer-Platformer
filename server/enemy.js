@@ -13,6 +13,7 @@ var FIRE_SPEED = 7;
 var EnemyFire = require('./enemyFire');
 //const EnemyBomb = require('./enemyBomb');
 var Vector = require('./vector');
+var Camera = require('./camera');
 /**
  * @module exports the Enemy class
  */
@@ -173,10 +174,11 @@ if(this.direction =="left"){
   }
   this.lazerCooldown--;
   if(this.reticulePosition.fire==true){
+	  var camera = new Camera(this.reticulePosition.canvas);
 	  var direction = Vector.subtract(
       {x:this.reticulePosition.x,y:this.reticulePosition.y},
-      Vector.subtract(this.levelPos,this.screenPos)
-    );
+      camera.toScreenCoordinates(this.levelPos));
+      this.woo = camera;
 	  this.fire(direction,this.enemyFire);
 	  this.reticulePosition.fire=false;
   }
@@ -295,18 +297,18 @@ Enemy.prototype.changeAnimation = function(x)
 Enemy.prototype.fire = function(direction,enemyFire)
 {
 	
-	 var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
-	 
+	 var velocity2 = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
+	// this.woo=velocity2;
 	 
 	 if ( this.lazerCooldown<1)
   {
-	  this.woo=true;
+	  //this.woo=true;
 	  var p = Vector.add(this.levelPos, {x:0, y:0});
-	  var laz = new EnemyFire(p,"left","lazer");
+	  var laz = new EnemyFire(p,velocity2,this.levelPos);
 	 // if (this.facing == "right")
 	  //{
 		   //p.x += this.widthInGame;
-		   laz =  new EnemyFire(p,velocity);
+		  
 	  //}
 		 
 	 

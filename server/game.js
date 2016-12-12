@@ -113,7 +113,7 @@ Game.prototype.update = function(newTime) {
   //update fire 
   for (var i = 0 ; i < this.enemyFire.length ; i++)
   {
-	  this.enemyFire[i].update(elapsedTime);
+	  this.enemyFire[i].update();
 	  
 	  //remove the shot at this condtion, it could be hitting an opject or going out of the screen
 	  if (this.enemyFire[i].timer>40)

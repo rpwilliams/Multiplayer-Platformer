@@ -1,7 +1,7 @@
 "use strict";
 
 /* Classes and Libraries */
-const Vector = require('./vector');
+var Vector = require('./vector');
 
 /**
  * @module Camera
@@ -68,7 +68,7 @@ Camera.prototype.onScreen = function(target) {
  * @return the tranformed coordinates
  */
 Camera.prototype.toScreenCoordinates = function(worldCoordinates) {
-  return Vector.subtract(worldCoordinates, this);
+  return Vector.subtract(worldCoordinates, this.position);
 }
 
 /**
