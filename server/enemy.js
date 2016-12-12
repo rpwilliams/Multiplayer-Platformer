@@ -1,46 +1,42 @@
 "use strict";
 
 /* Constants */
-const Enemy_RUN_VELOCITY = 0.25;
-const Enemy_RUN_SPEED = 5;
-const Enemy_RUN_MAX = 3;
-const Enemy_FALL_VELOCITY = 0.25;
-const Enemy_JUMP_SPEED = 6;
-const Enemy_JUMP_BREAK_VELOCITY= 0.20;
+var Enemy_RUN_VELOCITY = 0.25;
+var Enemy_RUN_SPEED = 5;
+var Enemy_RUN_MAX = 3;
+var Enemy_FALL_VELOCITY = 0.25;
+var Enemy_JUMP_SPEED = 6;
+var Enemy_JUMP_BREAK_VELOCITY= 0.20;
 
-const EnemyFire = require('./enemyFire');
-const EnemyBomb = require('./enemyBomb');
-const Vector = require('./vector');
+var FIRE_SPEED = 7;
 
-const FIRE_SPEED = 7;
-
+var EnemyFire = require('./enemyFire');
+//const EnemyBomb = require('./enemyBomb');
+var Vector = require('./vector');
 /**
- * @module Enemy
- * A class representing a Enemy's helicopter
+ * @module exports the Enemy class
  */
 module.exports = exports = Enemy;
 
+
 /**
- * @constructor Enemy
- * Creates a Enemy
- * @param {BulletPool} bullets the bullet pool
+ * @constructor Player
+ * Creates a player
  */
 function Enemy(position,socket ) {
-   
 this.animationTimer = 0;
 this.animationCounter = 0;
-this.frameLength = 9;
+this.frameLength = 8;
 //animation dependent
-this.numberOfSpirtes = 0; // how many frames are there in the animation
+this.numberOfSprites = 0; // how man y frames are there in the animation
 this.spirteWidth = 42; // width of each frame
 this.spirteHeight = 23; // height of each frame
 this.widthInGame = 80;   
 this.heightInGame = 68;
-this.xPlaceInImage = 0; // this should CHANGE for the same animation 
+this.xPlaceInImage = 0; // this should CHANGE for the same animation
 this.yPlaceInImage = 0; // this should NOT change for the same animation
-
-//specific animation information for this enemy
-//while it is still
+this.animation = "stand still"; // this will keep track of the animation
+this.tookAstep = "no";
 this.stillHeight = this.spirteHeight;
 this.stillWidth = this.spirteWidth;
 this.stillWidthInGame = this.widthInGame;   
@@ -52,45 +48,43 @@ this.movingWidthInGame = 80;
 this.movingHeightInGame = 90;
 //this is used to make sure both movement feels to be in the same place in the screent 
 this.offPostion = 8;
+this.velocity = {x: 0, y: 0};
+this.screenPos= {x: 512, y: position.y};
+this.levelPos= {x: position.x, y: position.y};
+this.direction = 'none';
+this.enemyFire = [];
+this.enemyBombs = [];
+this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
+sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
+swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
+height:this.heightInGame, animation:this.animationCounter,
+velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire};
 
-
-this.animation = "stand still"; // this will keep track of the animation
-this.tookAstep = "no";
-this.position={x: position.x, y: position.y};
-this.send = {x: this.position.x, y: this.position.y, direction: 'none',
-sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter,sy:this.yPlaceInImage,
-swidth:this.spirteWidth,sheight:this.spirteHeight,width:this.widthInGame,
-height:this.heightInGame};
 this.socket = socket;
 
-this.position = {x: 500, y: 400};
-this.velocity = {x: 0, y: 0};
-this.jumping = false ;
-this.crouching = "no"
-this.floorYPostion = 600;
-this.moving = false;
-
-
+this.reticulePosition = {x:0,y:0,fire:false};
+this.jumping = false;
+this.falling=false;
+this.crouching = "no";
+this.floorYPostion = 610;
+this.jumpingTime = 0;
 this.facing = "left";
-this.dashing = false;
+this.lazerCooldown=0;
 
+this.woo=false;
 }
-
-
 
 
 
 /**
  * @function update
- * Updates the Enemy based on the supplied input
+ * Updates the player based on the supplied input
  * @param {DOMHighResTimeStamp} elapedTime
  * @param {Input} input object defining input, must have
  * boolean properties: up, left, right, down
  */
-Enemy.prototype.update = function(elapsedTime, input) {
-
-	
-	if(this.position.direction =="left"){
+Enemy.prototype.update = function() {
+if(this.direction =="left"){
 		//if (!input.down)
 		{
 			this.velocity.x -= Enemy_RUN_VELOCITY;
@@ -102,7 +96,7 @@ Enemy.prototype.update = function(elapsedTime, input) {
 		}
 					
 	}
-	else if(this.position.direction =="right"){
+	else if(this.direction =="right"){
 		this.velocity.x += Enemy_RUN_VELOCITY;
 		this.velocity.x += Enemy_RUN_VELOCITY;
 		this.changeAnimation("moving right");
@@ -141,7 +135,9 @@ Enemy.prototype.update = function(elapsedTime, input) {
 	}
 	*/
 
-	this.position.x += this.velocity.x;
+	this.levelPos.x += this.velocity.x;
+	this.levelPos.y += this.velocity.y;
+	this.screenPos.y += this.velocity.y;
 	//this.position.y += this.velocity.y;
 	
 	
@@ -163,31 +159,40 @@ Enemy.prototype.update = function(elapsedTime, input) {
 		this.animationCounter = 0;
 		}
   }
+   for (var i = 0 ; i < this.enemyFire.length ; i++)
+  {
+	  this.enemyFire[i].update();
+	  
+	  //remove the shot at this condtion, it could be hitting an opject or going out of the screen
+	  if (this.enemyFire[i].timer>40)
+	  {
+		  
+		  this.enemyFire.splice(i,1);
+		  i--;
+	  }
+  }
+  this.lazerCooldown--;
+  if(this.reticulePosition.fire==true){
+	  var direction = Vector.subtract(
+      {x:this.reticulePosition.x,y:this.reticulePosition.y},
+      Vector.subtract(this.levelPos,this.screenPos)
+    );
+	  this.fire(direction,this.enemyFire);
+	  this.reticulePosition.fire=false;
+  }
+	  
   
-  
- 
-  this.send = {x: this.position.x, y: this.position.y, direction: 'none',
-	sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter,sy:this.yPlaceInImage,
-	swidth:this.spirteWidth,sheight:this.spirteHeight,width:this.widthInGame,
-	height:this.heightInGame};
+this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
+sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
+swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
+height:this.heightInGame, animation:this.animationCounter,
+velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire};
 }
 
-/**
- * @function render
- * Renders the Enemy helicopter in world coordinates
- * @param {DOMHighResTimeStamp} elapsedTime
- * @param {CanvasRenderingContext2D} ctx
- 
-Enemy.prototype.render = function(elapasedTime, ctx) {
-   ctx.drawImage( this.img,this.xPlaceInImage+this.spirteWidth*this.animationCounter , 
-   this.yPlaceInImage, this.spirteWidth,this.spirteHeight, 
-   this.position.x, this.position.y, this.widthInGame,this.heightInGame);
-   this.xPlaceInImage=0;
-}
- */
- 
+
 Enemy.prototype.changeAnimation = function(x)
 {
+
 	this.animation = x;
 	if (this.animation == "stand still")
 	{
@@ -286,32 +291,32 @@ Enemy.prototype.changeAnimation = function(x)
 		}
 		
 	}
-	
 }
-
 Enemy.prototype.fire = function(direction,enemyFire)
 {
 	
 	 var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
 	 
+	 
 	 if ( this.lazerCooldown<1)
   {
-	  
-	  var p = Vector.add(this.position, {x:0, y:0});
+	  this.woo=true;
+	  var p = Vector.add(this.levelPos, {x:0, y:0});
 	  var laz = new EnemyFire(p,"left","lazer");
 	 // if (this.facing == "right")
-	  {
+	  //{
 		   //p.x += this.widthInGame;
 		   laz =  new EnemyFire(p,velocity);
-	  }
+	  //}
 		 
 	 
 	  
-	  enemyFire.push(laz);
+	  this.enemyFire.push(laz);
 	  
 	  this.lazerCooldown = 15;
 	  
   }
+  
 }
 
 
