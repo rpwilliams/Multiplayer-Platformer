@@ -231,6 +231,17 @@ else{
   ctx.restore();
    
    }
+
+  // Indicate if player 1 won the game by reaching the end
+  if(players.current.wonGame)
+  {
+    console.log("Player 1 won!");
+    ctx.fillStyle = 'white';
+    ctx.font="20px Verdana";
+    ctx.fillText('Player 1 wins!', players.current.screenPos.x - 100, players.current.screenPos.y - 100);
+    // TO DO: Fix this so player 2 also sees "player 1 won"
+    // ctx.fillText('Player 1 won!', players.other.screenPos.x - 100, players.other.levelPos.y - 100);
+  }
   ctx.restore();
 }
 

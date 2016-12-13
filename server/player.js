@@ -212,23 +212,18 @@ Player.prototype.changeAnimation = function(x)
 			case "moving up":
 				this.animationCounter=0;
 				//this.xPlaceInImage =this.spriteWidth*7;
-
 			break;
-
 			case "moving down":
-  			this.yPlaceInImage =this.spriteHeight*0;
-  			break;
-
+  				this.yPlaceInImage =this.spriteHeight*0;
+  				break;
 			case "moving left":
-
-				  if(this.jumping==false && this.falling==false){
-            this.yPlaceInImage =this.spriteHeight*1;
-
-          }
-			     break;
+				if(this.jumping==false && this.falling==false){
+            		this.yPlaceInImage =this.spriteHeight*1;
+          		}
+				break;
 			case "moving right":
-			this.yPlaceInImage =this.spriteHeight*0;
-			break;
+				this.yPlaceInImage =this.spriteHeight*0;
+				break;
 		}
 	}
 }
