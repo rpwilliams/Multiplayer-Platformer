@@ -70,12 +70,19 @@ HidingObjects.prototype.add = function(pos, t)
 }
 
 HidingObjects.prototype.update = function(player, newTime)
-{
+{	
 	// Check for player collision with each object
 	for(var i = 0; i < this.length; i++)
 	{
+		// Adjust y hitbox for cabinets
+		var yOffset = 0;
+		if(this.objects[i].type == 5)
+		{
+			yOffset = 60;
+		}
+		
 		if (player.levelPos.x > (this.objects[i].position.x - 35) && player.levelPos.x < (this.objects[i].position.x + 50) 
-			&& player.levelPos.y <= (this.objects[i].position.y) && player.levelPos.y > (this.objects[i].position.y - 60))
+			&& player.levelPos.y <= (this.objects[i].position.y + yOffset) && player.levelPos.y > (this.objects[i].position.y - 60 + yOffset))
 		{
 			// Check if pressing 'down' to hide
 			if (player.direction == 'down')
