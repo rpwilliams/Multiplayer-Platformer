@@ -19,8 +19,12 @@ function Game(io, sockets, room) {
   this.room = room;
   this.state = new Uint8Array(WIDTH * HEIGHT);
   this.time = Date.now();
+<<<<<<< HEAD
+  
+=======
   this.enemyFire = [];
   this.enemyBombs = [];
+>>>>>>> origin/Enemy2Server
   this.players = [];
   this.hidingObjects = new HidingObjects();
 
@@ -53,7 +57,7 @@ function Game(io, sockets, room) {
 	player.socket.on('fire',function(reticulePosition){
 		player.reticulePosition = reticulePosition;
 	});
-	
+
     //return player;
   });
 
@@ -109,7 +113,10 @@ Game.prototype.update = function(newTime) {
     //   clearInterval(interval);
     // }
   });
+<<<<<<< HEAD
+=======
   
+  //update fire 
   for (var i = 0 ; i < this.enemyFire.length ; i++)
   {
 	  this.enemyFire[i].update();
@@ -122,6 +129,7 @@ Game.prototype.update = function(newTime) {
 	  }
   }
   
+>>>>>>> origin/Enemy2Server
   // Broadcast updated game state
   // io.to(room).emit('move', {
   //   player: this.players[0].send,

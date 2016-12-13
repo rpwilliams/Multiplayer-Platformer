@@ -42,7 +42,8 @@ hidingObjImages[6].src = 'Cabinet2.png'; // Cabinet2
 var reticule = {
   x: 0,
   y: 0,
-  fire:false
+  fire:false,
+  canvas: canvas
 }
 /**
  * @function onmousemove
@@ -206,9 +207,27 @@ function renderPlayers(players, ctx) {
   ctx.drawImage( images[3],players.other.sx ,
    players.other.sy, players.other.swidth, players.other.sheight,
    players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);   
+	
+	for (var i = 0 ; i < players.other.enemyFire.length ; i++)
+  {
+	  console.log("ok");
+	  console.log(players.other.enemyFire);
+	  ctx.save();
+	  //ctx.translate(players.other.enemyFire[i].position.x+(Math.abs(players.other.enemyFire[i].position.x-players.other.enemyFire[i].levelPos.x)), players.other.enemyFire[i].position.y);
+		ctx.translate(players.other.enemyFire[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.other.enemyFire[i].position.y)
+	  ctx.fillStyle = "violet";
+
+	  ctx.rotate(-players.other.enemyFire[i].angle);
+	  ctx.fillRect(0,0, players.other.enemyFire[i].width, players.other.enemyFire[i].height*3);
+	  
+	  
+	  ctx.restore();
+	 
   }
+
+ }
 else{
-	console.log(players.current);
+	console.log(players.current.woo);
 	ctx.drawImage( images[3],players.current.sx ,
 	   players.current.sy, players.current.swidth, players.current.sheight,
 	   players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
@@ -230,8 +249,21 @@ else{
   ctx.stroke();
   ctx.restore();
    
-   }
+   
+for (var i = 0 ; i < players.current.enemyFire.length ; i++)
+  {
+	  ctx.save();
+	  ctx.translate(players.current.enemyFire[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.current.enemyFire[i].position.y);
+		
+	  ctx.fillStyle = "violet";
 
+	  ctx.rotate(-players.current.enemyFire[i].angle);
+	  ctx.fillRect(0,0, players.current.enemyFire[i].width, players.current.enemyFire[i].height*3);
+	 
+	  
+	  ctx.restore();
+  }
+}
   // Indicate if player 1 won the game by reaching the end
   if(players.current.wonGame)
   {
