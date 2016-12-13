@@ -35,9 +35,9 @@ function Player(position,socket ) {
 	this.velocity = {x: 0, y: 0};
 	this.screenPos= {x: 512, y: position.y};
 	this.levelPos= {x: position.x, y: position.y};
-	this.direction = 'none'
+	this.direction = {left:false, down:false, right:false, up:false};
 	this.id='player';
-	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
+	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.direction,
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
@@ -69,19 +69,19 @@ Player.prototype.update = function() {
 	//track movment than change velocity and animation
 	if (this.jumping==false && this.falling==false)
 	{
-		if(this.direction=="left"){
+		if(this.direction.left){
 			this.velocity.x = -PLAYER_RUN_VELOCITY;
 			// this.velocity.x -= PLAYER_RUN_VELOCITY;
 			this.changeAnimation("moving left");
 			this.facing = "left";
 		}
-		else if(this.direction=="right"){
+		else if(this.direction.right){
 			this.velocity.x = PLAYER_RUN_VELOCITY;
 			// this.velocity.x += PLAYER_RUN_VELOCITY;
 			this.changeAnimation("moving right");
 			this.facing = "right";
 		}
-    	else if(this.direction=="none"){
+    	else if(!this.direction.right && !this.direction.left){
 			//this.velocity.x += PLAYER_RUN_VELOCITY;
 			this.velocity.x = 0;
 			this.changeAnimation("stand still");
@@ -101,7 +101,7 @@ Player.prototype.update = function() {
 	// if(this.velocity.x < -PLAYER_RUN_MAX) this.velocity.x=-PLAYER_RUN_MAX;
 	// if(this.velocity.x > PLAYER_RUN_MAX) this.velocity.x=PLAYER_RUN_MAX;
 
-	if(this.direction=="up" && this.jumping==false && this.falling==false) {
+	if(this.direction.up && this.jumping==false && this.falling==false) {
 		this.velocity.y -= PLAYER_JUMP_SPEED;
 		this.jumping=true;
 
@@ -115,13 +115,13 @@ Player.prototype.update = function() {
 		}
 		if (this.facing=="left")
 		{
-			if(this.direction=="right" && this.velocity.x!=0){
+			if(this.direction.right && this.velocity.x!=0){
 				this.velocity.x += PLAYER_JUMP_BREAK_VELOCITY;
 			}
 		}
 		else if (this.facing=="right")
 		{
-			if(this.direction=="left" && this.velocity.x!=0){
+			if(this.direction.left && this.velocity.x!=0){
 				this.velocity.x -= PLAYER_JUMP_BREAK_VELOCITY;
 			}
 			
@@ -179,7 +179,7 @@ Player.prototype.update = function() {
     	//console.log('Player 1 wins!');
   	}
 
-	this.send = { levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
+	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.direction,
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,

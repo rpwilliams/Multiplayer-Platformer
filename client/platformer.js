@@ -118,22 +118,22 @@ window.onload = function() {
       case 38:
       case 32:
       case 87:
-        socket.emit('steer', 'up');
+        socket.emit('keyDown', {left:false, down:false, right:false, up:true});
         break;
       // LEFT
       case 37:
       case 65:
-        socket.emit('steer', 'left');
+        socket.emit('keyDown', {left:true, down:false, right:false, up:false});
         break;
       // RIGHT
       case 39:
       case 68:
-        socket.emit('steer', 'right');
+        socket.emit('keyDown', {left:false, down:false, right:true, up:false});
         break;
       // DOWN
       case 40:
       case 83:
-        socket.emit('steer', 'down');
+        socket.emit('keyDown', {left:false, down:true, right:false, up:false});
         break;
     }
   }
@@ -141,16 +141,26 @@ window.onload = function() {
   window.onkeyup = function(event) {
     event.preventDefault();
     switch(event.keyCode) {
+      // UP
       case 38:
-      case 87:
       case 32:
+      case 87:
+        socket.emit('keyUp', {left:true, down:true, right:true, up:false});
+        break;
+      // LEFT
       case 37:
       case 65:
+        socket.emit('keyUp', {left:false, down:true, right:true, up:true});
+        break;
+      // RIGHT
       case 39:
       case 68:
+        socket.emit('keyUp', {left:true, down:true, right:false, up:true});
+        break;
+      // DOWN
       case 40:
       case 83:
-        socket.emit('steer', 'none');
+        socket.emit('keyUp', {left:true, down:false, right:true, up:true});
         break;
     }
   }
@@ -279,7 +289,8 @@ for (var i = 0 ; i < players.current.enemyFire.length ; i++)
 function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 {
   // Draw the canvas backgrounds
-  if((players.current.direction == 'none' || players.other.direction == 'none') && renderDelayedObjs == false) {
+  if(((!players.current.direction.left && !players.current.direction.down && !players.current.direction.right && !players.current.direction.up) ||
+        (!players.other.direction.left && !players.other.direction.down && !players.other.direction.right && !players.other.direction.up)) && renderDelayedObjs == false) {
     renderBackground(ctx, players.current);
   }
 	

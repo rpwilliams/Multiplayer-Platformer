@@ -47,9 +47,21 @@ function Game(io, sockets, room) {
     });
 
     // Handle steering events
-    player.socket.on('steer', function(direction) {
-      player.direction = direction;
+    player.socket.on('keyDown', function(direction) {
+      player.direction.left = player.direction.left | direction.left;
+      player.direction.down = player.direction.down | direction.down;
+      player.direction.right = player.direction.right | direction.right;
+      player.direction.up = player.direction.up | direction.up;
     });
+
+    // Handle steering events
+    player.socket.on('keyUp', function(direction) {
+      player.direction.left = player.direction.left & direction.left;
+      player.direction.down = player.direction.down & direction.down;
+      player.direction.right = player.direction.right & direction.right;
+      player.direction.up = player.direction.up & direction.up;
+    });
+
 	player.socket.on('fire',function(reticulePosition){
 		player.reticulePosition = reticulePosition;
 	});

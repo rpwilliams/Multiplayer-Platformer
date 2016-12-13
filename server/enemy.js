@@ -25,54 +25,54 @@ module.exports = exports = Enemy;
  * Creates a player
  */
 function Enemy(position,socket ) {
-this.animationTimer = 0;
-this.animationCounter = 0;
-this.frameLength = 8;
-//animation dependent
-this.numberOfSprites = 0; // how man y frames are there in the animation
-this.spirteWidth = 42; // width of each frame
-this.spirteHeight = 23; // height of each frame
-this.widthInGame = 80;   
-this.heightInGame = 68;
-this.xPlaceInImage = 0; // this should CHANGE for the same animation
-this.yPlaceInImage = 0; // this should NOT change for the same animation
-this.animation = "stand still"; // this will keep track of the animation
-this.tookAstep = "no";
-this.stillHeight = this.spirteHeight;
-this.stillWidth = this.spirteWidth;
-this.stillWidthInGame = this.widthInGame;   
-this.stillHeightInGame = this.heightInGame;
-//while it is moving
-this.movingHeight = 32;
-this.movingWidth = 41;			
-this.movingWidthInGame = 80;   
-this.movingHeightInGame = 90;
-//this is used to make sure both movement feels to be in the same place in the screent 
-this.offPostion = 8;
-this.velocity = {x: 0, y: 0};
-this.screenPos= {x: 512, y: position.y};
-this.levelPos= {x: position.x, y: position.y};
-this.direction = 'none';
-this.enemyFire = [];
-this.enemyBombs = [];
-this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
-sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
-swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
-height:this.heightInGame, animation:this.animationCounter,
-velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire};
+	this.animationTimer = 0;
+	this.animationCounter = 0;
+	this.frameLength = 8;
+	//animation dependent
+	this.numberOfSprites = 0; // how man y frames are there in the animation
+	this.spirteWidth = 42; // width of each frame
+	this.spirteHeight = 23; // height of each frame
+	this.widthInGame = 80;   
+	this.heightInGame = 68;
+	this.xPlaceInImage = 0; // this should CHANGE for the same animation
+	this.yPlaceInImage = 0; // this should NOT change for the same animation
+	this.animation = "stand still"; // this will keep track of the animation
+	this.tookAstep = "no";
+	this.stillHeight = this.spirteHeight;
+	this.stillWidth = this.spirteWidth;
+	this.stillWidthInGame = this.widthInGame;   
+	this.stillHeightInGame = this.heightInGame;
+	//while it is moving
+	this.movingHeight = 32;
+	this.movingWidth = 41;			
+	this.movingWidthInGame = 80;   
+	this.movingHeightInGame = 90;
+	//this is used to make sure both movement feels to be in the same place in the screent 
+	this.offPostion = 8;
+	this.velocity = {x: 0, y: 0};
+	this.screenPos= {x: 512, y: position.y};
+	this.levelPos= {x: position.x, y: position.y};
+	this.direction = {left:false, down:false, right:false, up:false};
+	this.enemyFire = [];
+	this.enemyBombs = [];
+	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.direction,
+	sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
+	swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
+	height:this.heightInGame, animation:this.animationCounter,
+	velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire};
 
-this.socket = socket;
+	this.socket = socket;
 
-this.reticulePosition = {x:0,y:0,fire:false};
-this.jumping = false;
-this.falling=false;
-this.crouching = "no";
-this.floorYPostion = 610;
-this.jumpingTime = 0;
-this.facing = "left";
-this.lazerCooldown=0;
+	this.reticulePosition = {x:0,y:0,fire:false};
+	this.jumping = false;
+	this.falling=false;
+	this.crouching = "no";
+	this.floorYPostion = 610;
+	this.jumpingTime = 0;
+	this.facing = "left";
+	this.lazerCooldown=0;
 
-this.woo=false;
+	this.woo=false;
 }
 
 
@@ -85,7 +85,7 @@ this.woo=false;
  * boolean properties: up, left, right, down
  */
 Enemy.prototype.update = function() {
-if(this.direction =="left"){
+if(this.direction.left){
 		//if (!input.down)
 		{
 			this.velocity.x -= Enemy_RUN_VELOCITY;
@@ -97,7 +97,7 @@ if(this.direction =="left"){
 		}
 					
 	}
-	else if(this.direction =="right"){
+	else if(this.direction.right){
 		this.velocity.x += Enemy_RUN_VELOCITY;
 		this.velocity.x += Enemy_RUN_VELOCITY;
 		this.changeAnimation("moving right");
@@ -184,11 +184,11 @@ if(this.direction =="left"){
   }
 	  
   
-this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: 'none',
-sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
-swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
-height:this.heightInGame, animation:this.animationCounter,
-velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire};
+	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.direction,
+	sx:this.xPlaceInImage+this.spirteWidth*this.animationCounter, sy:this.yPlaceInImage,
+	swidth:this.spirteWidth, sheight:this.spirteHeight, width:this.widthInGame,
+	height:this.heightInGame, animation:this.animationCounter,
+	velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire};
 }
 
 

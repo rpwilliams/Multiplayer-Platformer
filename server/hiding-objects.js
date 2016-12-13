@@ -85,7 +85,7 @@ HidingObjects.prototype.update = function(player, newTime)
 			&& player.levelPos.y <= (this.objects[i].position.y + yOffset) && player.levelPos.y > (this.objects[i].position.y - 60 + yOffset))
 		{
 			// Check if pressing 'down' to hide
-			if (player.direction == 'down')
+			if (player.direction.down)
 			{
 				this.objects[i].displayArrow = false;
 				this.objects[i].delayRender = true;
