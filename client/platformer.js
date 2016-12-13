@@ -265,14 +265,13 @@ for (var i = 0 ; i < players.current.enemyFire.length ; i++)
   }
 }
   // Indicate if player 1 won the game by reaching the end
-  if(players.current.wonGame)
+  if(players.current.wonGame || players.other.wonGame)
   {
-    console.log("Player 1 won!");
+	console.log("Player 1 won!");
     ctx.fillStyle = 'white';
-    ctx.font="20px Verdana";
-    ctx.fillText('Player 1 wins!', players.current.screenPos.x - 100, players.current.screenPos.y - 100);
-    // TO DO: Fix this so player 2 also sees "player 1 won"
-    // ctx.fillText('Player 1 won!', players.other.screenPos.x - 100, players.other.levelPos.y - 100);
+    ctx.font="40px Verdana";
+	ctx.fontWeight = 'bolder';
+    ctx.fillText('Player 1 wins!', players.current.screenPos.x - 125, players.current.screenPos.y - 350);
   }
   ctx.restore();
 }
@@ -291,7 +290,7 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 	  // Render objects not being used to hide behind
 	  if(renderDelayedObjs == false)
 	  {
-		  if(hidingObjects.objects[i].delayRender == false)
+		  if(hidingObjects.objects[i].delayRender == false && hidingObjects.objects[i].render)
 		  {
 			ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
 			hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type].width * 2, hidingObjImages[hidingObjects.objects[i].type].height * 2); 
@@ -300,7 +299,7 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 	  // Now render those being hid behind
 	  else
 	  {
-		  if(hidingObjects.objects[i].delayRender == true)
+		  if(hidingObjects.objects[i].delayRender == true && hidingObjects.objects[i].render)
 		  {
 			ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
 			hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type ].width * 2, hidingObjImages[hidingObjects.objects[i].type].height * 2); 
@@ -308,7 +307,7 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 	  }
 	  
 	 // Display animated down arrow if on top of a object that can be hid behind
-	 if(hidingObjects.objects[i].displayArrow == true)
+	 if(hidingObjects.objects[i].displayArrow == true  && hidingObjects.objects[i].render)
 	{
 		ctx.drawImage(hidingObjImages[0],hidingObjects.arrowFrame * 130, 0, 128, 175,  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x) + 16, hidingObjects.objects[i].position.y - 95, 30, 45);
 	}
