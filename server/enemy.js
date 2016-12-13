@@ -177,7 +177,7 @@ if(this.direction =="left"){
 	  var camera = new Camera(this.reticulePosition.canvas);
 	  var direction = Vector.subtract(
       {x:this.reticulePosition.x,y:this.reticulePosition.y},
-      camera.toScreenCoordinates(this.levelPos));
+      camera.toScreenCoordinates(this.screenPos));
       this.woo = camera;
 	  this.fire(direction,this.enemyFire);
 	  this.reticulePosition.fire=false;

@@ -252,9 +252,11 @@ else{
 
 	  ctx.rotate(-players.current.enemyFire[i].angle);
 	  ctx.fillRect(0,0, players.current.enemyFire[i].width, players.current.enemyFire[i].height*3);
-	  
+	 
 	  
 	  ctx.restore();
+	   ctx.fillText('screen: (' + Math.floor(players.current.enemyFire[i].position.x)+ ',' + Math.floor(players.current.enemyFire[i].position.y) + ')', players.current.enemyFire[i].position.x, players.current.enemyFire[i].position.y);  
+  
   }
    }
    
