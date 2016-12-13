@@ -7,6 +7,7 @@ function SingleObject(pos, t)
 {
 	this.position = pos;
 	this.type = t;
+	this.render = true;
 	this.delayRender = false;
 	this.displayArrow = false;
 }
