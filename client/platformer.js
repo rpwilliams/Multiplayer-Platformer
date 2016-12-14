@@ -17,7 +17,7 @@ var images = [
 ];
 
 images[0].src = 'level.png'; // Background
-images[1].src = 'stars.png'; // Foreground
+images[1].src = 'stars.jpg'; // Foreground
 images[2].src = 'fumiko2.png';  // Player
 images[3].src = 'Enemy_Ship.png'; // enemy
 
@@ -197,10 +197,7 @@ function renderBackground(ctx, current) {
 }
 
 function renderPlayers(players, ctx) {
-  //console.log(players.player);
-  //ctx.fillRect(players.player.x, players.player.y, 5, 5);
   ctx.save();
-  // ctx.translate(-camera_position.x, players.player.y);
   ctx.fillStyle = 'white';
   ctx.font="20px Verdana";
   ctx.fillText('level: (' + Math.floor(players.current.levelPos.x) + ',' + Math.floor(players.current.levelPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 30);
@@ -208,6 +205,22 @@ function renderPlayers(players, ctx) {
   ctx.fillText('level: (' + Math.floor(players.other.levelPos.x) + ',' + Math.floor(players.other.levelPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 30);
   ctx.fillText('screen: (' + Math.floor(players.other.screenPos.x)+ ',' + Math.floor(players.other.screenPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 10);  
   if(players.current.id=='player') {
+    for (var i = 0 ; i < players.other.enemyFire.length ; i++)
+    {
+      console.log("ok");
+      console.log(players.other.enemyFire);
+      ctx.save();
+      //ctx.translate(players.other.enemyFire[i].position.x+(Math.abs(players.other.enemyFire[i].position.x-players.other.enemyFire[i].levelPos.x)), players.other.enemyFire[i].position.y);
+      ctx.translate(players.other.enemyFire[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.other.enemyFire[i].position.y)
+      ctx.fillStyle = "violet";
+
+      ctx.rotate(-players.other.enemyFire[i].angle);
+      ctx.fillRect(0,0, players.other.enemyFire[i].width, players.other.enemyFire[i].height*3);
+      
+      
+      ctx.restore();
+    
+    }
 	  // Draw current player's sprite
 	  ctx.drawImage( images[2],players.current.sx ,
 	   players.current.sy, players.current.swidth, players.current.sheight,
@@ -218,25 +231,22 @@ function renderPlayers(players, ctx) {
    players.other.sy, players.other.swidth, players.other.sheight,
    players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y, players.other.width, players.other.height);   
 	
-	for (var i = 0 ; i < players.other.enemyFire.length ; i++)
-  {
-	  console.log("ok");
-	  console.log(players.other.enemyFire);
-	  ctx.save();
-	  //ctx.translate(players.other.enemyFire[i].position.x+(Math.abs(players.other.enemyFire[i].position.x-players.other.enemyFire[i].levelPos.x)), players.other.enemyFire[i].position.y);
-		ctx.translate(players.other.enemyFire[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.other.enemyFire[i].position.y)
-	  ctx.fillStyle = "violet";
-
-	  ctx.rotate(-players.other.enemyFire[i].angle);
-	  ctx.fillRect(0,0, players.other.enemyFire[i].width, players.other.enemyFire[i].height*3);
-	  
-	  
-	  ctx.restore();
-	 
-  }
 
  }
 else{
+for (var i = 0 ; i < players.current.enemyFire.length ; i++)
+  {
+	  ctx.save();
+	  ctx.translate(players.current.enemyFire[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.current.enemyFire[i].position.y);
+		
+	  ctx.fillStyle = "violet";
+
+	  ctx.rotate(-players.current.enemyFire[i].angle);
+	  ctx.fillRect(0,0, players.current.enemyFire[i].width, players.current.enemyFire[i].height*3);
+	 
+	  
+	  ctx.restore();
+  }
 	console.log(players.current.woo);
 	ctx.drawImage( images[3],players.current.sx ,
 	   players.current.sy, players.current.swidth, players.current.sheight,
@@ -260,19 +270,6 @@ else{
   ctx.restore();
    
    
-for (var i = 0 ; i < players.current.enemyFire.length ; i++)
-  {
-	  ctx.save();
-	  ctx.translate(players.current.enemyFire[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.current.enemyFire[i].position.y);
-		
-	  ctx.fillStyle = "violet";
-
-	  ctx.rotate(-players.current.enemyFire[i].angle);
-	  ctx.fillRect(0,0, players.current.enemyFire[i].width, players.current.enemyFire[i].height*3);
-	 
-	  
-	  ctx.restore();
-  }
 }
   // Indicate if player 1 won the game by reaching the end
   if(players.current.wonGame || players.other.wonGame)

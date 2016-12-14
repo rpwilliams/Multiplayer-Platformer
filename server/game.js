@@ -31,7 +31,7 @@ function Game(io, sockets, room) {
   ));
 
   this.players.push(new Enemy(
-    {x: 700, y: 610},
+    {x: 10900, y: 100},
     sockets[1]
   ));
 

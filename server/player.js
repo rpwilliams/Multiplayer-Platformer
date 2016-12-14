@@ -7,6 +7,7 @@ var PLAYER_RUN_MAX = 3;
 var PLAYER_FALL_VELOCITY = 0.25;
 var PLAYER_JUMP_SPEED = 6;
 var PLAYER_JUMP_BREAK_VELOCITY= 0.10;
+const LEVEL_LENGTH = 11229;
 
 /**
  * @module exports the Player class
@@ -36,8 +37,9 @@ function Player(position,socket ) {
 	this.screenPos= {x: 512, y: position.y};
 	this.levelPos= {x: position.x, y: position.y};
 	this.direction = {left:false, down:false, right:false, up:false};
+	this.noDir = {left:false, down:false, right:false, up:false};
 	this.id='player';
-	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.direction,
+	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
@@ -134,7 +136,6 @@ Player.prototype.update = function() {
 			//this.velocity.x=0; // HAVE THE PLAYER STOP ALL MOMENTUM WHEN HIT GROUND
 			this.jumping = false;
 			this.falling=false;
-			//this.animation="stand still";
 		}
 	}
 	/*
@@ -146,9 +147,28 @@ Player.prototype.update = function() {
 		this.levelPos.x += this.velocity.x;
 		this.levelPos.y += this.velocity.y;
 		this.screenPos.y += this.velocity.y;
+
+		// Prevent player from walking off screen
+		if(this.levelPos.x <= 0){
+			this.levelPos.x = 0;
+		}
+		else if(this.levelPos.x >= LEVEL_LENGTH - this.widthInGame){
+			this.levelPos.x = LEVEL_LENGTH - this.widthInGame;
+		}
+
+		// Prevent background from moving too far
+		if(this.levelPos.x <= 512 ){
+			this.screenPos.x = this.levelPos.x;
+		}
+		else if(this.levelPos.x >= LEVEL_LENGTH - 512){
+			this.screenPos.x = 1024 - (LEVEL_LENGTH - this.levelPos.x);
+		}
+		else{
+			this.screenPos.x = 512;
+		}
+
 	}
 
-	//if (!(this.animation=="stand still" && this.tookAstep=="yes"))
 	this.animationTimer++;
 	if (this.animationTimer>this.frameLength)
 	{
@@ -179,7 +199,7 @@ Player.prototype.update = function() {
     	//console.log('Player 1 wins!');
   	}
 
-	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.direction,
+	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
@@ -191,22 +211,13 @@ Player.prototype.changeAnimation = function(x)
 {
 
 	this.animation = x;
-	if (this.animation == "stand still")
-	{
-		//if (animationTimer == 0)
-		//{
-			this.numberOfSprites = 0;
-		    this.animationTimer = 0;
-			this.animationCounter = 0;
-			this.tookAstep = "yes";
-		//}
-
-
+	if (this.animation == "stand still"){
+		this.numberOfSprites = 0;
+		this.animationTimer = 0;
+		this.animationCounter = 0;
 	}
-	else
-	{
+	else{
 		this.numberOfSprites = 5;
-		//tookAstep = "no";
 		switch(this.animation)
 		{
 			case "moving up":
