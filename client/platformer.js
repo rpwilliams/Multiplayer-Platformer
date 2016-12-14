@@ -264,7 +264,12 @@ function renderPlayers(players, ctx) {
     ctx.fillStyle = 'white';
     ctx.font="40px Verdana";
     ctx.fontWeight = 'bolder';
-    ctx.fillText('Player 1 wins!', players.current.screenPos.x - 125, players.current.screenPos.y - 350);
+    // Get the center of the screen
+    var midpoint = rectangleMidpoint(0, 0, canvas.width, canvas.height);
+    var X_OFFSET = 100;
+    // Subtract the midpoint by half of the number of letters of the message
+    // so that the text appears in the center of the midpoint.
+    ctx.fillText('Player 1 wins!', midpoint.x - X_OFFSET, midpoint.y);
   }
   ctx.restore();
 }
@@ -306,4 +311,17 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
     }
   }
   ctx.restore();
+}
+
+/*
+ * @function midpoint()
+ * Calculates the midpoint of a rectangle
+ * Used to get the center of the screen
+ */
+function rectangleMidpoint(x1, y1, x2, y2)
+{
+  var midpoint = { x: 0, y: 0};
+  midpoint.x = (x1 + x2)/2;
+  midpoint.y = (y1 + y2)/2;
+  return midpoint;
 }
