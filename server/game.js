@@ -136,6 +136,17 @@ Game.prototype.update = function(newTime) {
 	}
   }
   
+    // Check for projectile collisions with the player
+	for (var i = 0 ; i < this.players[1].enemyFire.length; i++)
+	{
+		if (this.players[1].enemyFire[i].position.x > this.players[0].levelPos.x - 15 && this.players[1].enemyFire[i].position.x < (this.players[0].levelPos.x + 50)
+			&& this.players[1].enemyFire[i].position.y > this.players[0].levelPos.y  - 15 && this.players[1].enemyFire[i].position.y < this.players[0].levelPos.y + 75)			
+		{
+		    this.players[1].enemyFire.splice(i,1);
+			i--;
+		}
+	}
+  
   // Broadcast updated game state
   // io.to(room).emit('move', {
   //   player: this.players[0].send,
