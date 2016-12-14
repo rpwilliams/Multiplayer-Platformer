@@ -18,13 +18,13 @@ images[2].src = 'player.png';  // Player
 images[3].src = 'Enemy_Ship.png'; // enemy
 
 var hidingObjImages = [
-new Image(),
-new Image(),
-new Image(),
-new Image(),
-new Image(),
-new Image(),
-new Image()
+  new Image(),
+  new Image(),
+  new Image(),
+  new Image(),
+  new Image(),
+  new Image(),
+  new Image()
 ];
 
 hidingObjImages[0].src = 'hiding_objects/DownArrow.png'; // Down arrow above hiding objects
@@ -70,11 +70,7 @@ window.onload = function() {
 
   // Handle movement updates from the server
   socket.on('render', function(players, hidingObjects){
-	
-    // Render the normal objects, followed by the player and then the objects that the player is hiding behind
-    renderHidingObjects(players, hidingObjects, ctx, false);
-    renderPlayers(players, ctx);
-    renderHidingObjects(players, hidingObjects, ctx, true);
+    init(players, hidingObjects, ctx);
   });
 
   // Handle game on events
@@ -174,7 +170,20 @@ window.onload = function() {
 }
 
 /**
-  * @function renderBackground
+  * @function init()
+  * Initializes the game, with the player at the beginning of the map and
+  * the enemy at the end of the map.
+  */
+function init(players, hidingObjects, ctx)
+{
+    // Render the normal objects, followed by the player and then the objects that the player is hiding behind
+    renderHidingObjects(players, hidingObjects, ctx, false);
+    renderPlayers(players, ctx);
+    renderHidingObjects(players, hidingObjects, ctx, true);
+}
+
+/**
+  * @function renderBackground()
   * Renders the background (stars) and the foreground (the space station)
   * @param ctx: the canvas context to be drawn to
   */
@@ -194,11 +203,11 @@ function renderBackground(ctx, current) {
 }
 
 /**
-    * @function renderPlayer
-    * Renders the player, enemy, and win message
-    * @param players: the player and enemy
-    * @param ctx: the canvas context to be drawn to
-    */
+  * @function renderPlayer
+  * Renders the player, enemy, and win message
+  * @param players: the player and enemy
+  * @param ctx: the canvas context to be drawn to
+  */
 function renderPlayers(players, ctx) {
 
   // Render debug information. TODO: Remove
@@ -283,10 +292,14 @@ function renderPlayers(players, ctx) {
     ctx.fontWeight = 'bolder';
     // Get the center of the screen
     var midpoint = rectangleMidpoint(0, 0, canvas.width, canvas.height);
-    var X_OFFSET = 100;
+    var X_OFFSET_1 = 100;
+    var X_OFFSET_2 = 115;
+    var Y_OFFSET = 50;
     // Subtract the midpoint by half of the number of letters of the message
     // so that the text appears in the center of the midpoint.
-    ctx.fillText('Player 1 wins!', midpoint.x - X_OFFSET, midpoint.y);
+    ctx.fillText('Player 1 wins!', midpoint.x - X_OFFSET_1, midpoint.y);
+    ctx.font="20px Verdana";
+    ctx.fillText('Press space to play again', midpoint.x - X_OFFSET_2, midpoint.y + Y_OFFSET);
   }
   else if(players.other.wonGame)
   {
