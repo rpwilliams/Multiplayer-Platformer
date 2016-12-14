@@ -1,12 +1,19 @@
 "use strict";
 
-/* Constants */
+/* 
+	Constants 
+	We made these "var" instead of "const" because node.js is 
+	outdated on the lab computers
+	*/
 var PLAYER_RUN_VELOCITY = 4;
 var PLAYER_RUN_SPEED = 5;
 var PLAYER_RUN_MAX = 3;
 var PLAYER_FALL_VELOCITY = 0.5;
 var PLAYER_JUMP_SPEED = 10;
 var PLAYER_JUMP_BREAK_VELOCITY= 0.10;
+var PLAYER_WON_GAME_X_POS = 111000;
+var SCREEN_POS_X = 512;
+var FLOOR_Y_POS = 610;
 const LEVEL_LENGTH = 11229;
 
 /**
@@ -49,7 +56,7 @@ function Player(position,socket ) {
 	this.jumping = false;
 	this.falling=false;
 	this.crouching = "no";
-	this.floorYPostion = 610;// TODO: magic numbers
+	this.floorYPostion = FLOOR_Y_POS;
 	this.jumpingTime = 0;
 	this.facing = "left";
 	this.wonGame = false;
@@ -141,14 +148,14 @@ Player.prototype.update = function() {
 	}
 
 	// Prevent background from moving too far
-	if(this.levelPos.x <= 512 ){// TODO: magic numbers
+	if(this.levelPos.x <= SCREEN_POS_X ){
 		this.screenPos.x = this.levelPos.x;
 	}
 	else if(this.levelPos.x >= LEVEL_LENGTH - 512){// TODO: magic numbers
 		this.screenPos.x = 1024 - (LEVEL_LENGTH - this.levelPos.x);// TODO: magic numbers
 	}
 	else{
-		this.screenPos.x = 512;// TODO: magic numbers
+		this.screenPos.x = SCREEN_POS_X;
 	}
 
 
@@ -176,7 +183,7 @@ Player.prototype.update = function() {
 	else this.xPlaceInImage = 0;
 
 	// Check if player 1 won the game
-	if(Math.floor(this.levelPos.x) > 11100)// TODO: magic numbers
+	if(Math.floor(this.levelPos.x) > PLAYER_WON_GAME_X_POS)// TODO: magic numbers
 	{
 		this.wonGame = true;
   	}
