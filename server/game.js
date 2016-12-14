@@ -19,8 +19,8 @@ function Game(io, sockets, room) {
   this.room = room;
   this.state = new Uint8Array(WIDTH * HEIGHT);
   this.time = Date.now();
-  this.enemyFire = [];
-  this.enemyBombs = [];
+  this.enemyFire = []; // Not sure we're even using this since it's already a property of the enemy class 
+  this.enemyBombs = []; // Same goes for this
   this.players = [];
   this.hidingObjects = new HidingObjects();
 
@@ -121,17 +121,19 @@ Game.prototype.update = function(newTime) {
     //   clearInterval(interval);
     // }
   });
-  
-  for (var i = 0 ; i < this.enemyFire.length ; i++)
+		
+  // Check for projectile collisions with hiding objects
+  for (var j = 0; j < this.hidingObjects.length; j++)
   {
-	  this.enemyFire[i].update();
-	  
-	  //remove the shot at this condtion, it could be hitting an opject or going out of the screen
-	  if (this.enemyFire[i].timer>40)
-	  {
-		  this.enemyFire.splice(i,1);
-		  i--;
-	  }
+	for (var i = 0 ; i < this.players[1].enemyFire.length; i++)
+	{
+		if (this.players[1].enemyFire[i].position.x > this.hidingObjects.objects[j].position.x - 25 && this.players[1].enemyFire[i].position.x < (this.hidingObjects.objects[j].position.x + 75)
+			&& this.players[1].enemyFire[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyFire[i].position.y < this.hidingObjects.objects[j].position.y + 75)			
+		{
+		    this.players[1].enemyFire.splice(i,1);
+			i--;
+		}
+	}
   }
   
   // Broadcast updated game state
