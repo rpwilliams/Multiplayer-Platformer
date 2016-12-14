@@ -38,7 +38,6 @@ function Enemy(position,socket ) {
 	this.xPlaceInImage = 0; // this should CHANGE for the same animation
 	this.yPlaceInImage = 0; // this should NOT change for the same animation
 	this.animation = "stand still"; // this will keep track of the animation
-	this.tookAstep = "no";
 	this.stillHeight = this.spriteHeight;
 	this.stillWidth = this.spriteWidth;
 	this.stillWidthInGame = this.widthInGame;   

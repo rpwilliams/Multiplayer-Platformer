@@ -1,11 +1,11 @@
 "use strict";
 
 /* Constants */
-var PLAYER_RUN_VELOCITY = 3;
+var PLAYER_RUN_VELOCITY = 4;
 var PLAYER_RUN_SPEED = 5;
 var PLAYER_RUN_MAX = 3;
-var PLAYER_FALL_VELOCITY = 0.25;
-var PLAYER_JUMP_SPEED = 6;
+var PLAYER_FALL_VELOCITY = 0.5;
+var PLAYER_JUMP_SPEED = 10;
 var PLAYER_JUMP_BREAK_VELOCITY= 0.10;
 const LEVEL_LENGTH = 11229;
 
@@ -32,13 +32,12 @@ function Player(position,socket ) {
 	this.xPlaceInImage = 0; // this should CHANGE for the same animation
 	this.yPlaceInImage = 0; // this should NOT change for the same animation
 	this.animation = "stand still"; // this will keep track of the animation
-	this.tookAstep = "no";
 	this.velocity = {x: 0, y: 0};
 	this.screenPos= {x: 512, y: position.y};
 	this.levelPos= {x: position.x, y: position.y};
 	this.direction = {left:false, down:false, right:false, up:false};
 	this.noDir = {left:false, down:false, right:false, up:false};
-	this.id='player';
+	this.id = 'player';
 	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
@@ -50,7 +49,7 @@ function Player(position,socket ) {
 	this.jumping = false;
 	this.falling=false;
 	this.crouching = "no";
-	this.floorYPostion = 610;
+	this.floorYPostion = 610;// TODO: magic numbers
 	this.jumpingTime = 0;
 	this.facing = "left";
 	this.wonGame = false;
@@ -66,123 +65,107 @@ function Player(position,socket ) {
  * boolean properties: up, left, right, down
  */
 Player.prototype.update = function() {
-// set the velocity
-	//this.velocity.x = 0;
-	//track movment than change velocity and animation
-	if (this.jumping==false && this.falling==false)
-	{
-		if(this.direction.left){
+	// Left key pressed
+	if(this.direction.left){
+		if(this.jumping || this.falling){
+			if(this.velocity.x > -PLAYER_RUN_VELOCITY){
+				this.velocity.x -= 0.2;// TODO: magic numbers
+			}
+		}
+		else{
 			this.velocity.x = -PLAYER_RUN_VELOCITY;
-			// this.velocity.x -= PLAYER_RUN_VELOCITY;
 			this.changeAnimation("moving left");
 			this.facing = "left";
 		}
-		else if(this.direction.right){
+	}
+
+	// Right key pressed
+	else if(this.direction.right){
+		if(this.jumping || this.falling){
+			if(this.velocity.x < PLAYER_RUN_VELOCITY){
+				this.velocity.x += 0.2;// TODO: magic numbers
+			}
+		}
+		else{
 			this.velocity.x = PLAYER_RUN_VELOCITY;
-			// this.velocity.x += PLAYER_RUN_VELOCITY;
 			this.changeAnimation("moving right");
 			this.facing = "right";
 		}
-    	else if(!this.direction.right && !this.direction.left){
-			//this.velocity.x += PLAYER_RUN_VELOCITY;
-			this.velocity.x = 0;
-			this.changeAnimation("stand still");
-		}
-		// else if(this.velocity.x>0) {
-		// 	this.velocity.x -=PLAYER_RUN_VELOCITY;
-		// }
-		// else if(this.velocity.x<0){
-		// 	this.velocity.x +=PLAYER_RUN_VELOCITY;
-		// }
 	}
-	else{
+
+	// Jumping or falling
+	if(this.jumping || this.falling){
 		this.changeAnimation("moving up");
-	}
-
-	// set a maximum run speed
-	// if(this.velocity.x < -PLAYER_RUN_MAX) this.velocity.x=-PLAYER_RUN_MAX;
-	// if(this.velocity.x > PLAYER_RUN_MAX) this.velocity.x=PLAYER_RUN_MAX;
-
-	if(this.direction.up && this.jumping==false && this.falling==false) {
-		this.velocity.y -= PLAYER_JUMP_SPEED;
-		this.jumping=true;
-
-		//this.jumpingTime+=elapsedTime;
-	}
-	else if(this.jumping==true || this.falling==true) {
 		this.velocity.y += PLAYER_FALL_VELOCITY;
-		if(this.velocity.y>0) {
+		if(this.velocity.y > 0){
 			this.jumping=false;
 			this.falling=true;
 		}
-		if (this.facing=="left")
-		{
-			if(this.direction.right && this.velocity.x!=0){
-				this.velocity.x += PLAYER_JUMP_BREAK_VELOCITY;
-			}
-		}
-		else if (this.facing=="right")
-		{
-			if(this.direction.left && this.velocity.x!=0){
-				this.velocity.x -= PLAYER_JUMP_BREAK_VELOCITY;
-			}
-			
-		}
+
+		// TODO: Change this once the tile interactions are working
 		if (this.levelPos.y > this.floorYPostion)
 		{
 			this.levelPos.y = this.floorYPostion;
 			this.screenPos.y = this.floorYPostion;
 			this.velocity.y = 0;
-			//this.velocity.x=0; // HAVE THE PLAYER STOP ALL MOMENTUM WHEN HIT GROUND
 			this.jumping = false;
 			this.falling=false;
 		}
 	}
-	/*
-	else if(input.down && this.jumping==false) this.crouching == true;//this.velocity.y += PLAYER_RUN_SPEED / 2;
-	*/
-	// move the player
-	if(this.velocity.x==0 && this.velocity.y==0) this.animation="stand still";
-	else{
-		this.levelPos.x += this.velocity.x;
-		this.levelPos.y += this.velocity.y;
-		this.screenPos.y += this.velocity.y;
 
-		// Prevent player from walking off screen
-		if(this.levelPos.x <= 0){
-			this.levelPos.x = 0;
-		}
-		else if(this.levelPos.x >= LEVEL_LENGTH - this.widthInGame){
-			this.levelPos.x = LEVEL_LENGTH - this.widthInGame;
-		}
-
-		// Prevent background from moving too far
-		if(this.levelPos.x <= 512 ){
-			this.screenPos.x = this.levelPos.x;
-		}
-		else if(this.levelPos.x >= LEVEL_LENGTH - 512){
-			this.screenPos.x = 1024 - (LEVEL_LENGTH - this.levelPos.x);
-		}
-		else{
-			this.screenPos.x = 512;
-		}
-
+	// Beginning to jump
+	else if(this.direction.up){
+		this.velocity.y -= PLAYER_JUMP_SPEED;
+		this.jumping=true;
 	}
 
+	// Standing still
+	else{
+		if(!this.direction.right && !this.direction.left){
+			this.velocity.x = 0;
+			this.changeAnimation("stand still");
+		}
+	}
+
+	// Move player
+	this.levelPos.x += this.velocity.x;
+	this.levelPos.y += this.velocity.y;
+	this.screenPos.y += this.velocity.y;
+
+	// Prevent player from walking off screen
+	if(this.levelPos.x <= 0){
+		this.levelPos.x = 0;
+	}
+	else if(this.levelPos.x >= LEVEL_LENGTH - this.widthInGame){
+		this.levelPos.x = LEVEL_LENGTH - this.widthInGame;
+	}
+
+	// Prevent background from moving too far
+	if(this.levelPos.x <= 512 ){// TODO: magic numbers
+		this.screenPos.x = this.levelPos.x;
+	}
+	else if(this.levelPos.x >= LEVEL_LENGTH - 512){// TODO: magic numbers
+		this.screenPos.x = 1024 - (LEVEL_LENGTH - this.levelPos.x);// TODO: magic numbers
+	}
+	else{
+		this.screenPos.x = 512;// TODO: magic numbers
+	}
+
+
+	// Update animations
 	this.animationTimer++;
 	if (this.animationTimer>this.frameLength)
 	{
 	  if(this.animation=="stand still") this.animationCounter=0;
 	  else if(this.animation!="moving up"){
 		this.animationCounter++;
-
 	  }
 	  this.animationTimer = 0;
 	}
 
-	if (this.animationCounter>=this.numberOfSprites){
+	if (this.animationCounter >= this.numberOfSprites){
 		if(this.animation!="stand still"){
-			this.animationCounter = 3;
+			this.animationCounter = 3;	// TODO: magic numbers
 		}
 		else{
 		this.animationCounter = 0;
@@ -193,10 +176,9 @@ Player.prototype.update = function() {
 	else this.xPlaceInImage = 0;
 
 	// Check if player 1 won the game
-	if(Math.floor(this.levelPos.x) > 11200)
+	if(Math.floor(this.levelPos.x) > 11100)// TODO: magic numbers
 	{
 		this.wonGame = true;
-    	//console.log('Player 1 wins!');
   	}
 
 	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
@@ -209,7 +191,6 @@ Player.prototype.update = function() {
 
 Player.prototype.changeAnimation = function(x)
 {
-
 	this.animation = x;
 	if (this.animation == "stand still"){
 		this.numberOfSprites = 0;
@@ -217,12 +198,11 @@ Player.prototype.changeAnimation = function(x)
 		this.animationCounter = 0;
 	}
 	else{
-		this.numberOfSprites = 5;
+		this.numberOfSprites = 5;// TODO: magic numbers
 		switch(this.animation)
 		{
 			case "moving up":
 				this.animationCounter=0;
-				//this.xPlaceInImage =this.spriteWidth*7;
 			break;
 			case "moving down":
   				this.yPlaceInImage =this.spriteHeight*0;
