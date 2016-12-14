@@ -176,7 +176,7 @@ function renderBackground(ctx, current) {
   // Render background
   ctx.save();
   ctx.drawImage(images[0],
-                (images[0].width/(canvas.height/(images[0].height)*images[0].width))*(current.levelPos.x - current.screenPos.x),
+                (images[0].width/((canvas.height/images[0].height)*images[0].width))*(current.levelPos.x - current.screenPos.x),
                 0, images[0].width, images[0].height,
                 0, 0, (canvas.height/(images[0].height)*images[0].width), canvas.height);
   ctx.restore();
@@ -260,10 +260,10 @@ function renderPlayers(players, ctx) {
   // Indicate if player 1 won the game by reaching the end
   if(players.current.wonGame || players.other.wonGame)
   {
-	console.log("Player 1 won!");
+    console.log("Player 1 won!");
     ctx.fillStyle = 'white';
     ctx.font="40px Verdana";
-	ctx.fontWeight = 'bolder';
+    ctx.fontWeight = 'bolder';
     ctx.fillText('Player 1 wins!', players.current.screenPos.x - 125, players.current.screenPos.y - 350);
   }
   ctx.restore();
