@@ -7,11 +7,12 @@ var Enemy_RUN_MAX = 10;
 var Enemy_FALL_VELOCITY = 0.25;
 var Enemy_JUMP_SPEED = 6;
 var Enemy_JUMP_BREAK_VELOCITY= 0.20;
-const LEVEL_LENGTH = 11229;
+var LEVEL_LENGTH = 11229;
 
 var FIRE_SPEED = 15;
 
 var EnemyFire = require('./enemyFire');
+var EnemyBomb = require('./enemyBomb');
 //const EnemyBomb = require('./enemyBomb');
 var Vector = require('./vector');
 var Camera = require('./camera');
@@ -72,6 +73,7 @@ function Enemy(position,socket ) {
 	this.jumpingTime = 0;
 	this.facing = "left";
 	this.lazerCooldown=0;
+	  this.bombCooldown=0;
 
 	this.woo=false;
 }
@@ -171,14 +173,37 @@ if(this.direction.left){
 		  i--;
 	  }
   }
+  for (var i = 0 ; i < this.enemyBombs.length ; i++)
+  {
+	  this.enemyBombs[i].update();
+	  
+	  //remove the shot at this condtion, it could be hitting an opject or going out of the screen
+	  if (this.enemyBombs[i].timer>40 && this.enemyBombs[i].state=="falling")
+	  {
+		  this.enemyBombs[i].explode();
+		  
+	  }
+	  else if (this.enemyBombs[i].state=="finished")
+	   {
+		this.enemyBombs.splice(i,1);
+		i--; 
+	   }
+  }
   this.lazerCooldown--;
+    this.bombCooldown--;
   if(this.reticulePosition.fire==true){
 	  var camera = new Camera(this.reticulePosition.canvas);
 	  var direction = Vector.subtract(
       {x:this.reticulePosition.x,y:this.reticulePosition.y},
-      camera.toScreenCoordinates({x:this.screenPos.x + 25, y:this.screenPos.y + 40}));
-      this.woo = this.reticulePosition;
-	  this.fire(direction,this.enemyFire);
+      camera.toScreenCoordinates(this.screenPos));
+      
+	  if(this.reticulePosition.type=="lazer"){
+		this.fire(direction,this.enemyFire);
+	  }
+	  else if(this.reticulePosition.type=="bomb"){
+		  
+		  this.bomb(direction,this.enemyBombs);
+	  }
 	  this.reticulePosition.fire=false;
   }
 	  
@@ -187,9 +212,9 @@ if(this.direction.left){
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire};
+	velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire,
+	enemyBomb:this.enemyBombs};
 }
-
 
 Enemy.prototype.changeAnimation = function(animation)
 {
@@ -265,9 +290,9 @@ Enemy.prototype.bomb = function(direction,enemyBombs)
   {
 	  
 	  //var p = {x : this.position.x+this.widthInGame/2, y: this.position.y+this.heightInGame - this.heightInGame/3}
-	  var p =  Vector.add(this.position, {x:15, y:15});
+	  var p =  Vector.add(this.levelPos, {x:15, y:15});
 	  //var position = Vector.add(this.position, {x:30, y:30});
-	  var bomb = new EnemyBomb(p,velocity);
+	  var bomb = new EnemyBomb(p,velocity,this.levelPos);
 	  /*
 	  if (this.facing == "right")
 	  {
@@ -279,7 +304,7 @@ Enemy.prototype.bomb = function(direction,enemyBombs)
 	  
 	  enemyBombs.push(bomb);
 	  
-	  this.bombCooldown = 30;
+	  this.bombCooldown = 60;
 	  
   }
 	

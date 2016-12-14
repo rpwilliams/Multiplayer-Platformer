@@ -134,6 +134,23 @@ Game.prototype.update = function(newTime) {
 			i--;
 		}
 	}
+	for (var i = 0 ; i < this.players[1].enemyBombs.length ; i++)
+	  {
+		  if (this.players[1].enemyBombs[i].position.x > this.hidingObjects.objects[j].position.x - 25 && this.players[1].enemyBombs[i].position.x < (this.hidingObjects.objects[j].position.x + 75)
+			&& this.players[1].enemyBombs[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyBombs[i].position.y < this.hidingObjects.objects[j].position.y + 75)			
+			{
+				this.players[1].enemyBombs[i].explode();
+				this.hidingObjects.objects[j].position.x=100000;
+				
+				break;
+			}
+			else if (this.players[1].enemyBombs[i].state=="finished")
+		   {
+				this.players[1].enemyBombs.splice(i,1);
+			i--; 
+		   }
+
+	  }
   }
   
     // Check for projectile collisions with the player
