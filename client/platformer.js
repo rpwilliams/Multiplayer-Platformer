@@ -52,7 +52,10 @@ window.onmousemove = function(event) {
 	  reticule.y = event.offsetY;
 }
 
-// Start the game after all files have loaded
+/**
+ * @function onload
+ * Start the game after all files have loaded
+ */
 window.onload = function() {
   // Global variables
   var canvas = document.getElementById('screen');
@@ -97,8 +100,11 @@ window.onload = function() {
     message.style.display = 'block';
   });
 
-  // Handle key presses by sending a message to the
-  // server with our new direction
+  /**
+    * @function onkeydown
+    * Handle key presses by sending a message to the
+    * server with our new direction
+    */
   window.onkeydown = function(event) {
     event.preventDefault();
     switch(event.keyCode) {
@@ -167,6 +173,11 @@ window.onload = function() {
   }
 }
 
+/**
+  * @function renderBackground
+  * Renders the background (stars) and the foreground (the space station)
+  * @param ctx: the canvas context to be drawn to
+  */
 function renderBackground(ctx, current) {
   // Render stars
   ctx.save();
@@ -182,6 +193,12 @@ function renderBackground(ctx, current) {
   ctx.restore();
 }
 
+/**
+    * @function renderPlayer
+    * Renders the player, enemy, and win message
+    * @param players: the player and enemy
+    * @param ctx: the canvas context to be drawn to
+    */
 function renderPlayers(players, ctx) {
 
   // Render debug information. TODO: Remove
@@ -258,7 +275,7 @@ function renderPlayers(players, ctx) {
   }
 
   // Indicate if player 1 won the game by reaching the end
-  if(players.current.wonGame || players.other.wonGame)
+  if(players.current.wonGame)
   {
     console.log("Player 1 won!");
     ctx.fillStyle = 'white';
@@ -271,9 +288,21 @@ function renderPlayers(players, ctx) {
     // so that the text appears in the center of the midpoint.
     ctx.fillText('Player 1 wins!', midpoint.x - X_OFFSET, midpoint.y);
   }
+  else if(players.other.wonGame)
+  {
+    // TO DO: Check if enemy killed player and won the game
+  }
   ctx.restore();
 }
 
+/**
+  * @function renderHidingObjects
+  * Renders the objects that can be hidden behind (indicated by an arrow)
+  * @param players: the player and the enemy
+  * @param hidingObjects: The objects being used to hide behind (NOTE: need confirmation on this)
+  * @param ctx: the canvas context
+  * @param renderDelayedObjs: Objects not being used to hide behind
+  */
 function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 {
   // Draw the canvas backgrounds
