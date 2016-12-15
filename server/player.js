@@ -14,7 +14,7 @@ var PLAYER_JUMP_BREAK_VELOCITY= 0.10;
 var PLAYER_WON_GAME_X_POS = 11100;
 var SCREEN_POS_X = 512;
 var FLOOR_Y_POS = 610;
-const LEVEL_LENGTH = 11229;
+var LEVEL_LENGTH = 11229;
 
 /**
  * @module exports the Player class
@@ -71,7 +71,9 @@ function Player(position,socket ) {
  * @param {Input} input object defining input, must have
  * boolean properties: up, left, right, down
  */
-Player.prototype.update = function() {
+Player.prototype.update = function(tilemap) {
+	// if(this.hitSolid(tilemap)) return;
+
 	// Left key pressed
 	if(this.direction.left){
 		if(this.jumping || this.falling){
@@ -224,4 +226,61 @@ Player.prototype.changeAnimation = function(x)
 				break;
 		}
 	}
+}
+
+
+Player.prototype.hitSolid = function(tilemap) {
+  var tile1;
+  var tile2;
+
+  if(this.direction.right){
+      console.log("right")
+      tile1 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 2);
+      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 2);
+			
+      console.log(tile1);
+      if (tile1.Solid || tile2.Solid) {
+        this.levelPos.x -= ((this.levelPos.x + this.widthInGame) % tilemap.tileWidth) - 1;
+				this.direction.right = false;
+        return true;
+      }
+  }
+
+  else if(this.direction.left){
+      console.log("left")
+      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y, 2);
+      tile2 = tilemap.tileAt(this.levelPos.x, this.levelPos.y + this.heightInGame, 2);
+      console.log(tile1);
+      if (tile1.Solid || tile2.Solid) {
+        this.levelPos.x += tilemap.tileWidth - ((this.levelPos.x) % tilemap.tileWidth) + 1;
+	this.direction.left = false;
+        return true;
+      }
+  }
+
+  else if(this.direction.up){
+	console.log("up")
+      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y, 2);
+      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 2);
+      console.log(tile1);
+      if (tile1.Solid || tile2.Solid) {
+        this.levelPos.y += tilemap.tileHeight - ((this.levelPos.y) % tilemap.tileHeight) + 1;
+	this.direction.up = false;
+        return true;
+      }
+  }
+
+  else if(this.direction.down){
+      console.log("down")
+      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y + this.heightInGame, 2);
+      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 2) - 1;
+      console.log(tile1);
+      if (tile1.Solid || tile2.Solid) {
+        this.levelPos.y -= ((this.levelPos.y + this.widthInGame) % tilemap.tileHeight);
+		this.direction.down = false;
+        return true;
+      }	  
+  }  
+
+  return false;
 }

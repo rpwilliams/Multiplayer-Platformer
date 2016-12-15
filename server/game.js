@@ -6,6 +6,9 @@ module.exports = exports = Game;
 const Player = require('./player.js');
 const Enemy = require('./enemy.js');
 const HidingObjects = require('./hiding-objects.js');
+const Tilemap = require('./tilemap.js');
+
+const fs = require('fs');
 
 /**
  * @class Game
@@ -23,6 +26,8 @@ function Game(io, sockets, room) {
   this.enemyBombs = []; // Same goes for this
   this.players = [];
   this.hidingObjects = new HidingObjects();
+
+  Tilemap.load(JSON.parse(fs.readFileSync('./client/assets/tiles/level.json')), {});
 
     // Initialize the player
   this.players.push(new Player(
@@ -109,7 +114,7 @@ Game.prototype.update = function(newTime) {
 
 
 
-      player.update();
+      player.update(Tilemap);
 	
 
 
