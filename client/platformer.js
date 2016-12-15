@@ -6,8 +6,10 @@ canvas.width = canvas.offsetWidth;
 canvas.height = canvas.offsetHeight;
 //var camera = new Camera(canvas);
 
-var playerFlag = true;
+// Flags to ensure instructions only appear once
+var playerFlag = true;  
 var enemyFlag = true;
+var gameOver = false;
 
 var images = [
   new Image(),
@@ -79,9 +81,12 @@ window.onload = function() {
 
   // Handle movement updates from the server
   socket.on('render', function(players, hidingObjects){
-    renderHidingObjects(players, hidingObjects, ctx, false);
-    renderPlayers(players, ctx);
-    renderHidingObjects(players, hidingObjects, ctx, true);
+    if(!gameOver)
+    {
+      renderHidingObjects(players, hidingObjects, ctx, false);
+      renderPlayers(players, ctx);
+      renderHidingObjects(players, hidingObjects, ctx, true);
+    }
   });
 
   // Handle game on events
@@ -232,7 +237,6 @@ function renderBackground(ctx, current) {
   * @param ctx: the canvas context to be drawn to
   */
 function renderPlayers(players, ctx) {
-
   // Render debug information. TODO: Remove
   ctx.save();
   ctx.fillStyle = 'white';
@@ -274,8 +278,6 @@ function renderPlayers(players, ctx) {
       players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y,
       players.other.width, players.other.height);   
   }
-
-
   // Enemy perspective
   else{
     if(enemyFlag)
@@ -293,26 +295,24 @@ function renderPlayers(players, ctx) {
       ctx.fillRect(0,0, players.current.enemyFire[i].width, players.current.enemyFire[i].height*3);
       ctx.restore();
     }
-	for (var i = 0 ; i < players.current.enemyBomb.length ; i++)
-  {
-	  console.log(players.current.enemyBomb[i].state);
-	  ctx.save();
-	  
-	  ctx.translate(players.current.enemyBomb[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.current.enemyBomb[i].position.y);
-		
-	  //ctx.rotate(-players.current.enemyBomb[i].angle);
-	  if(players.current.enemyBomb[i].state=="falling"){
-	  ctx.drawImage(images[4],0,0);
-	  }
-	  
-	  else if(players.current.enemyBomb[i].state!="finished"){
-		ctx.drawImage( images[5],players.current.enemyBomb[i].explosionAnimation*players.current.enemyBomb[i].explosionImageWidth,0 , 
-		players.current.enemyBomb[i].explosionImageWidth,players.current.enemyBomb[i].explosionImageHeight ,0,0,
-		players.current.enemyBomb[i].width ,players.current.enemyBomb[i].height )
-	  }
-	  
-	  ctx.restore();
-  }
+  	for (var i = 0 ; i < players.current.enemyBomb.length ; i++)
+    {
+  	  console.log(players.current.enemyBomb[i].state);
+  	  ctx.save();
+  	  
+  	  ctx.translate(players.current.enemyBomb[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.current.enemyBomb[i].position.y);
+  		
+  	  //ctx.rotate(-players.current.enemyBomb[i].angle);
+  	  if(players.current.enemyBomb[i].state=="falling"){
+  	  ctx.drawImage(images[4],0,0);
+  	  }
+  	  else if(players.current.enemyBomb[i].state!="finished"){
+  		ctx.drawImage( images[5],players.current.enemyBomb[i].explosionAnimation*players.current.enemyBomb[i].explosionImageWidth,0 , 
+  		players.current.enemyBomb[i].explosionImageWidth,players.current.enemyBomb[i].explosionImageHeight ,0,0,
+  		players.current.enemyBomb[i].width ,players.current.enemyBomb[i].height )
+  	  }
+  	  ctx.restore();
+    }
 
     // Draw current player's sprite
     ctx.drawImage( images[3],players.current.sx ,
@@ -338,29 +338,29 @@ function renderPlayers(players, ctx) {
     ctx.stroke();
     ctx.restore();
 	
-	//Draw hintbox if necessary
-	if (players.current.hintboxAlpha > 0.1)
-	{	
-		ctx.save();			
-		var grd;
-		if(players.current.leftOfPlayer == false)
-		{
-			grd = ctx.createLinearGradient(0, 0, 90, 0);
-		    grd.addColorStop(0, 'rgba(255, 0, 0, '+ players.current.hintboxAlpha + ')');
-		    grd.addColorStop(1, 'rgba(255, 0, 0, 0)');
-		    ctx.fillStyle = grd;
-			ctx.fillRect((players.current.screenPos.x -565), (players.current.screenPos.y - 100),160,1000);
-		}
-		else
-		{
-			grd = ctx.createLinearGradient(934, 0, 1024, 0);
-			grd.addColorStop(0, 'rgba(255, 0, 0, 0)');
-		    grd.addColorStop(1, 'rgba(255, 0, 0, '+ players.current.hintboxAlpha + ')');
-		    ctx.fillStyle = grd;
-			ctx.fillRect((players.current.screenPos.x +430), (players.current.screenPos.y - 100),160,1000);
-		}
-		ctx.restore();
-	}
+  	//Draw hintbox if necessary
+  	if (players.current.hintboxAlpha > 0.1)
+  	{	
+  		ctx.save();			
+  		var grd;
+  		if(players.current.leftOfPlayer == false)
+  		{
+  			grd = ctx.createLinearGradient(0, 0, 90, 0);
+  		    grd.addColorStop(0, 'rgba(255, 0, 0, '+ players.current.hintboxAlpha + ')');
+  		    grd.addColorStop(1, 'rgba(255, 0, 0, 0)');
+  		    ctx.fillStyle = grd;
+  			ctx.fillRect((players.current.screenPos.x -565), (players.current.screenPos.y - 100),160,1000);
+  		}
+  		else
+  		{
+  			grd = ctx.createLinearGradient(934, 0, 1024, 0);
+  			grd.addColorStop(0, 'rgba(255, 0, 0, 0)');
+  		    grd.addColorStop(1, 'rgba(255, 0, 0, '+ players.current.hintboxAlpha + ')');
+  		    ctx.fillStyle = grd;
+  			ctx.fillRect((players.current.screenPos.x +430), (players.current.screenPos.y - 100),160,1000);
+  		}
+  		ctx.restore();
+  	}
   }
 
   // Indicate if player 1 won the game by reaching the end
@@ -380,6 +380,7 @@ function renderPlayers(players, ctx) {
     ctx.fillText('Player 1 wins!', midpoint.x - X_OFFSET_1, midpoint.y);
     ctx.font="20px Verdana";
     ctx.fillText('Press refresh to play again', midpoint.x - X_OFFSET_2, midpoint.y + Y_OFFSET);
+    gameOver = true;
   }
   else if(players.other.wonGame)
   {
