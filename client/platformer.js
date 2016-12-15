@@ -10,10 +10,8 @@ canvas.height = canvas.offsetHeight;
 var playerFlag = true;  
 var enemyFlag = true;
 var gameOver = false;
-var playerWinner = 0;
 
 var images = [
-  new Image(),
   new Image(),
   new Image(),
   new Image(),
@@ -36,7 +34,6 @@ var hidingObjImages = [
   new Image(),
   new Image(),
   new Image(),
-  new Image(),
   new Image()
 ];
 
@@ -47,16 +44,6 @@ hidingObjImages[3].src = 'hiding_objects/BrownBox.png'; // Brown box
 hidingObjImages[4].src = 'hiding_objects/PlainBox.png'; // Plainbox
 hidingObjImages[5].src = 'hiding_objects/Cabinet.png'; // Cabinet
 hidingObjImages[6].src = 'hiding_objects/Cabinet2.png'; // Cabinet2
-
-/* 
-  The rocketship at the end of the level, which is used
-  as a hiding object but is not actually a hiding object.
-*/
-hidingObjImages[7].src = 'rocket.png'; // Cabinet2
-var ROCKET_SHIP_WIDTH = 64;
-var ROCKET_SHIP_HEIGHT = 72 + (72 * .5);
-hidingObjImages[7].width = ROCKET_SHIP_WIDTH;
-hidingObjImages[7].height = ROCKET_SHIP_HEIGHT;
 
 var reticule = {
   x: 0,
@@ -94,16 +81,11 @@ window.onload = function() {
 
   // Handle movement updates from the server
   socket.on('render', function(players, hidingObjects){
-    renderHidingObjects(players, hidingObjects, ctx, false);
     if(!gameOver)
     {
+      renderHidingObjects(players, hidingObjects, ctx, false);
       renderPlayers(players, ctx);
-    }
-    renderHidingObjects(players, hidingObjects, ctx, true); 
-
-    if(gameOver)
-    {
-      win(players, ctx, playerWinner);
+      renderHidingObjects(players, hidingObjects, ctx, true);
     }
   });
 
@@ -192,28 +174,28 @@ window.onload = function() {
   }
 
   window.onmousedown = function(event) {
-    event.preventDefault();
+  event.preventDefault();
     if(event.button == 0) {
-  		reticule.x = event.offsetX;
-  		reticule.y = event.offsetY;
-  		reticule.fire=true;
-  		reticule.type="lazer";
-  		socket.emit('fire',reticule);
-  		reticule.fire=false;
-    }
+		reticule.x = event.offsetX;
+		reticule.y = event.offsetY;
+		reticule.fire=true;
+		reticule.type="lazer";
+		socket.emit('fire',reticule);
+		reticule.fire=false;
+		
   }
-
-  canvas.oncontextmenu = function(event) {
-      event.preventDefault();
-      reticule.x = event.offsetX;
-      reticule.y = event.offsetY;
-      
-      reticule.fire=true;
-      reticule.type="bomb";
-    	socket.emit('fire',reticule);
-    	reticule.fire=false;
-    }
-  }
+}
+canvas.oncontextmenu = function(event) {
+  event.preventDefault();
+  reticule.x = event.offsetX;
+  reticule.y = event.offsetY;
+  
+  reticule.fire=true;
+  reticule.type="bomb";
+	socket.emit('fire',reticule);
+	reticule.fire=false;
+}
+}
 
 /**
   * @function init()
@@ -398,9 +380,22 @@ function renderPlayers(players, ctx) {
   }
 
   // Indicate if player 1 won the game by reaching the end
-  if(players.current.wonGame || players.other.wonGame)
+  if(players.current.wonGame)
   {
-    playerWinner = 1;
+   
+    ctx.fillStyle = 'white';
+    ctx.font="40px Verdana";
+    ctx.fontWeight = 'bolder';
+    // Get the center of the screen
+    var midpoint = rectangleMidpoint(0, 0, canvas.width, canvas.height);
+    var X_OFFSET_1 = 100;
+    var X_OFFSET_2 = 115;
+    var Y_OFFSET = 50;
+    // Subtract the midpoint by half of the number of letters of the message
+    // so that the text appears in the center of the midpoint.
+    ctx.fillText('Player 1 wins!', midpoint.x - X_OFFSET_1, midpoint.y);
+    ctx.font="20px Verdana";
+    ctx.fillText('Press refresh to play again', midpoint.x - X_OFFSET_2, midpoint.y + Y_OFFSET);
     gameOver = true;
   }
   else if(players.other.wonGame)
@@ -468,37 +463,4 @@ function rectangleMidpoint(x1, y1, x2, y2)
   midpoint.x = (x1 + x2)/2;
   midpoint.y = (y1 + y2)/2;
   return midpoint;
-}
-
-/*
- * @function win()
- * Displays win message
- * @param {Player} players: The player and the enemy
- * @param {Canvas} ctx: The canvas context
- * @param {Integer} playerNum: 1 or 2, depending if the winner
- * was player 1 or player 2.
- */
-function win(players, ctx, playerNum)
-{
-  console.log("Player" + playerNum + "won!");
-  ctx.fillStyle = 'white';
-  ctx.font="40px Verdana";
-  ctx.fontWeight = 'bolder';
-  // Get the center of the screen
-  var midpoint = rectangleMidpoint(0, 0, canvas.width, canvas.height);
-  var X_OFFSET_1 = 100;
-  var X_OFFSET_2 = 115;
-  var Y_OFFSET = 50;
-  // Subtract the midpoint by half of the number of letters of the message
-  // so that the text appears in the center of the midpoint.
-  if(playerNum == 1)
-  {
-    ctx.fillText('The prisoner wins!', midpoint.x - X_OFFSET_1, midpoint.y);
-  }
-  else if(playerNum == 2)
-  {
-    ctx.fillText('The alien wins!', midpoint.x - X_OFFSET_1, midpoint.y);
-  }
-  ctx.font="20px Verdana";
-  ctx.fillText('Press refresh to play again', midpoint.x - X_OFFSET_2, midpoint.y + Y_OFFSET);
 }
