@@ -1,8 +1,8 @@
 "use strict";
 
-/* 
-	Constants 
-	We made these "var" instead of "const" because node.js is 
+/*
+	Constants
+	We made these "var" instead of "const" because node.js is
 	outdated on the lab computers
 	*/
 var PLAYER_RUN_VELOCITY = 4;
@@ -72,7 +72,7 @@ function Player(position,socket ) {
  * boolean properties: up, left, right, down
  */
 Player.prototype.update = function(tilemap) {
-	// if(this.hitSolid(tilemap)) return;
+	 if(this.hitSolid(tilemap)) return;
 
 	// Left key pressed
 	if(this.direction.left){
@@ -237,7 +237,7 @@ Player.prototype.hitSolid = function(tilemap) {
       console.log("right")
       tile1 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 2);
       tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 2);
-			
+
       console.log(tile1);
       if (tile1.Solid || tile2.Solid) {
         this.levelPos.x -= ((this.levelPos.x + this.widthInGame) % tilemap.tileWidth) - 1;
@@ -279,8 +279,8 @@ Player.prototype.hitSolid = function(tilemap) {
         this.levelPos.y -= ((this.levelPos.y + this.widthInGame) % tilemap.tileHeight);
 		this.direction.down = false;
         return true;
-      }	  
-  }  
+      }
+  }
 
   return false;
 }
