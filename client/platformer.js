@@ -318,6 +318,30 @@ function renderPlayers(players, ctx) {
     ctx.strokeStyle = '#00ff00';
     ctx.stroke();
     ctx.restore();
+	
+	//Draw hintbox if necessary
+	if (players.current.hintboxAlpha > 0.1)
+	{	
+		ctx.save();			
+		var grd;
+		if(players.current.leftOfPlayer == false)
+		{
+			grd = ctx.createLinearGradient(0, 0, 90, 0);
+		    grd.addColorStop(0, 'rgba(255, 0, 0, '+ players.current.hintboxAlpha + ')');
+		    grd.addColorStop(1, 'rgba(255, 0, 0, 0)');
+		    ctx.fillStyle = grd;
+			ctx.fillRect((players.current.screenPos.x -565), (players.current.screenPos.y - 100),160,1000);
+		}
+		else
+		{
+			grd = ctx.createLinearGradient(934, 0, 1024, 0);
+			grd.addColorStop(0, 'rgba(255, 0, 0, 0)');
+		    grd.addColorStop(1, 'rgba(255, 0, 0, '+ players.current.hintboxAlpha + ')');
+		    ctx.fillStyle = grd;
+			ctx.fillRect((players.current.screenPos.x +430), (players.current.screenPos.y - 100),160,1000);
+		}
+		ctx.restore();
+	}
   }
 
   // Indicate if player 1 won the game by reaching the end
@@ -336,7 +360,7 @@ function renderPlayers(players, ctx) {
     // so that the text appears in the center of the midpoint.
     ctx.fillText('Player 1 wins!', midpoint.x - X_OFFSET_1, midpoint.y);
     ctx.font="20px Verdana";
-    ctx.fillText('Press refresh to play again', midpoint.x - X_OFFSET_2, midpoint.y + Y_OFFSET);
+    ctx.fillText('Press space to play again', midpoint.x - X_OFFSET_2, midpoint.y + Y_OFFSET);
   }
   else if(players.other.wonGame)
   {
