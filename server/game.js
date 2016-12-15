@@ -132,8 +132,8 @@ Game.prototype.update = function(newTime) {
   {
 	for (var i = 0 ; i < this.players[1].enemyFire.length; i++)
 	{
-		if (this.players[1].enemyFire[i].position.x > this.hidingObjects.objects[j].position.x - 25 && this.players[1].enemyFire[i].position.x < (this.hidingObjects.objects[j].position.x + 75)
-			&& this.players[1].enemyFire[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyFire[i].position.y < this.hidingObjects.objects[j].position.y + 75)			
+		if (this.players[1].enemyFire[i].position.x > (this.hidingObjects.objects[j].position.x - 5) && this.players[1].enemyFire[i].position.x < (this.hidingObjects.objects[j].position.x + 70)
+			&& this.players[1].enemyFire[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyFire[i].position.y < this.hidingObjects.objects[j].position.y + 65)			
 		{
 		    this.players[1].enemyFire.splice(i,1);
 			i--;
@@ -141,8 +141,8 @@ Game.prototype.update = function(newTime) {
 	}
 	for (var i = 0 ; i < this.players[1].enemyBombs.length ; i++)
 	  {
-		  if (this.players[1].enemyBombs[i].position.x > this.hidingObjects.objects[j].position.x - 25 && this.players[1].enemyBombs[i].position.x < (this.hidingObjects.objects[j].position.x + 75)
-			&& this.players[1].enemyBombs[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyBombs[i].position.y < this.hidingObjects.objects[j].position.y + 75)			
+		  if (this.players[1].enemyBombs[i].position.x > this.hidingObjects.objects[j].position.x - 5 && this.players[1].enemyBombs[i].position.x < (this.hidingObjects.objects[j].position.x + 70)
+			&& this.players[1].enemyBombs[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyBombs[i].position.y < this.hidingObjects.objects[j].position.y + 65)			
 			{
 				this.players[1].enemyBombs[i].explode();
 				this.hidingObjects.objects[j].position.x=100000;
