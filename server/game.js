@@ -168,6 +168,16 @@ Game.prototype.update = function(newTime) {
 			i--;
 		}
 	}
+	
+	//Check if the enemy has passed the player
+	if (this.players[1].levelPos.x < this.players[0].levelPos.x)
+	{
+		this.players[1].leftOfPlayer = true;
+	}
+	else
+	{
+		this.players[1].leftOfPlayer = false;
+	}
   
   // Broadcast updated game state
   // io.to(room).emit('move', {

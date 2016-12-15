@@ -57,11 +57,19 @@ function Enemy(position,socket ) {
 	this.noDir = {left:false, down:false, right:false, up:false};	
 	this.enemyFire = [];
 	this.enemyBombs = [];
+	
+	//hintbox properties
+	this.hintboxAlpha = 0.1;
+    this.increaseAlpha = true;	
+	this.hintboxCooldown = 600;
+	this.hintboxIteration = 0;
+	this.leftOfPlayer = false;
+	
 	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire};
+	velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire, hintboxAlpha:this.hintboxAlpha,leftOfPlayer:this.leftOfPlayer};
 
 	this.socket = socket;
 
@@ -87,7 +95,7 @@ function Enemy(position,socket ) {
  * @param {Input} input object defining input, must have
  * boolean properties: up, left, right, down
  */
-Enemy.prototype.update = function() {
+Enemy.prototype.update = function(tilemap) {
 if(this.direction.left){
 		//if (!input.down)
 		{
@@ -206,6 +214,39 @@ if(this.direction.left){
 	  }
 	  this.reticulePosition.fire=false;
   }
+  
+  //Check if the enemy is due for a hintbox
+  this.hintboxCooldown -= 1;
+  if(this.hintboxCooldown <= 0 && this.levelPos.x < 10600 && this.levelPos.x > 600)
+  {
+	  if(this.hintboxAlpha >= 0.7 && this.increaseAlpha)
+	  {
+		  this.increaseAlpha = false;
+	  }
+	  if (this.increaseAlpha)
+	  {
+		  this.hintboxAlpha += 0.05;
+	  }
+	  else
+	  {
+		  this.hintboxAlpha -= 0.05;
+	  }
+	  
+	  //Check if the animation is complete. If so, reset the properties we use for the animation
+	  if(this.hintboxAlpha <= 0.1)
+	  {
+		  this.hintboxAlpha = 0.1;		 
+		  this.increaseAlpha = true;
+		  this.hintboxIteration++;
+		  
+		  if (this.hintboxIteration == 2)
+		  {
+			  this.hintboxCooldown = 900;
+			  this.hintboxIteration = 0;
+		  }
+		 
+	  }
+  }
 	  
   
 	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
@@ -213,7 +254,7 @@ if(this.direction.left){
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
 	velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire,
-	enemyBomb:this.enemyBombs};
+	enemyBomb:this.enemyBombs, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer};
 }
 
 Enemy.prototype.changeAnimation = function(animation)
