@@ -28,8 +28,8 @@ module.exports = exports = (function (){
     mapData.tilesets.forEach( function(tilesetmapData, index) {
       // Load the tileset image
       // Create the tileset's tiles
-      var colCount = Math.floor(tilesetmapData.imagewidth / tileWidth),
-          rowCount = Math.floor(tilesetmapData.imageheight / tileHeight),
+      var colCount = Math.floor(tilesetmapData.imagewidth / 32),
+          rowCount = Math.floor(tilesetmapData.imageheight / 32),
           tileCount = colCount * rowCount;
       console.log(colCount, rowCount, tileCount);
 
@@ -38,9 +38,9 @@ module.exports = exports = (function (){
           // Reference to the image, shared amongst all tiles in the tileset
           image: null,
           // Source x position.  i % colCount == col number (as we remove full rows)
-          sx: (i % colCount) * tileWidth,
+          sx: (i % colCount) * 32,
           // Source y position. i / colWidth (integer division) == row number
-          sy: Math.floor(i / rowCount) * tileHeight,
+          sy: Math.floor(i / rowCount) * 32,
           // Indicates a solid tile (i.e. solid property is true).  As properties
           // can be left blank, we need to make sure the property exists.
           // We'll assume any tiles missing the solid property are *not* solid
@@ -87,18 +87,14 @@ module.exports = exports = (function (){
     var tilemapY = Math.floor(y / tileHeight);
     console.log(tilemapX);
     console.log(tilemapY);
-
-
-    console.log(layers.length, tiles.length, layers[layer].width);
-    return tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1];
+    console.log()
+    return tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)]];
   }
 
   // Expose the module's public API
   var return_val = {
     load: load,
-    tileAt: tileAt,
-    tileWidth: 32,
-    tileHeight: 32
+    tileAt: tileAt
   }
   return return_val;
 
