@@ -13,7 +13,6 @@ var FIRE_SPEED = 15;
 
 var EnemyFire = require('./enemyFire');
 var EnemyBomb = require('./enemyBomb');
-//const EnemyBomb = require('./enemyBomb');
 var Vector = require('./vector');
 var Camera = require('./camera');
 /**
@@ -28,14 +27,13 @@ module.exports = exports = Enemy;
  */
 function Enemy(position,socket ) {
 	this.animationTimer = 0;
-	this.animationCounter = 0;
-	this.frameLength = 8;
-	//animation dependent
+	this.animationCounter = 0; // what frame in the animation is the enemy on
+	this.frameLength = 8; // number of frames in animation
 	this.numberOfSprites = 0; // how man y frames are there in the animation
 	this.spriteWidth = 42; // width of each frame
 	this.spriteHeight = 23; // height of each frame
-	this.widthInGame = 80;   
-	this.heightInGame = 68;
+	this.widthInGame = 80;  //width of enemy in game
+	this.heightInGame = 68; //height of enemy in game
 	this.xPlaceInImage = 0; // this should CHANGE for the same animation
 	this.yPlaceInImage = 0; // this should NOT change for the same animation
 	this.animation = "stand still"; // this will keep track of the animation
@@ -44,19 +42,19 @@ function Enemy(position,socket ) {
 	this.stillWidthInGame = this.widthInGame;   
 	this.stillHeightInGame = this.heightInGame;
 	//while it is moving
-	this.movingHeight = 32;
+	this.movingHeight = 32; 
 	this.movingWidth = 41;			
 	this.movingWidthInGame = 80;   
 	this.movingHeightInGame = 90;
 	//this is used to make sure both movement feels to be in the same place in the screent 
 	this.offPostion = 8;
-	this.velocity = {x: 0, y: 0};
-	this.screenPos= {x: 512, y: position.y};
-	this.levelPos= {x: position.x, y: position.y};
-	this.direction = {left:false, down:false, right:false, up:false};
+	this.velocity = {x: 0, y: 0}; 
+	this.screenPos= {x: 512, y: position.y}; // position the enemy is relative to his screen
+	this.levelPos= {x: position.x, y: position.y}; // position the enemy is relative to the world
+	this.direction = {left:false, down:false, right:false, up:false}; // what direction is the enemy looking
 	this.noDir = {left:false, down:false, right:false, up:false};	
-	this.enemyFire = [];
-	this.enemyBombs = [];
+	this.enemyFire = []; // Array of enemy bullets
+	this.enemyBombs = []; // Array of enemy bombs
 	
 	//hintbox properties
 	this.hintboxAlpha = 0.1;
@@ -69,21 +67,17 @@ function Enemy(position,socket ) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire, hintboxAlpha:this.hintboxAlpha,leftOfPlayer:this.leftOfPlayer};
+	velocity:this.velocity,enemyFire:this.enemyFire, hintboxAlpha:this.hintboxAlpha,
+	leftOfPlayer:this.leftOfPlayer};
 
 	this.socket = socket;
 
-	this.reticulePosition = {x:0,y:0,fire:false};
-	this.jumping = false;
-	this.falling=false;
-	this.crouching = "no";
+	this.reticulePosition = {x:0,y:0,fire:false}; // reticule information
 	this.floorYPostion = 610;
-	this.jumpingTime = 0;
 	this.facing = "left";
 	this.lazerCooldown=0;
-	  this.bombCooldown=0;
+	this.bombCooldown=0;
 
-	this.woo=false;
 }
 
 
@@ -129,8 +123,8 @@ if(this.direction.left){
 	if(this.velocity.x > Enemy_RUN_MAX) this.velocity.x=Enemy_RUN_MAX;
 
 	this.levelPos.x += this.velocity.x;
-	this.levelPos.y += this.velocity.y;
-	this.screenPos.y += this.velocity.y;
+	//this.levelPos.y += this.velocity.y;
+	//this.screenPos.y += this.velocity.y;
 
 	// Prevent enemy from flying off screen
 	if(this.levelPos.x <= 0){
@@ -197,8 +191,7 @@ if(this.direction.left){
 		i--; 
 	   }
   }
-  this.lazerCooldown--;
-    this.bombCooldown--;
+  
   if(this.reticulePosition.fire==true){
 	  var camera = new Camera(this.reticulePosition.canvas);
 	  var direction = Vector.subtract(
@@ -244,16 +237,17 @@ if(this.direction.left){
 			  this.hintboxCooldown = 900;
 			  this.hintboxIteration = 0;
 		  }
-		 
 	  }
   }
 	  
+  this.lazerCooldown--;
+  this.bombCooldown--;
   
 	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,woo:this.woo,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire,
+	velocity:this.velocity,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire,
 	enemyBomb:this.enemyBombs, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer};
 }
 
@@ -297,30 +291,16 @@ Enemy.prototype.changeAnimation = function(animation)
 }
 
 Enemy.prototype.fire = function(direction,enemyFire)
-{
-	
-	 var velocity2 = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
-	 //this.woo=velocity2;
+{	
+	 var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
 	 
 	 if ( this.lazerCooldown<1)
   {
-	  //this.woo=true;
-	  var p = Vector.add(this.levelPos, {x:25, y:40});
-	  var laz = new EnemyFire(p,velocity2,this.levelPos);
-	 // if (this.facing == "right")
-	  //{
-		   //p.x += this.widthInGame;
-		  
-	  //}
-		 
-	 
-	  
-	  this.enemyFire.push(laz);
-	  
-	  this.lazerCooldown = 15;
-	  
+	  var p = Vector.add(this.levelPos, {x:0, y:0});
+	  var laz = new EnemyFire(p,velocity,this.levelPos);
+	  this.enemyFire.push(laz);	  
+	  this.lazerCooldown = 15;  
   }
-  
 }
 
 
