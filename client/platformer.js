@@ -266,6 +266,23 @@ function renderPlayers(players, ctx) {
       ctx.fillRect(0,0, players.other.enemyFire[i].width, players.other.enemyFire[i].height*3);
       ctx.restore();
     }
+	for (var i = 0 ; i < players.other.enemyBomb.length ; i++)
+    {
+  	  ctx.save();
+  	  
+  	  ctx.translate(players.other.enemyBomb[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.other.enemyBomb[i].position.y);
+  		
+  	 
+  	  if(players.other.enemyBomb[i].state=="falling"){
+  	  ctx.drawImage(images[4],0,0);
+  	  }
+  	  else if(players.other.enemyBomb[i].state!="finished"){
+  		ctx.drawImage( images[5],players.other.enemyBomb[i].explosionAnimation*players.other.enemyBomb[i].explosionImageWidth,0 , 
+  		players.other.enemyBomb[i].explosionImageWidth,players.other.enemyBomb[i].explosionImageHeight ,0,0,
+  		players.other.enemyBomb[i].width ,players.other.enemyBomb[i].height )
+  	  }
+  	  ctx.restore();
+    }
 
     // Draw current player's sprite
     ctx.drawImage( images[2],players.current.sx,
@@ -297,7 +314,6 @@ function renderPlayers(players, ctx) {
     }
   	for (var i = 0 ; i < players.current.enemyBomb.length ; i++)
     {
-  	  console.log(players.current.enemyBomb[i].state);
   	  ctx.save();
   	  
   	  ctx.translate(players.current.enemyBomb[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.current.enemyBomb[i].position.y);
@@ -366,7 +382,7 @@ function renderPlayers(players, ctx) {
   // Indicate if player 1 won the game by reaching the end
   if(players.current.wonGame)
   {
-    console.log("Player 1 won!");
+   
     ctx.fillStyle = 'white';
     ctx.font="40px Verdana";
     ctx.fontWeight = 'bolder';
