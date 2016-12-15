@@ -7,7 +7,6 @@ const Player = require('./player.js');
 const Enemy = require('./enemy.js');
 const HidingObjects = require('./hiding-objects.js');
 const Tilemap = require('./tilemap.js');
-
 const fs = require('fs');
 
 /**

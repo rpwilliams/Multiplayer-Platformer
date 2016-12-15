@@ -59,7 +59,9 @@ function HidingObjects()
 	this.objects[34] = new SingleObject({x: 10100, y: 435}, 3);
 	this.objects[35] = new SingleObject({x: 10160, y: 498}, 3);
 	this.objects[36] = new SingleObject({x: 10310, y: 498}, 3);
-	this.length = 37;
+	//this.objects[37] = new SingleObject({x: 11000, y: 460}, 7);
+	this.objects[37] = new SingleObject({x: 10900, y: 460}, 7);
+	this.length = 38;
 }
 
 HidingObjects.prototype.add = function(pos, t)
