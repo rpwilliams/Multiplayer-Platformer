@@ -12,6 +12,43 @@
         Waiting for a Challenger...
       </div>
     </div>
+
+    <!-- Instructions Modal for Player -->
+    <div id="playerModal" class="modal">
+      <!-- Modal content -->
+      <div class = "modal-content">
+         <div class="modal-header-player">
+          <span class="close">&times;</span>
+          <h2>YOU ARE THE PRISONER</h2>
+        </div>
+        <div class="modal-body w3-center">
+          <h2> You've been captured by aliens and are trying to escape. You will need to progress to the end of the map to win. You're unarmed, so your only hope of survival is by hiding behind the marked crates when the alien is near using the DOWN key. Good luck! </h2>
+          <img src="player_copy.png" height="auto" width="15%" float="center">
+        </div>
+        <footer class = "modal-footer">
+          <span onclick="document.getElementById('playerModal').style.display='none'" class="w3-btn w3-center">Play!</span>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Instructions Modal for Enemy -->
+    <div id="enemyModal" class="modal">
+      <!-- Modal content -->
+      <div class = "modal-content">
+         <div class="modal-header-enemy">
+          <span class="close">&times;</span>
+          <h2>YOU ARE THE ALIEN</h2>
+        </div>
+        <div class="modal-body w3-center">
+          <h2> Your prisoner is trying to escape! Stop her before she gets to the escape pod to win. Use the arrow keys to move, left click to shoot missiles, and right click to use bombs. If you can't find her, she might be hiding! </h2>
+          <img src="Enemy_Ship_Copy.png" height="auto" width="25%" float="center">
+        </div>
+        <footer class = "modal-footer">
+          <span onclick="document.getElementById('enemyModal').style.display='none'" class="w3-btn w3-center">Play!</span>
+        </footer>
+      </div>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="platformer.js"></script>
   </body>

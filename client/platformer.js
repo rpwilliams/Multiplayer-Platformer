@@ -5,6 +5,10 @@ var canvas = document.getElementById('screen');
 canvas.width = canvas.offsetWidth;
 canvas.height = canvas.offsetHeight;
 //var camera = new Camera(canvas);
+
+var playerFlag = true;
+var enemyFlag = true;
+
 var images = [
   new Image(),
   new Image(),
@@ -75,7 +79,9 @@ window.onload = function() {
 
   // Handle movement updates from the server
   socket.on('render', function(players, hidingObjects){
-    init(players, hidingObjects, ctx);
+    renderHidingObjects(players, hidingObjects, ctx, false);
+    renderPlayers(players, ctx);
+    renderHidingObjects(players, hidingObjects, ctx, true);
   });
 
   // Handle game on events
@@ -191,13 +197,13 @@ canvas.oncontextmenu = function(event) {
   * Initializes the game, with the player at the beginning of the map and
   * the enemy at the end of the map.
   */
-function init(players, hidingObjects, ctx)
-{
-    // Render the normal objects, followed by the player and then the objects that the player is hiding behind
-    renderHidingObjects(players, hidingObjects, ctx, false);
-    renderPlayers(players, ctx);
-    renderHidingObjects(players, hidingObjects, ctx, true);
-}
+// function init(players, hidingObjects, ctx)
+// {
+//     // Render the normal objects, followed by the player and then the objects that the player is hiding behind
+//     renderHidingObjects(players, hidingObjects, ctx, false);
+//     renderPlayers(players, ctx);
+//     renderHidingObjects(players, hidingObjects, ctx, true);
+// }
 
 /**
   * @function renderBackground()
@@ -239,6 +245,13 @@ function renderPlayers(players, ctx) {
 
   // Player perspective
   if(players.current.id=='player') {
+    if(playerFlag)
+    {
+      var playerModal = document.getElementById('playerModal');
+      playerModal.style.display = "block";
+      playerFlag = false;
+    }
+
     // Render lasers
     for (var i = 0 ; i < players.other.enemyFire.length ; i++)
     {
@@ -265,6 +278,12 @@ function renderPlayers(players, ctx) {
 
   // Enemy perspective
   else{
+    if(enemyFlag)
+    {
+      var enemyModal = document.getElementById('enemyModal');
+      enemyModal.style.display = "block";
+      enemyFlag = false;
+    }
     // Render lasers
     for (var i = 0 ; i < players.current.enemyFire.length ; i++){
       ctx.save();

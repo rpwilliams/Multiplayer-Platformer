@@ -19,3 +19,84 @@
   text-align: center;
   font-size: 30pt;
 }
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 75%; /* Full width */
+    height: auto; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Header */
+.modal-header-enemy {
+    padding: 2px 16px;
+    background-color: #DC143C;
+    color: white;
+}
+.modal-header-player {
+    padding: 2px 16px;
+    background-color: #000000;
+    color: white;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.w3-center {
+  text-align:center!important
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.w3-btn,.w3-btn-block {
+  border:none;
+  display:inline-block;
+  outline:0;
+  padding:20px 32px;
+  overflow:hidden;
+  text-decoration:none!important;
+  color:#fff;
+  background-color:#000;
+  text-align:center;
+  cursor:pointer;
+  white-space:nowrap
+}
+
+/* Modal Body */
+.modal-body {padding: 2px 16px;}
+
+.imgContainer{
+    float:left;
+}
+
+/* Modal Footer */
+.modal-footer {
+    padding: 2px 16px;
+    color: white;
+}
