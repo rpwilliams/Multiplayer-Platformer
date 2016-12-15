@@ -360,7 +360,7 @@ function renderPlayers(players, ctx) {
     // so that the text appears in the center of the midpoint.
     ctx.fillText('Player 1 wins!', midpoint.x - X_OFFSET_1, midpoint.y);
     ctx.font="20px Verdana";
-    ctx.fillText('Press space to play again', midpoint.x - X_OFFSET_2, midpoint.y + Y_OFFSET);
+    ctx.fillText('Press refresh to play again', midpoint.x - X_OFFSET_2, midpoint.y + Y_OFFSET);
   }
   else if(players.other.wonGame)
   {
