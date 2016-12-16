@@ -203,7 +203,10 @@ if(this.direction.left){
 		this.fire(direction,this.enemyFire);
 	  }
 	  else if(this.reticulePosition.type=="bomb"){
-		  
+		  if(this.numBombs == 0)
+		  {
+		  	return;
+		  }
 		  this.bomb(direction,this.enemyBombs);
 	  }
 	  this.reticulePosition.fire=false;
