@@ -7,6 +7,7 @@ const Player = require('./player.js');
 const Enemy = require('./enemy.js');
 const HidingObjects = require('./hiding-objects.js');
 const Tilemap = require('./tilemap.js');
+
 const fs = require('fs');
 
 /**
@@ -30,7 +31,7 @@ function Game(io, sockets, room) {
 
     // Initialize the player
   this.players.push(new Player(
-      {x: 512, y: 610},
+      {x: 512, y: 400},
       sockets[0]
   ));
 
