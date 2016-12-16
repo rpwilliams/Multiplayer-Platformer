@@ -63,6 +63,8 @@ var sounds = [
   new Audio(),
   new Audio(),
   new Audio(),
+  new Audio(),
+  new Audio(),
   new Audio()
 ];
 
@@ -71,6 +73,9 @@ sounds[1].src = 'sounds/jump.wav';
 sounds[2].src = 'sounds/radar.mp3';
 sounds[3].src = 'sounds/player_hit.wav';
 sounds[3].loop = false;
+sounds[4].src = 'sounds/hiding.wav';
+sounds[5].src = 'sounds/bomb-drop.wav';
+sounds[6].src = 'sounds/explosion.wav';
 
 /* 
   The rocketship at the end of the level, which is used

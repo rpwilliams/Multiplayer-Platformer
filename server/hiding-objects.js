@@ -2,6 +2,7 @@
 
 module.exports = exports = HidingObjects;
 
+var first = true;
 
 function SingleObject(pos, t)
 {
@@ -91,10 +92,12 @@ HidingObjects.prototype.update = function(player, newTime)
 			{
 				this.objects[i].displayArrow = false;
 				this.objects[i].delayRender = true;
+				if (first) { player.sound = 4; first = false; } 
 			}
 			else{
 				this.objects[i].delayRender = false;
 				this.objects[i].displayArrow = true;
+				first = true;
 			}
 		}
 		else
