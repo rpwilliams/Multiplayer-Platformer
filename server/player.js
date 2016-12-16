@@ -47,6 +47,7 @@ function Player(position,socket ) {
 	this.noDir = {left:false, down:false, right:false, up:false};
 	this.id = 'player';
 	this.sound = null;
+	this.invisible = false;
 	this.send = {
 		levelPos:this.levelPos,
 		screenPos:this.screenPos,
@@ -63,6 +64,7 @@ function Player(position,socket ) {
 		wonGame:this.wonGame,
 		id:this.id,
 		health:this.health
+		, invisible:this.invisible
 	};
 
 	this.socket = socket;
@@ -230,6 +232,7 @@ Player.prototype.update = function(tilemap) {
 		id:this.id,
 		health:this.health,
 		hit:this.hit
+		, invisible:this.invisible
 	};
 }
 
