@@ -10,7 +10,18 @@ function PowerUp(pos, t)
 	this.pickedUp = false;
 	this.active = false;
 	this.depleted = false;
-	this.duration = 30000;
+	this.duration;
+	
+	if(this.type == 0)
+	{
+		// 30 second box duration
+		this.duration = 30000;
+	}
+	else
+	{
+		// Player radar duration
+		this.duration = 10000;
+	}
 }
 
 function PowerUpArray()
