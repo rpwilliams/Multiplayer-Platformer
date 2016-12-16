@@ -187,6 +187,8 @@ window.onload = function() {
   socket.on('lift off', function() {
     sounds[7].play();
     hidingObjImages[7].src = 'rocket_on.png';
+    hidingObjImages[7].width = ROCKET_SHIP_WIDTH;
+    hidingObjImages[7].height = ROCKET_SHIP_HEIGHT + (ROCKET_SHIP_HEIGHT/2);
   });
 
   /**
