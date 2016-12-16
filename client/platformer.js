@@ -630,8 +630,16 @@ function renderPowerUps(players, powerUpArray, ctx)
 		// Display in HUD if picked up
 		if(powerUpArray.powerUps[i].pickedUp)
 		{
-			ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], players.current.screenPos.x - 478,
-			60, powerUpImages[powerUpArray.powerUps[i].type].width * .85, powerUpImages[powerUpArray.powerUps[i].type].height * .85);
+			if(powerUpArray.powerUps[i].type == 1)
+			{
+				ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], players.current.screenPos.x - 478,
+				60, powerUpImages[powerUpArray.powerUps[i].type].width * .65, powerUpImages[powerUpArray.powerUps[i].type].height * .65);
+			}
+			else
+			{
+				ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], players.current.screenPos.x - 478,
+				60, powerUpImages[powerUpArray.powerUps[i].type].width * .85, powerUpImages[powerUpArray.powerUps[i].type].height * .85);
+			}
 		}
 		
 		// HUD timer
