@@ -633,18 +633,19 @@ function renderPowerUps(players, powerUpArray, ctx)
 			{
 				if(powerUpArray.powerUps[i].type == 1)
 				{
-					ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], 34,
-					60, powerUpImages[powerUpArray.powerUps[i].type].width * .65, powerUpImages[powerUpArray.powerUps[i].type].height * .65);
+					ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], 32,
+					35 + (27 * powerUpArray.powerUpsBeingHeld), powerUpImages[powerUpArray.powerUps[i].type].width * .65, 
+					powerUpImages[powerUpArray.powerUps[i].type].height * .65);
 				}
 				else
 				{
 					ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], 34,
-					60, powerUpImages[powerUpArray.powerUps[i].type].width * .85, powerUpImages[powerUpArray.powerUps[i].type].height * .85);
+					60, powerUpImages[powerUpArray.powerUps[i].type].width * .75, powerUpImages[powerUpArray.powerUps[i].type].height * .75);
 				}
 			}
 		
 			// HUD timer
-			if(powerUpArray.powerUps[i].pickedUp)
+			if(powerUpArray.powerUps[i].active)
 			{
 				ctx.font="18px Verdana";
 				ctx.fillText(Math.floor(powerUpArray.powerUps[i].duration / 1000), 70, 60);
