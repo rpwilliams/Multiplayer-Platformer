@@ -189,6 +189,7 @@ if(this.direction.left){
 	  }
 	  else if (this.enemyBombs[i].state=="finished")
 	   {
+	   	this.numBombs--;
 		this.enemyBombs.splice(i,1);
 		i--; 
 	   }

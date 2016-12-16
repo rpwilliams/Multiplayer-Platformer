@@ -129,7 +129,7 @@ Game.prototype.update = function(newTime) {
   
     //Update power ups
     this.powerUpArray.update(this.players[0], this.time);
-  this.time = Date.now();
+    this.time = Date.now();
   
   
     // Update players
@@ -197,6 +197,7 @@ Game.prototype.update = function(newTime) {
   			}
   			if (this.players[1].enemyBombs[i].state=="finished")
   		  {
+          this.players[1].numBombs--;
           this.players[1].enemyBombs.splice(i,1);
           i--; 
   		  }
