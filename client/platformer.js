@@ -508,7 +508,6 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 	  {
 		  if(hidingObjects.objects[i].delayRender == true && hidingObjects.objects[i].render)
 		  {
-        hidingAudio.play();
         ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
           hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type ].width * 2, hidingObjImages[hidingObjects.objects[i].type].height * 2); 
 		  }
