@@ -169,8 +169,16 @@ Game.prototype.update = function(newTime) {
   	// Check if the player has activated a power up and make sure that powerup hasn't already been used
     if(this.players[0].ctrlKeyPressed && this.powerUpArray.powerUps[i].pickedUp && this.powerUpArray.powerUps[i].depleted == false && this.powerUpArray.powerUps[0].active == false)
   	{
+		if(this.powerUpArray.powerUps[i].type == 1)
+		{
+			this.players[0].invisible = true;
+		}
       this.powerUpArray.powerUps[i].active = true;
   	}
+  }
+ if(!this.powerUpArray.powerUps[1].active)
+  {
+	  this.players[0].invisible = false;
   }
 	
   // Check for projectile collisions with hiding objects
