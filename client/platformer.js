@@ -148,11 +148,10 @@ window.onload = function() {
     if(!gameOver)
     {
       renderPlayers(players, ctx, powerUpArray);
+	  renderPowerUps(players, powerUpArray, ctx);
       playSound(players);
     }
     renderHidingObjects(players, hidingObjects, ctx, true);
-    renderPowerUps(players, powerUpArray, ctx);
-	renderPowerUps(players, powerUpArray, ctx);
 
     if(gameOver)
     {
@@ -634,12 +633,12 @@ function renderPowerUps(players, powerUpArray, ctx)
 			{
 				if(powerUpArray.powerUps[i].type == 1)
 				{
-					ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], players.current.screenPos.x - 478,
+					ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], 34,
 					60, powerUpImages[powerUpArray.powerUps[i].type].width * .65, powerUpImages[powerUpArray.powerUps[i].type].height * .65);
 				}
 				else
 				{
-					ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], players.current.screenPos.x - 478,
+					ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], 34,
 					60, powerUpImages[powerUpArray.powerUps[i].type].width * .85, powerUpImages[powerUpArray.powerUps[i].type].height * .85);
 				}
 			}
@@ -647,15 +646,10 @@ function renderPowerUps(players, powerUpArray, ctx)
 			// HUD timer
 			if(powerUpArray.powerUps[i].pickedUp)
 			{
-				powerUpTimerDiv.innerHTML = Math.floor(powerUpArray.powerUps[i].duration / 1000);
+				ctx.font="18px Verdana";
+				ctx.fillText(Math.floor(powerUpArray.powerUps[i].duration / 1000), 70, 60);
 			}
 		}
-	}
-	
-	// Reset the timer in the HUD after each use
-	if(powerUpTimerDiv.innerHTML == "-1")
-	{
-		powerUpTimerDiv.innerHTML = "";
 	}
 	
 	ctx.restore();

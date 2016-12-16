@@ -20,15 +20,6 @@
   font-size: 30pt;
 }
 
-#powerUpTimerDiv{ 
-	font: Verdana;
-	font-size: 20px;
-	color: white;
-	position: absolute;
-	top: 143px;
-	left: 80px;
-}
-
 /* The Modal (background) */
 .modal {
     display: none; /* Hidden by default */
