@@ -32,7 +32,7 @@ module.exports = exports = (function (){
           rowCount = Math.floor(tilesetmapData.imageheight / 32),
           tileCount = colCount * rowCount;
 
-      console.log(tileCount);
+      //console.log(tileCount);
 
       for(i = 0; i < tileCount; i++) {
         var tile = {
@@ -48,14 +48,14 @@ module.exports = exports = (function (){
           Solid: (tilesetmapData.tileproperties[i] && tilesetmapData.tileproperties[i].Solid == true) ? true : false
         }
           if(tilesetmapData.tileproperties[i]){
-            console.log(tilesetmapData.tileproperties[i].Solid);
+            //console.log(tilesetmapData.tileproperties[i].Solid);
             if(tilesetmapData.tileproperties[i].Solid){
-              console.log(tile);
-              console.log(i);
+              //console.log(tile);
+              //console.log(i);
             }
           }
           else{
-            console.log('missing tile');
+            //console.log('missing tile');
           }
         tiles.push(tile);
       }
@@ -91,7 +91,7 @@ module.exports = exports = (function (){
   }
 
   var tileAt = function(x, y, layer) {
-    console.log("x: ", x, "y: ", y);
+    //console.log("x: ", x, "y: ", y);
     // sanity check
     if(layer < 0 || x < 0 || y < 0 || layer >= layers.length || x > 11229 || y > 768)
       return undefined;

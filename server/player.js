@@ -313,6 +313,7 @@ Player.prototype.hitSolid = function(tilemap) {
 		
 		this.falling=false;
 		this.direction.down = false;
+		this.sound = 1;
         return true;
       }
 	  //else this.falling=true;
