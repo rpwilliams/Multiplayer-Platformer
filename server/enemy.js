@@ -196,9 +196,13 @@ if(this.direction.left){
   
   if(this.reticulePosition.fire==true){
 	  var camera = new Camera(this.reticulePosition.canvas);
+	  
+	  var p = {x:30,y:30};
+	  var pp = Vector.add(p,this.screenPos);
+	  
 	  var direction = Vector.subtract(
       {x:this.reticulePosition.x,y:this.reticulePosition.y},
-      camera.toScreenCoordinates(this.screenPos));
+      camera.toScreenCoordinates(pp));
       
 	  if(this.reticulePosition.type=="lazer"){
 		this.fire(direction,this.enemyFire);
@@ -302,7 +306,7 @@ Enemy.prototype.fire = function(direction,enemyFire)
 	 
 	 if ( this.lazerCooldown<1)
   {
-	  var p = Vector.add(this.levelPos, {x:20, y:20});
+	  var p = Vector.add(this.levelPos, {x:30, y:30});
 	  var laz = new EnemyFire(p,velocity,this.levelPos);
 	  this.enemyFire.push(laz);	  
 	  this.lazerCooldown = 15;  
