@@ -67,9 +67,9 @@ function Game(io, sockets, room) {
       player.direction.up = player.direction.up & direction.up;
     });
 
-	player.socket.on('fire',function(reticulePosition){
-		player.reticulePosition = reticulePosition;
-	});
+  	player.socket.on('fire',function(reticulePosition){
+  		player.reticulePosition = reticulePosition;
+  	});
 	
     //return player;
   });
@@ -111,13 +111,7 @@ Game.prototype.update = function(newTime) {
   // Update players
   this.players.forEach(function(player, i, players) {
     var otherPlayer = players[(i+1)%2];
-
-
-
-      player.update(Tilemap);
-	
-
-
+    player.update(Tilemap);
     // Check for collision with walls
     // if(player.position.x < 0 || player.position.x > WIDTH || player.position.y < 0 || player.position.y > HEIGHT) {
     //   console.log("went out of bounds");
@@ -130,44 +124,45 @@ Game.prototype.update = function(newTime) {
   // Check for projectile collisions with hiding objects
   for (var j = 0; j < this.hidingObjects.length; j++)
   {
-	for (var i = 0 ; i < this.players[1].enemyFire.length; i++)
-	{
-		if (this.players[1].enemyFire[i].position.x > (this.hidingObjects.objects[j].position.x - 5) && this.players[1].enemyFire[i].position.x < (this.hidingObjects.objects[j].position.x + 70)
-			&& this.players[1].enemyFire[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyFire[i].position.y < this.hidingObjects.objects[j].position.y + 65)			
-		{
-		    this.players[1].enemyFire.splice(i,1);
-			i--;
-		}
-	}
-	for (var i = 0 ; i < this.players[1].enemyBombs.length ; i++)
-	  {
-		  if (this.players[1].enemyBombs[i].position.x > this.hidingObjects.objects[j].position.x - 5 && this.players[1].enemyBombs[i].position.x < (this.hidingObjects.objects[j].position.x + 70)
-			&& this.players[1].enemyBombs[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyBombs[i].position.y < this.hidingObjects.objects[j].position.y + 65 &&
-				this.players[1].enemyBombs[i].state=="falling")			
-			{
-				//this.woo={bomb:this.players[1].enemyBombs[i].position,
-				//object:this.hidingObjects.objects[j].position};
-				this.players[1].enemyBombs[i].explode();
-				this.hidingObjects.objects[j].position.x=100000;
-				
-				break;
-			}
-			if (this.players[1].enemyBombs[i].state=="finished")
-		   {
-				this.players[1].enemyBombs.splice(i,1);
-			i--; 
-		   }
-
-	  }
+  	for (var i = 0 ; i < this.players[1].enemyFire.length; i++)
+  	{
+  		if (this.players[1].enemyFire[i].position.x > (this.hidingObjects.objects[j].position.x - 5) && this.players[1].enemyFire[i].position.x < (this.hidingObjects.objects[j].position.x + 70)
+  			&& this.players[1].enemyFire[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyFire[i].position.y < this.hidingObjects.objects[j].position.y + 65)			
+  		{
+  		  this.players[1].enemyFire.splice(i,1);
+  			i--;
+  		}
+  	}
+  	for (var i = 0 ; i < this.players[1].enemyBombs.length ; i++)
+  	{
+  		  if (this.players[1].enemyBombs[i].position.x > this.hidingObjects.objects[j].position.x - 5 && this.players[1].enemyBombs[i].position.x < (this.hidingObjects.objects[j].position.x + 70)
+  			&& this.players[1].enemyBombs[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyBombs[i].position.y < this.hidingObjects.objects[j].position.y + 65 &&
+  				this.players[1].enemyBombs[i].state=="falling")			
+  			{
+  				//this.woo={bomb:this.players[1].enemyBombs[i].position,
+  				//object:this.hidingObjects.objects[j].position};
+  				this.players[1].enemyBombs[i].explode();
+  				this.hidingObjects.objects[j].position.x=100000;
+  				break;
+  			}
+  			if (this.players[1].enemyBombs[i].state=="finished")
+  		  {
+          this.players[1].enemyBombs.splice(i,1);
+          i--; 
+  		  }
+  	 }
   }
   
-    // Check for projectile collisions with the player
+  // Check for projectile collisions with the player
 	for (var i = 0 ; i < this.players[1].enemyFire.length; i++)
 	{
 		if (this.players[1].enemyFire[i].position.x > this.players[0].levelPos.x - 15 && this.players[1].enemyFire[i].position.x < (this.players[0].levelPos.x + 50)
 			&& this.players[1].enemyFire[i].position.y > this.players[0].levelPos.y  - 15 && this.players[1].enemyFire[i].position.y < this.players[0].levelPos.y + 75)			
 		{
-		    this.players[1].enemyFire.splice(i,1);
+      console.log("Ouch!");
+      this.players[0].health--;
+      console.log("Player health: " + this.players[0].health);
+		  this.players[1].enemyFire.splice(i,1);
 			i--;
 		}
 	}

@@ -403,9 +403,12 @@ function renderPlayers(players, ctx) {
     playerWinner = 1;
     gameOver = true;
   }
-  else if(players.other.wonGame)
+  // Inidicate if player 2 won the game by killing the player
+  else if(players.current.health <= 0 || players.other.health <= 0)
   {
-    // TO DO: Check if enemy killed player and won the game
+    console.log("The player has died!");
+    playerWinner = 2;
+    gameOver = true;
   }
   ctx.restore();
 }
