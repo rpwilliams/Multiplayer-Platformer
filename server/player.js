@@ -70,7 +70,7 @@ function Player(position,socket ) {
 	this.falling = true;
 	this.facing = "left";
 	this.wonGame = false;
-	this.health = 5;
+	this.health = 10;
 	this.pixelBuffer = 6;
 	this.powerUps = [];
 }

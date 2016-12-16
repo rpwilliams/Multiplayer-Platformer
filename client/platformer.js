@@ -10,13 +10,18 @@ canvas.height = canvas.offsetHeight;
 // Audio files
 
 // Flags to ensure instructions only appear once
-var playerFlag = true;
+var playerFlag = true;  
 var enemyFlag = true;
 var playerWinner = 0;
 
 var numBombs = 3;
 
 // Flags to ensure hit sounds play only once
+var playedNine = false;
+var playedEight = false;
+var playedSeven = false;
+var playedSix = false;
+var playedFive = false;
 var playedFour = false;
 var playedThree = false;
 var playedTwo = false;
@@ -100,7 +105,7 @@ sounds[5].src = 'sounds/bomb-drop.wav';
 sounds[6].src = 'sounds/explosion.wav';
 sounds[7].src = 'sounds/rocket-launch.wav';
 sounds[7].loop = false;
-/*
+/* 
   The rocketship at the end of the level, which is used
   as a hiding object but is not actually a hiding object.
 */
@@ -272,7 +277,8 @@ window.onload = function() {
 
   canvas.oncontextmenu = function(event) {
       event.preventDefault();
-      if(numBombs <= 0) {
+      if(numBombs <= 0)
+      {
         return;
       }
       numBombs--;
@@ -301,7 +307,7 @@ function renderBackground(ctx, current) {
   ctx.drawImage(images[0],
                 (current.levelPos.x - current.screenPos.x),
                 0, canvas.width, canvas.height,
-                0, 0, canvas.width, canvas.height);
+                0, 0, canvas.width, canvas.height);              
   ctx.restore();
 }
 
@@ -313,28 +319,42 @@ function renderBackground(ctx, current) {
   * @param ctx: the canvas context to be drawn to
   */
 function renderPlayers(players, ctx, powerUpArray) {
+  // Render debug information. TODO: Remove
+  // ctx.save();
+  // ctx.fillStyle = 'white';
+  // ctx.font="20px Verdana";
+  // ctx.fillText('level: (' + Math.floor(players.current.levelPos.x) + ',' + Math.floor(players.current.levelPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 30);
+  // ctx.fillText('screen: (' + Math.floor(players.current.screenPos.x)+ ',' + Math.floor(players.current.screenPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 10);
+  // ctx.fillText('level: (' + Math.floor(players.other.levelPos.x) + ',' + Math.floor(players.other.levelPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 30);
+  // ctx.fillText('screen: (' + Math.floor(players.other.screenPos.x)+ ',' + Math.floor(players.other.screenPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 10);  
+  // ctx.restore();
+
   // Player perspective
   if(players.current.id=='player') {
     // Display the instructions
-    if(playerFlag) {
+    if(playerFlag)
+    {
       var playerModal = document.getElementById('playerModal');
       playerModal.style.display = "block";
       playerFlag = false;
     }
-  	//Render where enemy is
-  	var enemyDistance = Math.floor((players.other.levelPos.x - players.current.levelPos.x)/100);
-  	ctx.font="25px Verdana";
-  	if(enemyDistance > 0) {
-  		ctx.fillText(enemyDistance + 'm', canvas.width - 90, canvas.height/2);
-  		ctx.drawImage(powerUpImages[2], canvas.width - 35, canvas.height/2 - 5, 30, 45);
-  	}
-  	else {
-  		ctx.fillText(Math.abs(enemyDistance) + 'm', 40, canvas.height/2);
-  		ctx.drawImage(powerUpImages[3], 5, canvas.height/2 - 5, 30, 45);
-  	}
+	//Render where enemy is
+	var enemyDistance = Math.floor((players.other.levelPos.x - players.current.levelPos.x)/100);
+	ctx.font="25px Verdana";
+	if(enemyDistance > 0)
+	{
+		ctx.fillText(enemyDistance + 'm', canvas.width - 90, canvas.height/2);
+		ctx.drawImage(powerUpImages[2], canvas.width - 35, canvas.height/2 - 5, 30, 45);
+	}
+	else
+	{
+		ctx.fillText(Math.abs(enemyDistance) + 'm', 40, canvas.height/2);
+		ctx.drawImage(powerUpImages[3], 5, canvas.height/2 - 5, 30, 45);
+	}
 
     // Render lasers
-    for(var i = 0 ; i < players.other.enemyFire.length ; i++) {
+    for (var i = 0 ; i < players.other.enemyFire.length ; i++)
+    {
       ctx.save();
       ctx.translate(players.other.enemyFire[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.other.enemyFire[i].position.y)
       ctx.fillStyle = "violet";
@@ -342,63 +362,97 @@ function renderPlayers(players, ctx, powerUpArray) {
       ctx.fillRect(0,0, players.other.enemyFire[i].width, players.other.enemyFire[i].height*3);
       ctx.restore();
     }
-    for(var i = 0 ; i < players.other.enemyBomb.length ; i++) {
+    for (var i = 0 ; i < players.other.enemyBomb.length ; i++)
+    {
       ctx.save();
-
+  	  
   	  ctx.translate(players.other.enemyBomb[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.other.enemyBomb[i].position.y);
-
-  	  if(players.other.enemyBomb[i].state=="falling") {
+  		
+  	  if(players.other.enemyBomb[i].state=="falling"){
   	  ctx.drawImage(images[4],0,0, 14,32 ,0,0,players.other.enemyBomb[i].width ,players.other.enemyBomb[i].height);
   	  }
-  	  else if(players.other.enemyBomb[i].state!="finished") {
-    		ctx.drawImage( images[5],players.other.enemyBomb[i].explosionAnimation*players.other.enemyBomb[i].explosionImageWidth,0 ,
-    		players.other.enemyBomb[i].explosionImageWidth,players.other.enemyBomb[i].explosionImageHeight ,0,0,
-    		players.other.enemyBomb[i].width ,players.other.enemyBomb[i].height )
+  	  else if(players.other.enemyBomb[i].state!="finished"){
+  		ctx.drawImage( images[5],players.other.enemyBomb[i].explosionAnimation*players.other.enemyBomb[i].explosionImageWidth,0 , 
+  		players.other.enemyBomb[i].explosionImageWidth,players.other.enemyBomb[i].explosionImageHeight ,0,0,
+  		players.other.enemyBomb[i].width ,players.other.enemyBomb[i].height )
   	  }
   	  ctx.restore();
     }
 
     // Draw current player's sprite. Also check if player is using the 30 second box powerup
-  	var playerDrawn = false;
-  	for(var i = 0; i < powerUpArray.length; i++) {
-  		if(powerUpArray.powerUps[i].type == 0 && powerUpArray.powerUps[i].active && !players.current.wonGame) {
-  		  // Draw the player as a box instead if they are using the 30 second box powerup
-  		  ctx.drawImage(hidingObjImages[3], players.current.screenPos.x,
-        players.current.screenPos.y - 12, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); // todo: magic numbers
-  		  playerDrawn = true;
-  		}
-  	}
-
-  	if(playerDrawn == false && !players.current.wonGame && players.current.health > 0) {
-  	  ctx.drawImage( images[2],players.current.sx,
+	var playerDrawn = false;
+	for(var i = 0; i < powerUpArray.length; i++)
+	{
+		if(powerUpArray.powerUps[i].type == 0 && powerUpArray.powerUps[i].active && !players.current.wonGame)
+		{
+		  // Draw the player as a box instead if they are using the 30 second box powerup
+		  ctx.drawImage(hidingObjImages[3], players.current.screenPos.x, 
+          players.current.screenPos.y - 13, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); // todo: magic numbers
+		  playerDrawn = true;
+		}
+	}
+	
+	if(playerDrawn == false && !players.current.wonGame && players.current.health > 0)
+	{
+	  ctx.drawImage( images[2],players.current.sx,
       players.current.sy, players.current.swidth, players.current.sheight,
       players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
-  	}
+	}
 
     // Draw other player's sprite
     ctx.drawImage( images[3],players.other.sx ,
-    players.other.sy, players.other.swidth, players.other.sheight,
-    players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y,
-    players.other.width, players.other.height);
+      players.other.sy, players.other.swidth, players.other.sheight,
+      players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y,
+      players.other.width, players.other.height);   
 
     // Check if the player got hit
-    if(players.current.health == 4 && !playedFour) {
+    if(players.current.health == 9 && !playedNine)
+    {
       sounds[3].play();
       playedFour = true;
     }
-    else if(players.current.health == 3 && !playedThree) {
+    else if(players.current.health == 8 && !playedEight)
+    {
       sounds[3].play();
       playedThree = true;
     }
-    else if(players.current.health == 2 && !playedTwo) {
+    else if(players.current.health == 7 && !playedSeven)
+    {
       sounds[3].play();
       playedTwo = true;
     }
-    else if(players.current.health == 1 && !playedOne) {
+    else if(players.current.health == 6 && !playedSix)
+    {
       sounds[3].play();
       playedOne = true;
     }
-    else if(players.current.health == 0 && !playedZero) {
+    else if(players.current.health == 5 && !playedFive)
+    {
+      sounds[3].play();
+      playedZero = true;
+    }
+    else if(players.current.health == 4 && !playedFour)
+    {
+      sounds[3].play();
+      playedFour = true;
+    }
+    else if(players.current.health == 3 && !playedThree)
+    {
+      sounds[3].play();
+      playedThree = true;
+    }
+    else if(players.current.health == 2 && !playedTwo)
+    {
+      sounds[3].play();
+      playedTwo = true;
+    }
+    else if(players.current.health == 1 && !playedOne)
+    {
+      sounds[3].play();
+      playedOne = true;
+    }
+    else if(players.current.health == 0 && !playedZero)
+    {
       sounds[3].play();
       playedZero = true;
     }
@@ -411,15 +465,16 @@ function renderPlayers(players, ctx, powerUpArray) {
     ctx.fillText("HEALTH: " + players.current.health + "/5", 32, 32);
   }
   // Enemy perspective
-  else {
+  else{
     // Display the instructions
-    if(enemyFlag) {
+    if(enemyFlag)
+    {
       var enemyModal = document.getElementById('enemyModal');
       enemyModal.style.display = "block";
       enemyFlag = false;
     }
     // Render lasers
-    for (var i = 0 ; i < players.current.enemyFire.length; i++) {
+    for (var i = 0 ; i < players.current.enemyFire.length ; i++){
       ctx.save();
       ctx.translate(players.current.enemyFire[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.current.enemyFire[i].position.y);
       ctx.fillStyle = "violet";
@@ -427,77 +482,84 @@ function renderPlayers(players, ctx, powerUpArray) {
       ctx.fillRect(0,0, players.current.enemyFire[i].width, players.current.enemyFire[i].height*3);
       ctx.restore();
     }
-  	for (var i = 0 ; i < players.current.enemyBomb.length ; i++) {
+  	for (var i = 0 ; i < players.current.enemyBomb.length ; i++)
+    {
   	  ctx.save();
-
+  	  
   	  ctx.translate(players.current.enemyBomb[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.current.enemyBomb[i].position.y);
-
+  		
   	  //ctx.rotate(-players.current.enemyBomb[i].angle);
-  	  if(players.current.enemyBomb[i].state=="falling") {
+  	  if(players.current.enemyBomb[i].state=="falling"){
   	  ctx.drawImage(images[4],0,0,14,32 ,0,0,players.current.enemyBomb[i].width ,players.current.enemyBomb[i].height);
   	  }
-  	  else if(players.current.enemyBomb[i].state!="finished") {
-    		ctx.drawImage( images[5],players.current.enemyBomb[i].explosionAnimation*players.current.enemyBomb[i].explosionImageWidth,0 ,
-    		players.current.enemyBomb[i].explosionImageWidth,players.current.enemyBomb[i].explosionImageHeight ,0,0,
-    		players.current.enemyBomb[i].width ,players.current.enemyBomb[i].height )
+  	  else if(players.current.enemyBomb[i].state!="finished"){
+  		ctx.drawImage( images[5],players.current.enemyBomb[i].explosionAnimation*players.current.enemyBomb[i].explosionImageWidth,0 , 
+  		players.current.enemyBomb[i].explosionImageWidth,players.current.enemyBomb[i].explosionImageHeight ,0,0,
+  		players.current.enemyBomb[i].width ,players.current.enemyBomb[i].height )
   	  }
   	  ctx.restore();
     }
 
     // Draw current player's sprite
     ctx.drawImage( images[3],players.current.sx ,
-    players.current.sy, players.current.swidth, players.current.sheight,
-    players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
+      players.current.sy, players.current.swidth, players.current.sheight,
+      players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
 
 	// Draw other player's sprite
 	var playerDrawn = false;
-	for(var i = 0; i < powerUpArray.length; i++) {
-		if(powerUpArray.powerUps[i].type == 0 && powerUpArray.powerUps[i].active && !players.other.wonGame) {
+	for(var i = 0; i < powerUpArray.length; i++)
+	{
+		if(powerUpArray.powerUps[i].type == 0 && powerUpArray.powerUps[i].active && !players.other.wonGame)
+		{
 		  // Draw the player as a box instead if they are using the 30 second box powerup
-		  ctx.drawImage(hidingObjImages[3], players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x,
-      players.other.screenPos.y - 12, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); // todo: magic numbers
+		  ctx.drawImage(hidingObjImages[3], players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, 
+          players.other.screenPos.y - 13, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); // todo: magic numbers
 		  playerDrawn = true;
 		}
-	}
-	if(playerDrawn == false && !players.other.wonGame && players.other.health > 0) {
-    ctx.drawImage( images[2],players.other.sx ,
-    players.other.sy, players.other.swidth, players.other.sheight,
-    players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x,
-    players.other.screenPos.y, players.other.width, players.other.height);
-	}
+	}	
+	if(playerDrawn == false && !players.other.wonGame && players.other.health > 0)
+	{
+      ctx.drawImage( images[2],players.other.sx ,
+      players.other.sy, players.other.swidth, players.other.sheight,
+      players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x,
+      players.other.screenPos.y, players.other.width, players.other.height);
+	}	  
 
-  // Draw enemy's reticle
-  if(!players.other.wonGame && players.other.health > 0) {
-    ctx.save();
-    ctx.translate(reticule.x, reticule.y);
-    ctx.beginPath();
-    ctx.arc(0, 0, 10, 0, 2*Math.PI);
-    ctx.moveTo(0, 15);
-    ctx.lineTo(0, -15);
-    ctx.moveTo(15, 0);
-    ctx.lineTo(-15, 0);
-    ctx.strokeStyle = '#00ff00';
-    ctx.stroke();
-    ctx.restore();
-  }
-
+    // Draw enemy's reticle
+    if(!players.other.wonGame && players.other.health > 0){
+      ctx.save();
+      ctx.translate(reticule.x, reticule.y);
+      ctx.beginPath();
+      ctx.arc(0, 0, 10, 0, 2*Math.PI);
+      ctx.moveTo(0, 15);
+      ctx.lineTo(0, -15);
+      ctx.moveTo(15, 0);
+      ctx.lineTo(-15, 0);
+      ctx.strokeStyle = '#00ff00';
+      ctx.stroke();
+      ctx.restore();
+    }
+	
   	//Draw hintbox if necessary
-  	if(players.current.hintboxAlpha > 0.1) {
-      sounds[2].play();
-  		ctx.save();
+  	if (players.current.hintboxAlpha > 0.1)
+  	{	
+                sounds[2].play();
+  		ctx.save();			
   		var grd;
-  		if(players.current.leftOfPlayer == false) {
+  		if(players.current.leftOfPlayer == false)
+  		{
   			grd = ctx.createLinearGradient(0, 0, 90, 0);
-  		  grd.addColorStop(0, 'rgba(255, 0, 0, '+ players.current.hintboxAlpha + ')');
-  		  grd.addColorStop(1, 'rgba(255, 0, 0, 0)');
-  	    ctx.fillStyle = grd;
+  		    grd.addColorStop(0, 'rgba(255, 0, 0, '+ players.current.hintboxAlpha + ')');
+  		    grd.addColorStop(1, 'rgba(255, 0, 0, 0)');
+  		    ctx.fillStyle = grd;
   			ctx.fillRect((players.current.screenPos.x -565), (players.current.screenPos.y - 100),160,1000);
   		}
-  		else {
+  		else
+  		{
   			grd = ctx.createLinearGradient(934, 0, 1024, 0);
   			grd.addColorStop(0, 'rgba(255, 0, 0, 0)');
-  		  grd.addColorStop(1, 'rgba(255, 0, 0, '+ players.current.hintboxAlpha + ')');
-  		  ctx.fillStyle = grd;
+  		    grd.addColorStop(1, 'rgba(255, 0, 0, '+ players.current.hintboxAlpha + ')');
+  		    ctx.fillStyle = grd;
   			ctx.fillRect((players.current.screenPos.x +430), (players.current.screenPos.y - 100),160,1000);
   		}
   		ctx.restore();
@@ -520,77 +582,94 @@ function renderPlayers(players, ctx, powerUpArray) {
   * @param ctx: the canvas context
   * @param renderDelayedObjs: Objects not being used to hide behind
   */
-function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs) {
+function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
+{
   // Draw the canvas backgrounds
   if(((!players.current.direction.left && !players.current.direction.down && !players.current.direction.right && !players.current.direction.up) ||
-      (!players.other.direction.left && !players.other.direction.down && !players.other.direction.right && !players.other.direction.up)) && renderDelayedObjs == false) {
+        (!players.other.direction.left && !players.other.direction.down && !players.other.direction.right && !players.other.direction.up)) && renderDelayedObjs == false) {
     renderBackground(ctx, players.current);
   }
-
+	
   // Draw hiding objects
-  ctx.save();
-  for(var i = 0; i < hidingObjects.length; i++) {
+  ctx.save(); 
+  for(var i = 0; i < hidingObjects.length; i++)
+  {
 	  // Render objects not being used to hide behind
-	  if(renderDelayedObjs == false) {
-		  if(hidingObjects.objects[i].delayRender == false && hidingObjects.objects[i].render) {
-        ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x),
-        hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type].width * 1.9, hidingObjImages[hidingObjects.objects[i].type].height * 1.9);
+	  if(renderDelayedObjs == false)
+	  {
+		  if(hidingObjects.objects[i].delayRender == false && hidingObjects.objects[i].render)
+		  {
+        ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
+          hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type].width * 1.9, hidingObjImages[hidingObjects.objects[i].type].height * 1.9); 
 		  }
 	  }
 	  // Now render those being hid behind
-	  else {
-		  if(hidingObjects.objects[i].delayRender == true && hidingObjects.objects[i].render) {
-        ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x),
-        hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type ].width * 1.9, hidingObjImages[hidingObjects.objects[i].type].height * 1.9);
+	  else
+	  {
+		  if(hidingObjects.objects[i].delayRender == true && hidingObjects.objects[i].render)
+		  {
+        ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
+          hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type ].width * 1.9, hidingObjImages[hidingObjects.objects[i].type].height * 1.9); 
 		  }
 	  }
-
+	  
     // Display animated down arrow if on top of a object that can be hid behind
-    if(hidingObjects.objects[i].displayArrow == true  && hidingObjects.objects[i].render) {
+    if(hidingObjects.objects[i].displayArrow == true  && hidingObjects.objects[i].render){
       ctx.drawImage(hidingObjImages[0],hidingObjects.arrowFrame * 130, 0, 128, 175,  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x) + 16, hidingObjects.objects[i].position.y - 95, 30, 45);
     }
   }
   ctx.restore();
 }
 
-function renderPowerUps(players, powerUpArray, ctx) {
+function renderPowerUps(players, powerUpArray, ctx)
+{
 	ctx.save();
-	for(var i = 0; i < powerUpArray.length; i++) {
-		if(powerUpArray.powerUps[i].render) {
+	for(var i = 0; i < powerUpArray.length; i++)
+	{
+		if(powerUpArray.powerUps[i].render)
+		{
 			ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], powerUpArray.powerUps[i].position.x + (players.current.screenPos.x - players.current.levelPos.x),
 			powerUpArray.powerUps[i].position.y + powerUpArray.yOffset, powerUpImages[powerUpArray.powerUps[i].type].width * .85, powerUpImages[powerUpArray.powerUps[i].type].height * .85);
 		}
-
-		if(players.current.id == 'player') {
+		
+		if(players.current.id == 'player')
+		{
 			// Display distance between player and enemy if radar is active
-			if(powerUpArray.powerUps[i].active && powerUpArray.powerUps[i].type == 1)	{
+			if(powerUpArray.powerUps[i].active && powerUpArray.powerUps[i].type == 1)
+			{			
 				var enemyDistance = Math.floor((players.other.levelPos.x - players.current.levelPos.x)/100);
 				ctx.font="25px Verdana";
-				if(enemyDistance > 0) {
+				if(enemyDistance > 0)
+				{
 					ctx.fillText(enemyDistance + 'm', canvas.width - 90, canvas.height/2);
 					ctx.drawImage(powerUpImages[2], canvas.width - 35, canvas.height/2 - 5, 30, 45);
 				}
-				else {
+				else
+				{
 					ctx.fillText(Math.abs(enemyDistance) + 'm', 40, canvas.height/2);
 					ctx.drawImage(powerUpImages[3], 5, canvas.height/2 - 5, 30, 45);
 				}
 			}
-
+		
 			// Display in HUD if picked up
-			if(powerUpArray.powerUps[i].pickedUp)	{
-				if(powerUpArray.powerUps[i].type == 1) {
+			if(powerUpArray.powerUps[i].pickedUp)
+			{
+				if(powerUpArray.powerUps[i].type == 1)
+				{
 					ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], 32,
-					35 + (27 * powerUpArray.powerUpsBeingHeld), powerUpImages[powerUpArray.powerUps[i].type].width * .65,
+					35 + (27 * powerUpArray.powerUpsBeingHeld), powerUpImages[powerUpArray.powerUps[i].type].width * .65, 
 					powerUpImages[powerUpArray.powerUps[i].type].height * .65);
 				}
-				else {
+				else
+				{
 					ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], 34,
 					60, powerUpImages[powerUpArray.powerUps[i].type].width * .75, powerUpImages[powerUpArray.powerUps[i].type].height * .75);
 				}
 			}
-
+		
 			// HUD timer
-			if(powerUpArray.powerUps[i].active)	{
+			if(powerUpArray.powerUps[i].active)
+			{
 				ctx.font="18px Verdana";
 				ctx.fillText(Math.floor(powerUpArray.powerUps[i].duration / 1000), 70, 60);
 			}
