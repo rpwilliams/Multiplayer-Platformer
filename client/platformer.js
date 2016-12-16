@@ -2,6 +2,7 @@
 
 /* Global variables */
 var canvas = document.getElementById('screen');
+var powerUpTimerDiv = document.getElementById('powerUpTimerDiv');
 canvas.width = canvas.offsetWidth;
 canvas.height = canvas.offsetHeight;
 //var camera = new Camera(canvas);
@@ -210,7 +211,7 @@ window.onload = function() {
 		break;
 	  // CTRL
 	case 17:
-		socket.emit('ctrlKeyDown', {ctrlKey: true});
+		socket.emit('ctrlKey', {isDown: true});
         break;
     }
   }
@@ -241,7 +242,7 @@ window.onload = function() {
         break;
 	  // CTRL
 	  case 17:
-		socket.emit('ctrlKeyUp', {ctrlKey: false});
+		socket.emit('ctrlKey', {isDown: false});
         break;
     }
   }
@@ -604,7 +605,25 @@ function renderPowerUps(players, powerUpArray, ctx)
 			ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], powerUpArray.powerUps[i].position.x + (players.current.screenPos.x - players.current.levelPos.x),
 			powerUpArray.powerUps[i].position.y + powerUpArray.yOffset, powerUpImages[powerUpArray.powerUps[i].type].width * .85, powerUpImages[powerUpArray.powerUps[i].type].height * .85);
 		}
+		
+		if(powerUpArray.powerUps[i].pickedUp)
+		{
+			ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], players.current.screenPos.x - 478,
+			60, powerUpImages[powerUpArray.powerUps[i].type].width * .85, powerUpImages[powerUpArray.powerUps[i].type].height * .85);
+		}
+		
+		if(powerUpArray.powerUps[i].pickedUp)
+		{
+			powerUpTimerDiv.innerHTML = Math.floor(powerUpArray.powerUps[i].duration / 1000);
+		}
 	}
+	
+	// Reset the timer in the HUD after each use
+	if(powerUpTimerDiv.innerHTML == "-1")
+	{
+		powerUpTimerDiv.innerHTML = "";
+	}
+	
 	ctx.restore();
 }
 
