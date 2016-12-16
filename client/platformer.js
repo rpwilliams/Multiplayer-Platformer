@@ -473,11 +473,10 @@ function renderPlayers(players, ctx, powerUpArray) {
 		{
 		  // Draw the player as a box instead if they are using the 30 second box powerup
 		  ctx.drawImage(hidingObjImages[3], players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, 
-          players.current.screenPos.y - 12, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); 
+          players.other.screenPos.y - 16, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); 
 		  playerDrawn = true;
 		}
-	}
-	
+	}	
 	if(playerDrawn == false)
 	{
       ctx.drawImage( images[2],players.other.sx ,
