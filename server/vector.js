@@ -56,10 +56,7 @@ function subtract(a, b) {
  * @returns a new vector representing the rotated original
  */
 function rotate(a, angle) {
-  return {
-    x: a.x * Math.cos(angle) - a.y * Math.sin(angle),
-    y: a.x * Math.sin(angle) + a.y * Math.cos(angle)
-  }
+  return {x: a.x * Math.cos(angle) - a.y * Math.sin(angle), y: a.x * Math.sin(angle) + a.y * Math.cos(angle)};
 }
 
 /**

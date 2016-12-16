@@ -5,6 +5,7 @@
 	outdated on the lab computers
 */
 var PLAYER_RUN_VELOCITY = 4;
+var VELOCITY_DELTA = 0.2;
 var PLAYER_FALL_VELOCITY = 0.5;
 var PLAYER_JUMP_SPEED = 8;
 var PLAYER_WON_GAME_X_POS = 9340;
@@ -12,6 +13,8 @@ var CANVAS_WIDTH = 1024;
 var LEVEL_LENGTH = 9600;
 var PLAYER_MAX_FALL_VELOCITY = 12;
 var TILE_SIZE = 48;
+var ANIMATION_COUNTER = 3;
+var SPRITE_COUNT = 5
 
 /**
  * @module exports the Player class
@@ -44,11 +47,23 @@ function Player(position,socket ) {
 	this.noDir = {left:false, down:false, right:false, up:false};
 	this.id = 'player';
 	this.sound = null;
-	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
-	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
-	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
-	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity, sound:this.sound, wonGame:this.wonGame,id:this.id, health:this.health};
+	this.send = {
+		levelPos:this.levelPos,
+		screenPos:this.screenPos,
+		direction: this.noDir,
+		sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter,
+		sy:this.yPlaceInImage,
+		swidth:this.spriteWidth,
+		sheight:this.spriteHeight,
+		width:this.widthInGame,
+		height:this.heightInGame,
+		animation:this.animationCounter,
+		velocity:this.velocity,
+		sound:this.sound,
+		wonGame:this.wonGame,
+		id:this.id,
+		health:this.health
+	};
 
 	this.socket = socket;
 	this.jumping = false;
@@ -72,21 +87,21 @@ function Player(position,socket ) {
 Player.prototype.update = function(tilemap) {
 
 	// TODO: Remove (lets player jump to clicked X position)
-	if(this.reticulePosition && this.reticulePosition.fire){
+	if(this.reticulePosition && this.reticulePosition.fire) {
 		this.levelPos.x += this.reticulePosition.x - CANVAS_WIDTH/2;
 		this.levelPos.y = 100;
 		this.screenPos.y = 100;
 		this.reticulePosition.fire=false;
-  	}
+  }
 
 	// Left key pressed
-	if(this.direction.left){
-		if(this.jumping || this.falling){
-			if(this.velocity.x > -PLAYER_RUN_VELOCITY){
-				this.velocity.x -= 0.2;// TODO: magic numbers
+	if(this.direction.left) {
+		if(this.jumping || this.falling) {
+			if(this.velocity.x > -PLAYER_RUN_VELOCITY) {
+				this.velocity.x -= VELOCITY_DELTA;
 			}
 		}
-		else{
+		else {
 			this.velocity.x = -PLAYER_RUN_VELOCITY;
 			this.changeAnimation("moving left");
 			this.facing = "left";
@@ -94,13 +109,13 @@ Player.prototype.update = function(tilemap) {
 	}
 
 	// Right key pressed
-	else if(this.direction.right){
-		if(this.jumping || this.falling){
-			if(this.velocity.x < PLAYER_RUN_VELOCITY){
-				this.velocity.x += 0.2;// TODO: magic numbers
+	else if(this.direction.right) {
+		if(this.jumping || this.falling) {
+			if(this.velocity.x < PLAYER_RUN_VELOCITY) {
+				this.velocity.x += VELOCITY_DELTA;
 			}
 		}
-		else{
+		else {
 			this.velocity.x = PLAYER_RUN_VELOCITY;
 			this.changeAnimation("moving right");
 			this.facing = "right";
@@ -108,28 +123,27 @@ Player.prototype.update = function(tilemap) {
 	}
 
 	// Jumping or falling
-	if(this.jumping || this.falling){
+	if(this.jumping || this.falling) {
 		this.changeAnimation("moving up");
-		if(this.velocity.y < PLAYER_MAX_FALL_VELOCITY){
+		if(this.velocity.y < PLAYER_MAX_FALL_VELOCITY) {
 			this.velocity.y += PLAYER_FALL_VELOCITY;
 		}
-		if(this.velocity.y > 0){
+		if(this.velocity.y > 0) {
 			this.jumping=false;
 			this.falling=true;
 		}
-
 	}
 
 	// Beginning to jump
-	else if(this.direction.up){
+	else if(this.direction.up) {
 		this.velocity.y -= PLAYER_JUMP_SPEED;
 		this.jumping=true;
 		this.sound = 1;
 	}
 
 	// Standing still
-	else{
-		if(!this.direction.right && !this.direction.left){
+	else {
+		if(!this.direction.right && !this.direction.left) {
 			this.velocity.x = 0;
 			this.changeAnimation("stand still");
 		}
@@ -141,89 +155,105 @@ Player.prototype.update = function(tilemap) {
 	this.screenPos.y += this.velocity.y;
 
 	// Prevent player from walking off screen
-	if(this.levelPos.x <= 0){
+	if(this.levelPos.x <= 0) {
 		this.levelPos.x = 0;
 	}
-	else if(this.levelPos.x >= LEVEL_LENGTH - this.widthInGame){
+	else if(this.levelPos.x >= LEVEL_LENGTH - this.widthInGame) {
 		this.levelPos.x = LEVEL_LENGTH - this.widthInGame;
 	}
 
 	// Prevent background from moving too far
-	if(this.levelPos.x <= CANVAS_WIDTH/2 ){
+	if(this.levelPos.x <= CANVAS_WIDTH/2 ) {
 		this.screenPos.x = this.levelPos.x;
 	}
-	else if(this.levelPos.x >= LEVEL_LENGTH - CANVAS_WIDTH/2){
+	else if(this.levelPos.x >= LEVEL_LENGTH - CANVAS_WIDTH/2) {
 		this.screenPos.x = CANVAS_WIDTH - (LEVEL_LENGTH - this.levelPos.x);
 	}
-	else{
+	else {
 		this.screenPos.x = CANVAS_WIDTH/2;
 	}
 
 
 	// Update animations
 	this.animationTimer++;
-	if (this.animationTimer>this.frameLength)
-	{
-	  if(this.animation=="stand still") this.animationCounter=0;
-	  else if(this.animation!="moving up"){
-		this.animationCounter++;
+	if(this.animationTimer>this.frameLength) {
+	  if(this.animation=="stand still") {
+			this.animationCounter=0;
+		}
+	  else if(this.animation!="moving up") {
+			this.animationCounter++;
 	  }
 	  this.animationTimer = 0;
 	}
 
-	if (this.animationCounter >= this.numberOfSprites){
+	if(this.animationCounter >= this.numberOfSprites) {
 		if(this.animation!="stand still"){
-			this.animationCounter = 3;	// TODO: magic numbers
+			this.animationCounter = ANIMATION_COUNTER;
 		}
 		else{
 		this.animationCounter = 0;
 		}
 	}
-	if(this.jumping==true) this.xPlaceInImage = this.spriteWidth*5;
-	else if(this.falling==true) this.xPlaceInImage = this.spriteWidth*6;
-	else this.xPlaceInImage = 0;
+	if(this.jumping==true) {
+		this.xPlaceInImage = this.spriteWidth*5;
+	}
+	else if(this.falling==true) {
+		this.xPlaceInImage = this.spriteWidth*6;
+	}
+	else {
+		this.xPlaceInImage = 0;
+	}
 
 	// Check if player 1 won the game
-	if(Math.floor(this.levelPos.x) > PLAYER_WON_GAME_X_POS)// TODO: magic numbers
-	{
+	if(Math.floor(this.levelPos.x) > PLAYER_WON_GAME_X_POS) {
 		this.wonGame = true;
-  	}
+  }
 
 	// Tile collisions
 	this.hitSolid(tilemap);
 
 
-	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
-	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
-	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
-	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,wonGame:this.wonGame, sound: this.sound, id:this.id, health:this.health,
-	hit:this.hit};
+	this.send = {
+		levelPos:this.levelPos,
+		screenPos:this.screenPos,
+		direction: this.noDir,
+		sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter,
+		sy:this.yPlaceInImage,
+		swidth:this.spriteWidth,
+		sheight:this.spriteHeight,
+		width:this.widthInGame,
+		height:this.heightInGame,
+		animation:this.animationCounter,
+		velocity:this.velocity,
+		wonGame:this.wonGame,
+		sound: this.sound,
+		id:this.id,
+		health:this.health,
+		hit:this.hit
+	};
 }
 
 
-Player.prototype.changeAnimation = function(x)
-{
+Player.prototype.changeAnimation = function(x) {
 	this.animation = x;
-	if (this.animation == "stand still"){
+	if (this.animation == "stand still") {
 		this.numberOfSprites = 0;
 		this.animationTimer = 0;
 		this.animationCounter = 0;
 	}
-	else{
-		this.numberOfSprites = 5;// TODO: magic numbers
-		switch(this.animation)
-		{
+	else {
+		this.numberOfSprites = SPRITE_COUNT;
+		switch(this.animation) {
 			case "moving up":
 				this.animationCounter=0;
-			break;
+				break;
 			case "moving down":
-  				this.yPlaceInImage =this.spriteHeight*0;
-  				break;
+  			this.yPlaceInImage =this.spriteHeight*0;
+  			break;
 			case "moving left":
-				if(this.jumping==false && this.falling==false){
-            		          this.yPlaceInImage =this.spriteHeight*1;
-          		}
+				if(this.jumping==false && this.falling==false) {
+          this.yPlaceInImage =this.spriteHeight*1;
+        }
 				break;
 			case "moving right":
 				this.yPlaceInImage =this.spriteHeight*0;
@@ -246,27 +276,27 @@ Player.prototype.hitSolid = function(tilemap) {
 	}
 
 	// Right
-	if(this.velocity.x > 0){
-		side = tilemap.tileAt((this.levelPos.x + this.widthInGame - this.pixelBuffer), (this.levelPos.y + this.heightInGame - 2*this.pixelBuffer), 2); 
-		if(side.tile.Solid){
+	if(this.velocity.x > 0) {
+		side = tilemap.tileAt((this.levelPos.x + this.widthInGame - this.pixelBuffer), (this.levelPos.y + this.heightInGame - 2*this.pixelBuffer), 2);
+		if(side.tile.Solid) {
 			this.levelPos.x -= this.velocity.x;
 			this.velocity.x = 0;
 		}
 	}
 
 	// Left
-	else if(this.velocity.x < 0){
-		side = tilemap.tileAt((this.levelPos.x + this.pixelBuffer), (this.levelPos.y + this.heightInGame - 2*this.pixelBuffer), 2); 
-		if(side.tile.Solid){
+	else if(this.velocity.x < 0) {
+		side = tilemap.tileAt((this.levelPos.x + this.pixelBuffer), (this.levelPos.y + this.heightInGame - 2*this.pixelBuffer), 2);
+		if(side.tile.Solid) {
 			this.levelPos.x -= this.velocity.x;
 			this.velocity.x = 0;
-		}		
+		}
 	}
 
 	// Falling
-	if(this.falling){
+	if(this.falling) {
 		if (lowerLeftPlat.tile.Solid || lowerRightPlat.tile.Solid) {
-			if(this.levelPos.y + this.heightInGame - lowerLeftPlat.tileY*TILE_SIZE < 10){
+			if(this.levelPos.y + this.heightInGame - lowerLeftPlat.tileY*TILE_SIZE < 10) {
 				this.levelPos.y = lowerLeftPlat.tile.Solid ? lowerLeftPlat.tileY*TILE_SIZE: lowerRightPlat.tileY*TILE_SIZE;
 				this.screenPos.y = lowerLeftPlat.tile.Solid ? lowerLeftPlat.tileY*TILE_SIZE: lowerRightPlat.tileY*TILE_SIZE;
 				this.levelPos.y -= this.heightInGame - this.pixelBuffer + 4; // bad magic numbers
@@ -274,6 +304,6 @@ Player.prototype.hitSolid = function(tilemap) {
 				this.velocity.y=0;
 				this.falling=false;
 			}
-		}	  
+		}
 	}
 }

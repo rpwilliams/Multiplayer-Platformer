@@ -40,16 +40,6 @@ module.exports = exports = (function (){
           // We'll assume any tiles missing the solid property are *not* solid
           Solid: (tilesetmapData.tileproperties[i] && tilesetmapData.tileproperties[i].Solid) ? true : false
         }
-          // if(tilesetmapData.tileproperties[i]){
-          //   // console.log(tilesetmapData.tileproperties[i].Solid);
-          //   if(tilesetmapData.tileproperties[i].Solid){
-          //     // console.log(tile);
-          //     // console.log(i);
-          //   }
-          // }
-          // else{
-          //   console.log('missing tile');
-          // }
         tiles.push(tile);
       }
     });
@@ -66,7 +56,7 @@ module.exports = exports = (function (){
           width: layerData.width,
           height: layerData.height,
           visible: layerData.visible
-        }
+        };
 
         // Set up the layer's data array.  We'll try to optimize
         // by keeping the index data type as small as possible
@@ -89,13 +79,6 @@ module.exports = exports = (function (){
       return undefined;
     var tilemapX = Math.floor(x / tileWidth);
     var tilemapY = Math.floor(y / tileHeight);
-    // console.log("Tile x: ", tilemapX);
-    // console.log("Tile y: ", tilemapY);
-    // console.log(tiles)
-    // console.log(tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] -1])
-    // if(!(tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1])){
-      // console.log(layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1);
-    // }
     return {tile: tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1], tileX: tilemapX, tileY: tilemapY};
   }
 

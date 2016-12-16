@@ -3,8 +3,7 @@
 module.exports = exports = HidingObjects;
 
 
-function SingleObject(pos, t)
-{
+function SingleObject(pos, t) {
 	this.position = pos;
 	this.type = t;
 	this.render = true;
@@ -13,14 +12,13 @@ function SingleObject(pos, t)
 }
 
 // Array of SingleObjects
-function HidingObjects()
-{
+function HidingObjects() {
 	this.objects = [];
 	this.length;
 	this.arrowFrame = 5;
 	this.oldTime = Date.now();
 	this.elapsedTime = 0;
-	
+
 	// Pre-made objects that will spawn in the same locations at the beginning of each game
 	this.objects[0] = new SingleObject({x: 900, y: 515}, 1);
 	this.objects[1] = new SingleObject({x: 980, y: 515}, 1);
@@ -59,58 +57,52 @@ function HidingObjects()
 	this.objects[34] = new SingleObject({x: 8643, y: 360}, 3);
 	this.objects[35] = new SingleObject({x: 8701, y: 419}, 3);
 	this.objects[36] = new SingleObject({x: 8818, y: 419}, 3);
-	//this.objects[37] = new SingleObject({x: 11000, y: 460}, 7);
 	this.objects[37] = new SingleObject({x: 9300, y: 371}, 7);
 	this.length = 38;
 }
 
-HidingObjects.prototype.add = function(pos, t)
-{
+HidingObjects.prototype.add = function(pos, t) {
 	// Adds a new object to the array
 	this.objects[this.length] = {position: pos, type: t};
 	this.length++;
 }
 
-HidingObjects.prototype.update = function(player, newTime)
-{	
+HidingObjects.prototype.update = function(player, newTime) {
 	// Check for player collision with each object
-	for(var i = 0; i < this.length; i++)
-	{
+	for(var i = 0; i < this.length; i++) {
 		// Adjust y hitbox for cabinets
 		var yOffset = 30;
-		if(this.objects[i].type == 5)
-		{
+		if(this.objects[i].type == 5) {
 			yOffset = 70;
 		}
-		
-		if (player.levelPos.x > (this.objects[i].position.x - 35) && player.levelPos.x < (this.objects[i].position.x + 50) 
-			&& player.levelPos.y <= (this.objects[i].position.y + yOffset) && player.levelPos.y > (this.objects[i].position.y - 70 + yOffset))
-		{
+
+		if (player.levelPos.x > (this.objects[i].position.x - 35)
+		&& player.levelPos.x < (this.objects[i].position.x + 50)
+		&& player.levelPos.y <= (this.objects[i].position.y + yOffset)
+		&& player.levelPos.y > (this.objects[i].position.y - 70 + yOffset)) {
 			// Check if pressing 'down' to hide
-			if (player.direction.down)
-			{
+			if (player.direction.down) {
 				this.objects[i].displayArrow = false;
 				this.objects[i].delayRender = true;
 			}
-			else{
+			else {
 				this.objects[i].delayRender = false;
 				this.objects[i].displayArrow = true;
 			}
 		}
-		else
-		{
+		else {
 			this.objects[i].displayArrow = false;
 			this.objects[i].delayRender = false;
 		}
-	}	
-	
-	if(this.elapsedTime > 150){
-	   if (this.arrowFrame > 0) {
-            this.arrowFrame--;
-        }
-        else {
-            this.arrowFrame = 5;
-        }
+	}
+
+	if(this.elapsedTime > 150) {
+		if(this.arrowFrame > 0) {
+      this.arrowFrame--;
+    }
+    else {
+      this.arrowFrame = 5;
+    }
 		this.elapsedTime = 0;
 	}
 	this.elapsedTime += (newTime - this.oldTime);

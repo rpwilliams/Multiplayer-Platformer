@@ -51,7 +51,7 @@ var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
 /* Handles a player connection */
-io.on('connection', function(socket){
+io.on('connection', function(socket) {
   console.log('a user connected');
   players.push(socket);
 
@@ -64,6 +64,6 @@ io.on('connection', function(socket){
 });
 
 /* Launch the server */
-server.listen(PORT, function(){
+server.listen(PORT, function() {
   console.log("Server listening on: http://localhost:%s", PORT);
 })
