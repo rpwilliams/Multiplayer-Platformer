@@ -62,6 +62,7 @@ PowerUpArray.prototype.update = function(player, newTime)
 			{
 				this.powerUps[i].active = false;
 				this.powerUps[i].depleted = true;
+				this.powerUps[i].pickedUp = false;
 			}
 			else
 			{
