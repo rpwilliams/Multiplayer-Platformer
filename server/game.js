@@ -115,6 +115,7 @@ Game.prototype.update = function(newTime) {
   
   this.time = Date.now();
   
+  
   // Update players
   this.players.forEach(function(player, i, players) {
     var otherPlayer = players[(i+1)%2];
