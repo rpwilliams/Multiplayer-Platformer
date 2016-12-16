@@ -6,6 +6,9 @@ canvas.width = canvas.offsetWidth;
 canvas.height = canvas.offsetHeight;
 //var camera = new Camera(canvas);
 
+// Audio files
+var radarAudio = new Audio('sounds/radar.mp3');
+
 // Flags to ensure instructions only appear once
 var playerFlag = true;  
 var enemyFlag = true;
@@ -383,6 +386,7 @@ function renderPlayers(players, ctx) {
   	//Draw hintbox if necessary
   	if (players.current.hintboxAlpha > 0.1)
   	{	
+      radarAudio.play();
   		ctx.save();			
   		var grd;
   		if(players.current.leftOfPlayer == false)
