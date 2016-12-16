@@ -86,6 +86,7 @@ var sounds = [
   new Audio(),
   new Audio(),
   new Audio(),
+  new Audio(),
   new Audio()
 ];
 
@@ -97,6 +98,8 @@ sounds[3].loop = false;
 sounds[4].src = 'sounds/hiding.wav';
 sounds[5].src = 'sounds/bomb-drop.wav';
 sounds[6].src = 'sounds/explosion.wav';
+sounds[7].src = 'sounds/rocket-launch.wav';
+sounds[7].loop = false;
 
 /* 
   The rocketship at the end of the level, which is used
@@ -178,6 +181,12 @@ window.onload = function() {
     refreshMessage.innerHTML = 'Press refresh to play again';
     message.style.display = 'block';
     refreshMessage.style.display = 'block';
+  });
+
+  // Handle rocket launch
+  socket.on('lift off', function() {
+    sounds[7].play();
+    hidingObjImages[7].src = 'rocket_on.png';
   });
 
   /**

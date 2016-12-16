@@ -136,8 +136,10 @@ Game.prototype.update = function(newTime) {
   }
   else
   {
+    console.log("LIFT OFF!!");
     var rocketShip = this.hidingObjects.objects[37];
-    rocketShip.position.y -= 2.5;  
+    rocketShip.position.y -= 3.5; 
+    this.io.to(this.room).emit('lift off'); 
   }
   
 
