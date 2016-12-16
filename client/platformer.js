@@ -142,7 +142,7 @@ window.onload = function() {
     renderHidingObjects(players, hidingObjects, ctx, false);
     if(!gameOver)
     {
-      renderPlayers(players, ctx);
+      renderPlayers(players, ctx, powerUpArray);
       playSound(players);
     }
     renderHidingObjects(players, hidingObjects, ctx, true); 
@@ -207,6 +207,10 @@ window.onload = function() {
       case 40:
       case 83:
         socket.emit('keyDown', {left:false, down:true, right:false, up:false});
+		break;
+	  // CTRL
+	case 17:
+		socket.emit('ctrlKeyDown', {ctrlKey: true});
         break;
     }
   }
@@ -234,6 +238,10 @@ window.onload = function() {
       case 40:
       case 83:
         socket.emit('keyUp', {left:true, down:false, right:true, up:true});
+        break;
+	  // CTRL
+	  case 17:
+		socket.emit('ctrlKeyUp', {ctrlKey: false});
         break;
     }
   }
@@ -302,7 +310,7 @@ function renderBackground(ctx, current) {
   * @param players: the player and enemy
   * @param ctx: the canvas context to be drawn to
   */
-function renderPlayers(players, ctx) {
+function renderPlayers(players, ctx, powerUpArray) {
   // Render debug information. TODO: Remove
   ctx.save();
   ctx.fillStyle = 'white';
@@ -350,10 +358,25 @@ function renderPlayers(players, ctx) {
   	  ctx.restore();
     }
 
-    // Draw current player's sprite
-    ctx.drawImage( images[2],players.current.sx,
+    // Draw current player's sprite. Also check if player is using the 30 second box powerup
+	var playerDrawn = false;
+	for(var i = 0; i < powerUpArray.length; i++)
+	{
+		if(powerUpArray.powerUps[i].type == 0 && powerUpArray.powerUps[i].active)
+		{
+		  // Draw the player as a box instead if they are using the 30 second box powerup
+		  ctx.drawImage(hidingObjImages[3], players.current.screenPos.x, 
+          players.current.screenPos.y - 16, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); 
+		  playerDrawn = true;
+		}
+	}
+	
+	if(playerDrawn == false)
+	{
+	  ctx.drawImage( images[2],players.current.sx,
       players.current.sy, players.current.swidth, players.current.sheight,
       players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
+	}
 
     // Draw other player's sprite
     ctx.drawImage( images[3],players.other.sx ,
@@ -436,11 +459,26 @@ function renderPlayers(players, ctx) {
       players.current.sy, players.current.swidth, players.current.sheight,
       players.current.screenPos.x, players.current.screenPos.y, players.current.width, players.current.height);
 
-    // Draw other player's sprite
-    ctx.drawImage( images[2],players.other.sx ,
+	// Draw other player's sprite
+	var playerDrawn = false;
+	for(var i = 0; i < powerUpArray.length; i++)
+	{
+		if(powerUpArray.powerUps[i].type == 0 && powerUpArray.powerUps[i].active)
+		{
+		  // Draw the player as a box instead if they are using the 30 second box powerup
+		  ctx.drawImage(hidingObjImages[3], players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, 
+          players.current.screenPos.y - 12, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); 
+		  playerDrawn = true;
+		}
+	}
+	
+	if(playerDrawn == false)
+	{
+      ctx.drawImage( images[2],players.other.sx ,
       players.other.sy, players.other.swidth, players.other.sheight,
       players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x,
       players.other.screenPos.y, players.other.width, players.other.height);
+	}	  
 
     // Draw enemy's reticle
     ctx.save();
@@ -535,7 +573,7 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 		  if(hidingObjects.objects[i].delayRender == false && hidingObjects.objects[i].render)
 		  {
         ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
-          hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type].width * 2, hidingObjImages[hidingObjects.objects[i].type].height * 2); 
+          hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type].width * 1.9, hidingObjImages[hidingObjects.objects[i].type].height * 1.9); 
 		  }
 	  }
 	  // Now render those being hid behind
@@ -544,7 +582,7 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 		  if(hidingObjects.objects[i].delayRender == true && hidingObjects.objects[i].render)
 		  {
         ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
-          hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type ].width * 2, hidingObjImages[hidingObjects.objects[i].type].height * 2); 
+          hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type ].width * 1.9, hidingObjImages[hidingObjects.objects[i].type].height * 1.9); 
 		  }
 	  }
 	  
