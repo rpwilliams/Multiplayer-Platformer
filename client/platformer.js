@@ -12,7 +12,6 @@ canvas.height = canvas.offsetHeight;
 // Flags to ensure instructions only appear once
 var playerFlag = true;  
 var enemyFlag = true;
-var gameOver = false;
 var playerWinner = 0;
 
 // Flags to ensure hit sounds play only once
@@ -38,6 +37,7 @@ images[2].src = 'player.png';  // Player
 images[3].src = 'Enemy_Ship.png'; // enemy
 images[4].src = 'enemyBomb.png';
 images[5].src = 'Explosion.png';
+images[6].src = 'guardrails.png'; // Guard rails
 
 var hidingObjImages = [
   new Image(),
@@ -134,29 +134,18 @@ window.onload = function() {
   // Global variables
   var canvas = document.getElementById('screen');
   var message = document.getElementById('message');
+  var refreshMessage = document.getElementById('refreshMessage');
   var ctx = canvas.getContext('2d');
   var socket = io();
-
-  //handle draw background inputs from the server
-  socket.on('draw', function() {
-    renderBackground(ctx);
-  });
 
   // Handle movement updates from the server
   socket.on('render', function(players, hidingObjects, powerUpArray){
     renderHidingObjects(players, hidingObjects, ctx, false);
-    if(!gameOver)
-    {
-      renderPlayers(players, ctx, powerUpArray);
-	  renderPowerUps(players, powerUpArray, ctx);
-      playSound(players);
-    }
+    renderPlayers(players, ctx, powerUpArray);
+    renderPowerUps(players, powerUpArray, ctx);
+    playSound(players);
     renderHidingObjects(players, hidingObjects, ctx, true);
-
-    if(gameOver)
-    {
-      win(players, ctx, playerWinner);
-    }
+    renderRails(ctx, players.current);
   });
 
   // Handle game on events
@@ -172,14 +161,24 @@ window.onload = function() {
 
   // Handle victory
   socket.on('victory', function() {
+    message.style.color = 'white';
+    message.style.fontFamily = 'Verdana'
+    message.style.fontSize = '40px'
     message.innerHTML = 'You win!';
+    refreshMessage.innerHTML = 'Press refresh to play again';
     message.style.display = 'block';
+    refreshMessage.style.display = 'block';
   });
 
   // Handle loss
   socket.on('defeat', function() {
+    message.style.color = 'white';
+    message.style.fontFamily = 'Verdana'
+    message.style.fontSize = '40px'
     message.innerHTML = 'You lose!';
+    refreshMessage.innerHTML = 'Press refresh to play again';
     message.style.display = 'block';
+    refreshMessage.style.display = 'block';
   });
 
   /**
@@ -276,19 +275,6 @@ window.onload = function() {
   }
 
 /**
-  * @function init()
-  * Initializes the game, with the player at the beginning of the map and
-  * the enemy at the end of the map.
-  */
-// function init(players, hidingObjects, ctx)
-// {
-//     // Render the normal objects, followed by the player and then the objects that the player is hiding behind
-//     renderHidingObjects(players, hidingObjects, ctx, false);
-//     renderPlayers(players, ctx);
-//     renderHidingObjects(players, hidingObjects, ctx, true);
-// }
-
-/**
   * @function renderBackground()
   * Renders the background (stars) and the foreground (the space station)
   * @param ctx: the canvas context to be drawn to
@@ -303,11 +289,29 @@ function renderBackground(ctx, current) {
   ctx.save();
   ctx.drawImage(images[0],
                 (current.levelPos.x - current.screenPos.x),
-                // (images[0].width/((canvas.height/images[0].height)*images[0].width))*(current.levelPos.x - current.screenPos.x),
                 0, canvas.width, canvas.height,
                 0, 0, canvas.width, canvas.height);
+  ctx.drawImage(images[6],
+                (current.levelPos.x - current.screenPos.x),
+                0, canvas.width, canvas.height,
+                0, 0, canvas.width, canvas.height);                
   ctx.restore();
 }
+
+/**
+  * @function renderBackground()
+  * Renders the background (stars) and the foreground (the space station)
+  * @param ctx: the canvas context to be drawn to
+  */
+function renderRails(ctx, current) {
+  // Render guardrails
+  ctx.drawImage(images[6],
+                (current.levelPos.x - current.screenPos.x),
+                0, canvas.width, canvas.height,
+                0, 0, canvas.width, canvas.height);                
+}
+
+
 
 /**
   * @function renderPlayer
@@ -371,12 +375,12 @@ function renderPlayers(players, ctx, powerUpArray) {
 		{
 		  // Draw the player as a box instead if they are using the 30 second box powerup
 		  ctx.drawImage(hidingObjImages[3], players.current.screenPos.x, 
-          players.current.screenPos.y - 16, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); 
+          players.current.screenPos.y - 13, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); // todo: magic numbers
 		  playerDrawn = true;
 		}
 	}
 	
-	if(playerDrawn == false)
+	if(playerDrawn == false && !players.current.wonGame)
 	{
 	  ctx.drawImage( images[2],players.current.sx,
       players.current.sy, players.current.swidth, players.current.sheight,
@@ -472,11 +476,11 @@ function renderPlayers(players, ctx, powerUpArray) {
 		{
 		  // Draw the player as a box instead if they are using the 30 second box powerup
 		  ctx.drawImage(hidingObjImages[3], players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, 
-          players.other.screenPos.y - 16, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); 
+          players.other.screenPos.y - 13, hidingObjImages[3].width * 1.9, hidingObjImages[3].height * 1.9); // todo: magic numbers
 		  playerDrawn = true;
 		}
 	}	
-	if(playerDrawn == false)
+	if(playerDrawn == false && !players.other.wonGame)
 	{
       ctx.drawImage( images[2],players.other.sx ,
       players.other.sy, players.other.swidth, players.other.sheight,
@@ -485,17 +489,19 @@ function renderPlayers(players, ctx, powerUpArray) {
 	}	  
 
     // Draw enemy's reticle
-    ctx.save();
-    ctx.translate(reticule.x, reticule.y);
-    ctx.beginPath();
-    ctx.arc(0, 0, 10, 0, 2*Math.PI);
-    ctx.moveTo(0, 15);
-    ctx.lineTo(0, -15);
-    ctx.moveTo(15, 0);
-    ctx.lineTo(-15, 0);
-    ctx.strokeStyle = '#00ff00';
-    ctx.stroke();
-    ctx.restore();
+    if(!players.other.wonGame && players.other.health > 0){
+      ctx.save();
+      ctx.translate(reticule.x, reticule.y);
+      ctx.beginPath();
+      ctx.arc(0, 0, 10, 0, 2*Math.PI);
+      ctx.moveTo(0, 15);
+      ctx.lineTo(0, -15);
+      ctx.moveTo(15, 0);
+      ctx.lineTo(-15, 0);
+      ctx.strokeStyle = '#00ff00';
+      ctx.stroke();
+      ctx.restore();
+    }
 	
   	//Draw hintbox if necessary
   	if (players.current.hintboxAlpha > 0.1)
@@ -525,28 +531,8 @@ function renderPlayers(players, ctx, powerUpArray) {
     ctx.fillStyle = "rgb(250,250, 250)";
     ctx.font = "20px Verdana";
     ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    ctx.fillText("BULLETS: ∞", 32, 32);
-
-    ctx.fillStyle = "rgb(250,250, 250)";
-    ctx.font = "20px Verdana";
-    ctx.textAlign = "left";
     ctx.textBaseline = "bottom";
     ctx.fillText("BOMBS: " + players.current.numBombs, 32, 32);
-  }
-
-  // Indicate if player 1 won the game by reaching the end
-  if(players.current.wonGame || players.other.wonGame)
-  {
-    playerWinner = 1;
-    gameOver = true;
-  }
-  // Inidicate if player 2 won the game by killing the player
-  else if(players.current.health <= 0 || players.other.health <= 0)
-  {
-    console.log("The player has died!");
-    playerWinner = 2;
-    gameOver = true;
   }
   ctx.restore();
 }
@@ -652,21 +638,7 @@ function renderPowerUps(players, powerUpArray, ctx)
 			}
 		}
 	}
-	
 	ctx.restore();
-}
-
-/*
- * @function midpoint()
- * Calculates the midpoint of a rectangle
- * Used to get the center of the screen
- */
-function rectangleMidpoint(x1, y1, x2, y2)
-{
-  var midpoint = { x: 0, y: 0};
-  midpoint.x = (x1 + x2)/2;
-  midpoint.y = (y1 + y2)/2;
-  return midpoint;
 }
 
 function playSound(players) {
@@ -676,37 +648,4 @@ function playSound(players) {
     sounds[players.current.sound].currentTime = 0;
     sounds[players.current.sound].play();
   }
-}
-
-/*
- * @function win()
- * Displays win message
- * @param {Player} players: The player and the enemy
- * @param {Canvas} ctx: The canvas context
- * @param {Integer} playerNum: 1 or 2, depending if the winner
- * was player 1 or player 2.
- */
-function win(players, ctx, playerNum)
-{
-  console.log("Player " + playerNum + " won!");
-  ctx.fillStyle = 'white';
-  ctx.font="40px Verdana";
-  ctx.fontWeight = 'bolder';
-  // Get the center of the screen
-  var midpoint = rectangleMidpoint(0, 0, canvas.width, canvas.height);
-  var X_OFFSET_1 = 150;
-  var X_OFFSET_2 = 100;
-  var Y_OFFSET = 50;
-  // Subtract the midpoint by half of the number of letters of the message
-  // so that the text appears in the center of the midpoint.
-  if(playerNum == 1)
-  {
-    ctx.fillText('The prisoner wins!', midpoint.x - X_OFFSET_1, midpoint.y);
-  }
-  else if(playerNum == 2)
-  {
-    ctx.fillText('The alien wins!', midpoint.x - X_OFFSET_1, midpoint.y);
-  }
-  ctx.font="20px Verdana";
-  ctx.fillText('Press refresh to play again', midpoint.x - X_OFFSET_2, midpoint.y + Y_OFFSET);
 }
