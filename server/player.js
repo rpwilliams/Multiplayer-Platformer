@@ -73,7 +73,7 @@ function Player(position,socket ) {
  * boolean properties: up, left, right, down
  */
 Player.prototype.update = function(tilemap) {
-	//  this.hitSolid(tilemap);
+	  this.hitSolid(tilemap);
 	//  if(this.hitSolid(tilemap)) return;
 
 	// Left key pressed
@@ -233,73 +233,74 @@ Player.prototype.changeAnimation = function(x)
 
 
 Player.prototype.hitSolid = function(tilemap) {
+  var rightTile = tilemap.tileAt((this.levelPos.x-this.widthInGame)/(768*1.5/672), (this.levelPos.y)/(768*1.5/672), 2);
+  var leftTile = tilemap.tileAt((this.levelPos.x)/(768*1.5/672), (this.levelPos.y)/(768*1.5/672), 2);
   var tile1;
   var tile2;
   var tile3;
-
+	if(rightTile.Solid || leftTile.Solid){
+		this.screenPos.x-=this.velocity.x;
+		this.levelPos.x-=this.velocity.x;
+		this.velocity.x=0;
+	}
   if(this.direction.right){
     //   console.log("right")
-      tile1 = tilemap.tileAt((this.levelPos.x + this.widthInGame)/(768*1.5/672), this.levelPos.y/(768*1.5/672), 2);
-      tile2 = tilemap.tileAt((this.levelPos.x + this.widthInGame)/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2);
-    //   tile1 = tilemap.tileAt(10, 374, 2);
-    //   tile2 = tilemap.tileAt(10, 406, 2);
-    //   tile3 = tilemap.tileAt(10, 438, 2);
-
-	  if(tile1){
-		  console.log("Tile 1:", tile1);
-	  }
-	  if(tile2){
-		  console.log("Tile 2:", tile2);
-
-	  }
-	  if(tile3){
-		  console.log("Tile 3:", tile3);
-
-	  }
+      //tile1 = tilemap.tileAt((this.levelPos.x+this.widthInGame)/(768*1.5/672), (this.levelPos.y-this.heightInGame/2)/(768*1.5/672), 2);
+      //tile2 = tilemap.tileAt((this.levelPos.x + this.widthInGame)/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2);
+ 
 
     //   console.log(tile1);
-    //   if (tile1.Solid || tile2.Solid) {
-    //     this.levelPos.x -= ((this.levelPos.x + this.widthInGame) % tilemap.tileWidth) - 1;
-	// 			this.direction.right = false;
-    //     return true;
-    //   }
+       // if (tile1.Solid){// || tile2.Solid) {
+        // this.levelPos.x -= ((this.levelPos.x + this.widthInGame) % tilemap.tileWidth) - 1;
+	 			// this.direction.right = false;
+				
+        // return true;
+       // }
   }
 
   else if(this.direction.left){
-    //   console.log("left")
-      tile1 = tilemap.tileAt((this.levelPos.x)/(768*1.5/672), this.levelPos.y/(768*1.5/672), 2);
-      tile2 = tilemap.tileAt((this.levelPos.x)/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2);
-    //   console.log(tile1);
-      if (tile1.Solid || tile2.Solid) {
-        this.levelPos.x += tilemap.tileWidth - ((this.levelPos.x) % tilemap.tileWidth) + 1;
-	this.direction.left = false;
-        return true;
-      }
+		//   console.log("left")
+		// tile1 = tilemap.tileAt((this.levelPos.x)/(768*1.5/672), (this.levelPos.y-this.heightInGame/2)/(768*1.5/672), 2);
+		//tile2 = tilemap.tileAt((this.levelPos.x)/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2);
+		
+		// if (tile1.Solid ){//|| tile2.Solid) {
+			//this.levelPos.x += tilemap.tileWidth - ((this.levelPos.x) % tilemap.tileWidth) + 1;
+			// this.direction.left = false;
+			
+        // return true;
+       // }
   }
 
   else if(this.direction.up){
-	// console.log("up")
-      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y, 2);
-      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 2);
+	  
+      // tile1 = tilemap.tileAt((this.levelPos.x+this.widthInGame)/(768*1.5/672), (this.levelPos.y-this.heightInGame/2)/(768*1.5/672), 2);
+      //tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 2);
     //   console.log(tile1);
-      if (tile1.Solid || tile2.Solid) {
-        this.levelPos.y += tilemap.tileHeight - ((this.levelPos.y) % tilemap.tileHeight) + 1;
-	this.direction.up = false;
-        return true;
-      }
+      // if (tile1.Solid || tile2.Solid) {
+        // this.levelPos.y += tilemap.tileHeight - ((this.levelPos.y) % tilemap.tileHeight) + 1;
+        // this.levelPos.y += tilemap.tileHeight - ((this.levelPos.y) % tilemap.tileHeight) + 1;
+	// this.direction.up = false;
+        // return true;
+      // }
   }
 
-  else if(this.falling){
+  if(this.falling){
     //   console.log("down")
-      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y + this.heightInGame, 2);
-      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 2) - 1;
+      tile1 = tilemap.tileAt(this.levelPos.x/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2);
+      tile2 = tilemap.tileAt((this.levelPos.x + this.widthInGame)/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2) - 1;
     //   console.log(tile1);
       if (tile1.Solid || tile2.Solid) {
-        this.levelPos.y -= ((this.levelPos.y + this.widthInGame) % tilemap.tileHeight);
+        //this.levelPos.y -= ((this.levelPos.y + this.widthInGame) % tilemap.tileHeight);
+		//this.
+		this.velocity.y=0;
+		
+		this.falling=false;
 		this.direction.down = false;
         return true;
       }
+	  //else this.falling=true;
   }
 
   return false;
 }
+
