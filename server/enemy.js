@@ -7,7 +7,7 @@ var Enemy_RUN_MAX = 10;
 var Enemy_FALL_VELOCITY = 0.25;
 var Enemy_JUMP_SPEED = 6;
 var Enemy_JUMP_BREAK_VELOCITY= 0.20;
-var LEVEL_LENGTH = 11229;
+var LEVEL_LENGTH = 9600;
 
 var FIRE_SPEED = 15;
 
