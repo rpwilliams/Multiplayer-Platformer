@@ -245,9 +245,10 @@ function renderBackground(ctx, current) {
   // Render background
   ctx.save();
   ctx.drawImage(images[0],
-                (images[0].width/((canvas.height/images[0].height)*images[0].width))*(current.levelPos.x - current.screenPos.x),
-                0, images[0].width, images[0].height,
-                0, 0, (canvas.height/(images[0].height)*images[0].width), canvas.height);
+                (current.levelPos.x - current.screenPos.x),
+                // (images[0].width/((canvas.height/images[0].height)*images[0].width))*(current.levelPos.x - current.screenPos.x),
+                0, canvas.width, canvas.height,
+                0, 0, canvas.width, canvas.height);
   ctx.restore();
 }
 
