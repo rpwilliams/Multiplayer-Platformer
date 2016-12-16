@@ -1,7 +1,7 @@
 #wrapper {
   position: relative;
   width: 1024px;
-  height: 786px;
+  height: 672px;
   border: 2px solid black;
   box-shadow: gray 2px 2px 2px;
 }
@@ -9,7 +9,7 @@
 #screen {
   position: absolute;
   width: 1024px;
-  height: 786px;
+  height: 672px;
 }
 
 #message {
