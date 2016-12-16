@@ -63,31 +63,16 @@ function Enemy(position,socket ) {
 	this.hintboxIteration = 0;
 	this.leftOfPlayer = false;
 
-	this.send = {
-		levelPos:this.levelPos,
-		screenPos:this.screenPos,
-		direction: this.noDir,
-		sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter,
-		sy:this.yPlaceInImage,
-		swidth:this.spriteWidth,
-		sheight:this.spriteHeight,
-		width:this.widthInGame,
-		height:this.heightInGame,
-		animation:this.animationCounter,
-		velocity:this.velocity,
-		enemyFire:this.enemyFire,
-		sound:this.sound,
-		hintboxAlpha:this.hintboxAlpha,
-		leftOfPlayer:this.leftOfPlayer
-	};
+	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
+	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
+	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
+	height:this.heightInGame, animation:this.animationCounter,
+	velocity:this.velocity,enemyFire:this.enemyFire, sound:this.sound, hintboxAlpha:this.hintboxAlpha,
+	leftOfPlayer:this.leftOfPlayer};
 
 	this.socket = socket;
 
-	this.reticulePosition = {
-		x:0,
-		y:0,
-		fire:false
-	}; // reticule information
+	this.reticulePosition = {x:0,y:0,fire:false}; // reticule information
 	this.floorYPostion = 610;
 	this.facing = "left";
 	this.lazerCooldown=0;
@@ -104,12 +89,11 @@ function Enemy(position,socket ) {
  * boolean properties: up, left, right, down
  */
 Enemy.prototype.update = function(tilemap) {
-	if(this.direction.left) {
+	if(this.direction.left){
 			this.velocity.x -= Enemy_RUN_VELOCITY;
 			this.velocity.x -= Enemy_RUN_VELOCITY;
 			this.changeAnimation("moving left");
 			this.facing = "left";
-		}
 	}
 	else if(this.direction.right) {
 		this.velocity.x += Enemy_RUN_VELOCITY;
@@ -117,9 +101,7 @@ Enemy.prototype.update = function(tilemap) {
 		this.changeAnimation("moving right");
 		this.facing = "right";
 	}
-	else {
-		this.changeAnimation("stand still");
-	}
+	else this.changeAnimation("stand still");
 	if(this.velocity.x>0) {
 		this.velocity.x -=Enemy_RUN_VELOCITY;
 	}
@@ -127,17 +109,11 @@ Enemy.prototype.update = function(tilemap) {
 		this.velocity.x +=Enemy_RUN_VELOCITY
 	}
 
-	if(this.velocity.x < -Enemy_RUN_MAX) {
-		this.velocity.x=-Enemy_RUN_MAX;
-	}
-	if(this.velocity.x > Enemy_RUN_MAX) {
-		this.velocity.x=Enemy_RUN_MAX;
-	}
+	if(this.velocity.x < -Enemy_RUN_MAX) this.velocity.x=-Enemy_RUN_MAX;
+	if(this.velocity.x > Enemy_RUN_MAX) this.velocity.x=Enemy_RUN_MAX;
 
 	this.levelPos.x += this.velocity.x;
-
-	// Prevent enemy from flying off screen
-	if(this.levelPos.x <= 0) {
+	if(this.levelPos.x <= 0){
 		this.levelPos.x = 0;
 	}
 	else if(this.levelPos.x >= LEVEL_LENGTH - this.widthInGame) {
@@ -155,32 +131,36 @@ Enemy.prototype.update = function(tilemap) {
 		this.screenPos.x = 512;
 	}
 
-
 	this.animationTimer++;
-  if(this.animationTimer>this.frameLength) {
+  if (this.animationTimer>this.frameLength)
+  {
 	  if(this.animation!="moving up") {
-			this.animationCounter++;
+		this.animationCounter++;
+
 	  }
 	  this.animationTimer = 0;
   }
-  if(this.animationCounter>=this.numberOfSprites) {
+  if (this.animationCounter>=this.numberOfSprites) {
 		if(this.animation!="stand still") {
 			this.animationCounter = 0;
 		}
-		else {
-			this.animationCounter = 0;
+		else{
+		this.animationCounter = 0;
 		}
   }
-  for(var i = 0 ; i < this.enemyFire.length ; i++) {
+  for (var i = 0 ; i < this.enemyFire.length ; i++)
+  {
 	  this.enemyFire[i].update();
 
 	  //remove the shot at this condtion, it could be hitting an opject or going out of the screen
-	  if (this.enemyFire[i].timer>40) {
+	  if (this.enemyFire[i].timer>40)
+	  {
 	  	this.enemyFire.splice(i,1);
-			i--;
+		i--;
 	  }
   }
-  for(var i = 0 ; i < this.enemyBombs.length ; i++) {
+  for (var i = 0 ; i < this.enemyBombs.length ; i++)
+  {
 	  this.enemyBombs[i].update();
 
 	  //remove the shot at this condtion, it could be hitting an opject or going out of the screen
@@ -188,9 +168,9 @@ Enemy.prototype.update = function(tilemap) {
 		  this.enemyBombs[i].explode();
 		  this.sound = 6;
 	  }
-	  else if(this.enemyBombs[i].state=="finished") {
-			this.enemyBombs.splice(i,1);
-			i--;
+	  else if (this.enemyBombs[i].state=="finished") {
+		this.enemyBombs.splice(i,1);
+		i--;
 	  }
   }
 
@@ -204,10 +184,10 @@ Enemy.prototype.update = function(tilemap) {
       {x:this.reticulePosition.x,y:this.reticulePosition.y},
       camera.toScreenCoordinates(pp));
 
-	  if(this.reticulePosition.type=="lazer") {
+	  if(this.reticulePosition.type=="lazer"){
 		this.fire(direction,this.enemyFire);
 	  }
-	  else if(this.reticulePosition.type=="bomb") {
+	  else if(this.reticulePosition.type=="bomb"){
 		  this.bomb(direction,this.enemyBombs);
 	  }
 	  this.reticulePosition.fire=false;
@@ -216,9 +196,9 @@ Enemy.prototype.update = function(tilemap) {
   //Check if the enemy is due for a hintbox
   this.hintboxCooldown -= 1;
   if(this.hintboxCooldown <= 0 && this.levelPos.x < 10600 && this.levelPos.x > 600) {
-		if(this.hintboxAlpha >= 0.7 && this.increaseAlpha) {
-	   	this.increaseAlpha = false;
-		}
+	if(this.hintboxAlpha >= 0.7 && this.increaseAlpha) {
+	  this.increaseAlpha = false;
+	}
 	if (this.increaseAlpha) {
 	  this.hintboxAlpha += 0.05;
 	}
@@ -237,35 +217,23 @@ Enemy.prototype.update = function(tilemap) {
 		  this.hintboxIteration = 0;
 	  }
 	}
-  }
-
-  this.lazerCooldown--;
-  this.bombCooldown--;
-
-	this.send = {
-		levelPos:this.levelPos,
-		screenPos:this.screenPos,
-		direction: this.noDir,
-		sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter,
-		sy:this.yPlaceInImage,
-		swidth:this.spriteWidth,
-		sheight:this.spriteHeight,
-		width:this.widthInGame,
-		height:this.heightInGame,
-		animation:this.animationCounter,
-		velocity:this.velocity,
-		enemyFire:this.enemyFire,
-		reticule:this.reticulePosition.fire,
-		enemyBomb:this.enemyBombs,
-		sound:this.sound,
-		hintboxAlpha:this.hintboxAlpha,
-		leftOfPlayer:this.leftOfPlayer
-	};
 }
 
-Enemy.prototype.changeAnimation = function(animation) {
+  	this.lazerCooldown--;
+  	this.bombCooldown--;
+
+	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
+	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
+	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
+	height:this.heightInGame, animation:this.animationCounter,
+	velocity:this.velocity,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire,
+	enemyBomb:this.enemyBombs, sound:this.sound, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer};
+}
+
+Enemy.prototype.changeAnimation = function(animation)
+{
 	this.animation = animation;
-	if(this.animation == "stand still") {
+	if (this.animation == "stand still"){
 		this.numberOfSprites = 0;
 		this.animationTimer = 0;
 		this.animationCounter = 0;
@@ -275,14 +243,14 @@ Enemy.prototype.changeAnimation = function(animation) {
 		this.heightInGame = this.stillHeightInGame;
 		this.moving = false;
 
-		if(this.facing=="right")
+		if (this.facing=="right")
 			this.yPlaceInImage = this.spriteHeight*0;
 		else
 			this.yPlaceInImage = this.spriteHeight*1;
 		this.xPlaceInImage = this.spriteWidth*0;
 
 	}
-	else {
+	else{
 		this.numberOfSprites = 3;
 		this.heightInGame = 68;
 		this.spriteHeight = this.movingHeight;
@@ -290,7 +258,7 @@ Enemy.prototype.changeAnimation = function(animation) {
 		this.widthInGame = this.movingWidthInGame;
 		this.heightInGame = this.movingHeightInGame;
 		this.moving = true;
-		switch(this.animation) {
+		switch(this.animation){
 			case "moving left":
 				this.yPlaceInImage = 84;
 				break;
@@ -301,10 +269,12 @@ Enemy.prototype.changeAnimation = function(animation) {
 	}
 }
 
-Enemy.prototype.fire = function(direction,enemyFire) {
+Enemy.prototype.fire = function(direction,enemyFire)
+{
 	 var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
 
-	 if ( this.lazerCooldown<1) {
+	 if ( this.lazerCooldown<1)
+  {
 	  var p = Vector.add(this.levelPos, {x:30, y:30});
 	  var laz = new EnemyFire(p,velocity,this.levelPos);
 	  this.enemyFire.push(laz);
@@ -313,13 +283,28 @@ Enemy.prototype.fire = function(direction,enemyFire) {
 }
 
 
-Enemy.prototype.bomb = function(direction,enemyBombs) {
+Enemy.prototype.bomb = function(direction,enemyBombs)
+{
 	var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
-	if ( this.bombCooldown<1) {
+	if ( this.bombCooldown<1)
+  	{
+
+	  //var p = {x : this.position.x+this.widthInGame/2, y: this.position.y+this.heightInGame - this.heightInGame/3}
 	  var p =  Vector.add(this.levelPos, {x:15, y:15});
+	  //var position = Vector.add(this.position, {x:30, y:30});
 	  var bomb = new EnemyBomb(p,velocity,this.levelPos);
+	  /*
+	  if (this.facing == "right")
+	  {
+		   //p.x += this.widthInGame;
+		   bomb =  new EnemyBomb(p,velocity);
+	  }
+		*/
+
+
 	  enemyBombs.push(bomb);
 	  this.bombCooldown = 60;
 	  this.sound = 5;
-  }
+  	}
+
 }
