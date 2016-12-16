@@ -109,23 +109,6 @@ Game.prototype.update = function(newTime) {
   var io = this.io;
   
   if(!this.gameOver){
-    if(this.players[0].wonGame){
-      this.players[1].socket.emit('defeat');
-      this.players[0].socket.emit('victory');
-      this.gameOver = true;
-      return;
-    }
-    else if(this.players[0].health <= 0){
-      this.players[0].socket.emit('defeat');
-      this.players[1].socket.emit('victory');
-      this.gameOver = true;
-      return;
-    }
-  }
-  
-
-
-  if(!this.gameOver){
     //Update hiding objects
     this.hidingObjects.update(this.players[0], this.time);
   
@@ -139,7 +122,21 @@ Game.prototype.update = function(newTime) {
       var otherPlayer = players[(i+1)%2];
       player.update(Tilemap);
     });
+
+    if(this.players[0].wonGame){
+      this.players[1].socket.emit('defeat');
+      this.players[0].socket.emit('victory');
+      this.gameOver = true;
+    }
+    else if(this.players[0].health <= 0){
+      this.players[0].socket.emit('defeat');
+      this.players[1].socket.emit('victory');
+      this.gameOver = true;
+    }
   }
+  
+
+
 	
   // Check for player collision and use of powerups 
   for(var i = 0; i < this.powerUpArray.length; i++)
