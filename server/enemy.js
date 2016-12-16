@@ -3,7 +3,7 @@
 /* Constants */
 var Enemy_RUN_VELOCITY = 0.25;
 var Enemy_RUN_SPEED = 5;
-var Enemy_RUN_MAX = 10;
+var Enemy_RUN_MAX = 5;
 var Enemy_FALL_VELOCITY = 0.25;
 var Enemy_JUMP_SPEED = 6;
 var Enemy_JUMP_BREAK_VELOCITY= 0.20;
@@ -300,7 +300,7 @@ Enemy.prototype.fire = function(direction,enemyFire)
 	  var p = Vector.add(this.levelPos, {x:30, y:30});
 	  var laz = new EnemyFire(p,velocity,this.levelPos);
 	  this.enemyFire.push(laz);	  
-	  this.lazerCooldown = 15;  
+	  this.lazerCooldown = 40;  
   }
 }
 
