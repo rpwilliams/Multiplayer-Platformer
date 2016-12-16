@@ -7,9 +7,6 @@ canvas.height = canvas.offsetHeight;
 //var camera = new Camera(canvas);
 
 // Audio files
-var radarAudio = new Audio('sounds/radar.mp3');
-var playerHitAudio = new Audio('sounds/player_hit.wav');
-playerHitAudio.loop = false;
 
 // Flags to ensure instructions only appear once
 var playerFlag = true;  
@@ -59,6 +56,30 @@ hidingObjImages[3].src = 'hiding_objects/BrownBox.png'; // Brown box
 hidingObjImages[4].src = 'hiding_objects/PlainBox.png'; // Plainbox
 hidingObjImages[5].src = 'hiding_objects/Cabinet.png'; // Cabinet
 hidingObjImages[6].src = 'hiding_objects/Cabinet2.png'; // Cabinet2
+
+var music = new Audio('sounds/StarCommander1.wav');
+music.setAttribute('autoplay', 'autoplay');
+// dont know who made this but got it here http://www.dl-sounds.com/royalty-free/star-commander1/
+
+var sounds = [
+  new Audio(),
+  new Audio(),
+  new Audio(),
+  new Audio(),
+  new Audio(),
+  new Audio(),
+  new Audio(),
+  new Audio()
+];
+
+sounds[0].src = 'sounds/Laser.wav';
+sounds[1].src = 'sounds/jump.wav';
+sounds[2].src = 'sounds/radar.mp3';
+sounds[3].src = 'sounds/player_hit.wav';
+sounds[3].loop = false;
+sounds[4].src = 'sounds/hiding.wav';
+sounds[5].src = 'sounds/bomb-drop.wav';
+sounds[6].src = 'sounds/explosion.wav';
 
 /* 
   The rocketship at the end of the level, which is used
@@ -110,6 +131,7 @@ window.onload = function() {
     if(!gameOver)
     {
       renderPlayers(players, ctx);
+      playSound(players);
     }
     renderHidingObjects(players, hidingObjects, ctx, true); 
 
@@ -329,27 +351,27 @@ function renderPlayers(players, ctx) {
     // Check if the player got hit
     if(players.current.health == 4 && !playedFour)
     {
-      playerHitAudio.play();
+      sounds[3].play();
       playedFour = true;
     }
     else if(players.current.health == 3 && !playedThree)
     {
-      playerHitAudio.play();
+      sounds[3].play();
       playedThree = true;
     }
     else if(players.current.health == 2 && !playedTwo)
     {
-      playerHitAudio.play();
+      sounds[3].play();
       playedTwo = true;
     }
     else if(players.current.health == 1 && !playedOne)
     {
-      playerHitAudio.play();
+      sounds[3].play();
       playedOne = true;
     }
     else if(players.current.health == 0 && !playedZero)
     {
-      playerHitAudio.play();
+      sounds[3].play();
       playedZero = true;
     }
 
@@ -423,7 +445,7 @@ function renderPlayers(players, ctx) {
   	//Draw hintbox if necessary
   	if (players.current.hintboxAlpha > 0.1)
   	{	
-      radarAudio.play();
+                sounds[2].play();
   		ctx.save();			
   		var grd;
   		if(players.current.leftOfPlayer == false)
@@ -532,6 +554,15 @@ function rectangleMidpoint(x1, y1, x2, y2)
   midpoint.x = (x1 + x2)/2;
   midpoint.y = (y1 + y2)/2;
   return midpoint;
+}
+
+function playSound(players) {
+  console.log(players.current.sound)
+  if (players.current.sound != null) {
+    sounds[players.current.sound].pause();
+    sounds[players.current.sound].currentTime = 0;
+    sounds[players.current.sound].play();
+  }
 }
 
 /*

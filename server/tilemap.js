@@ -32,8 +32,6 @@ module.exports = exports = (function (){
           rowCount = Math.floor(tilesetmapData.imageheight / tilesetmapData.tileheight),
           tileCount = colCount * rowCount;
 
-      // console.log(tileCount);
-
       for(i = 0; i < tileCount; i++) {
         var tile = {
           id: i,
@@ -86,7 +84,6 @@ module.exports = exports = (function (){
   }
 
   var tileAt = function(x, y, layer) {
-    // console.log("x: ", x, "y: ", y);
     // sanity check
     if(layer < 0 || x < 0 || y < 0 || layer >= layers.length || x > 11229 || y > 768)
       return undefined;

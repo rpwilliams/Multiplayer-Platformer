@@ -184,6 +184,7 @@ if(this.direction.left){
 	  {
 		  this.enemyBombs[i].explode();
 		  this.numBombs--;
+		this.sound = 6;
 		  
 	  }
 	  else if (this.enemyBombs[i].state=="finished")
@@ -252,7 +253,7 @@ if(this.direction.left){
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
 	velocity:this.velocity,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire,
-	enemyBomb:this.enemyBombs, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer,
+	enemyBomb:this.enemyBombs, sound:this.sound, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer,
 	numBombs:this.numBombs};
 }
 
@@ -330,6 +331,7 @@ Enemy.prototype.bomb = function(direction,enemyBombs)
 	  
 	  enemyBombs.push(bomb);
 	  this.bombCooldown = 60;  
+	  this.sound = 5;
   	}
 	
 }

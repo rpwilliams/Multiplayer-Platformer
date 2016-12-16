@@ -69,6 +69,7 @@ function Game(io, sockets, room) {
 
   	player.socket.on('fire',function(reticulePosition){
   		player.reticulePosition = reticulePosition;
+		player.sound = 0;
   	});
 	
     //return player;

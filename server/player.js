@@ -1,5 +1,4 @@
 "use strict";
-var firstFrame = true;
 /*
 	Constants
 	We made these "var" instead of "const" because node.js is
@@ -48,7 +47,7 @@ function Player(position,socket ) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity, wonGame:this.wonGame,id:this.id, health:this.health};
+	velocity:this.velocity, sound:this.sound, wonGame:this.wonGame,id:this.id, health:this.health};
 
 	this.socket = socket;
 	this.jumping = false;
@@ -123,6 +122,7 @@ Player.prototype.update = function(tilemap) {
 	else if(this.direction.up){
 		this.velocity.y -= PLAYER_JUMP_SPEED;
 		this.jumping=true;
+		this.sound = 1;
 	}
 
 	// Standing still
@@ -195,7 +195,7 @@ Player.prototype.update = function(tilemap) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,wonGame:this.wonGame, id:this.id, health:this.health,
+	velocity:this.velocity,wonGame:this.wonGame, sound: this.sound, id:this.id, health:this.health,
 	hit:this.hit};
 }
 
@@ -221,26 +221,10 @@ Player.prototype.changeAnimation = function(x)
 			case "moving left":
 				if(this.jumping==false && this.falling==false){
             		          this.yPlaceInImage =this.spriteHeight*1;
-                                  if (this.animationCounter == 3) { 
-				    if (firstFrame) {
-				      this.sound = 1; 
-				      firstFrame = false; 
-				    }
-				  } else {
-				    firstFrame = true;
-				  }
           		}
 				break;
 			case "moving right":
 				this.yPlaceInImage =this.spriteHeight*0;
-                                if (this.animationCounter == 3) { 
-			          if (firstFrame) {
-	                 	    this.sound = 1; 
-				    firstFrame = false; 
-				  }
-				} else {
-				    firstFrame = true;
-				}
 				break;
 		}
 	}
@@ -291,4 +275,3 @@ Player.prototype.hitSolid = function(tilemap) {
 		}	  
 	}
 }
-
