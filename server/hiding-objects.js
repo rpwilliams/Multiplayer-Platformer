@@ -55,10 +55,10 @@ function HidingObjects()
 	this.objects[30] = new SingleObject({x: 7438, y: 465}, 2);
 	this.objects[31] = new SingleObject({x: 7720, y: 465}, 2);
 	this.objects[32] = new SingleObject({x: 8220, y: 485}, 5);
-	this.objects[33] = new SingleObject({x: 8643, y: 420}, 3);
+	this.objects[33] = new SingleObject({x: 8643, y: 419}, 3);
 	this.objects[34] = new SingleObject({x: 8643, y: 360}, 3);
-	this.objects[35] = new SingleObject({x: 8701, y: 420}, 3);
-	this.objects[36] = new SingleObject({x: 8818, y: 420}, 3);
+	this.objects[35] = new SingleObject({x: 8701, y: 419}, 3);
+	this.objects[36] = new SingleObject({x: 8818, y: 419}, 3);
 	//this.objects[37] = new SingleObject({x: 11000, y: 460}, 7);
 	this.objects[37] = new SingleObject({x: 9300, y: 371}, 7);
 	this.length = 38;
