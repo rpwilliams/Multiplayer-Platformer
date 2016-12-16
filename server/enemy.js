@@ -20,7 +20,6 @@ var Camera = require('./camera');
  */
 module.exports = exports = Enemy;
 
-
 /**
  * @constructor Player
  * Creates a player
@@ -217,32 +216,32 @@ if(this.direction.left){
   this.hintboxCooldown -= 1;
   if(this.hintboxCooldown <= 0 && this.levelPos.x < 10600 && this.levelPos.x > 600)
   {
-	  if(this.hintboxAlpha >= 0.7 && this.increaseAlpha)
-	  {
-		  this.increaseAlpha = false;
-	  }
-	  if (this.increaseAlpha)
-	  {
-		  this.hintboxAlpha += 0.05;
-	  }
-	  else
-	  {
-		  this.hintboxAlpha -= 0.05;
-	  }
+	if(this.hintboxAlpha >= 0.7 && this.increaseAlpha)
+	{
+	  this.increaseAlpha = false;
+	}
+	if (this.increaseAlpha)
+	{
+	  this.hintboxAlpha += 0.05;
+	}
+	else
+	{
+	  this.hintboxAlpha -= 0.05;
+	}
+
+	//Check if the animation is complete. If so, reset the properties we use for the animation
+	if(this.hintboxAlpha <= 0.1)
+	{
+	  this.hintboxAlpha = 0.1;		 
+	  this.increaseAlpha = true;
+	  this.hintboxIteration++;
 	  
-	  //Check if the animation is complete. If so, reset the properties we use for the animation
-	  if(this.hintboxAlpha <= 0.1)
+	  if (this.hintboxIteration == 2)
 	  {
-		  this.hintboxAlpha = 0.1;		 
-		  this.increaseAlpha = true;
-		  this.hintboxIteration++;
-		  
-		  if (this.hintboxIteration == 2)
-		  {
-			  this.hintboxCooldown = 900;
-			  this.hintboxIteration = 0;
-		  }
+		  this.hintboxCooldown = 900;
+		  this.hintboxIteration = 0;
 	  }
+	}
   }
 	  
   	this.lazerCooldown--;
