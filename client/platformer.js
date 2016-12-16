@@ -57,6 +57,10 @@ hidingObjImages[4].src = 'hiding_objects/PlainBox.png'; // Plainbox
 hidingObjImages[5].src = 'hiding_objects/Cabinet.png'; // Cabinet
 hidingObjImages[6].src = 'hiding_objects/Cabinet2.png'; // Cabinet2
 
+var music = new Audio('sounds/StarCommander1.wav');
+music.setAttribute('autoplay', 'autoplay');
+// dont know who made this but got it here http://www.dl-sounds.com/royalty-free/star-commander1/
+
 var sounds = [
   new Audio(),
   new Audio(),
