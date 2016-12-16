@@ -392,7 +392,7 @@ function renderPlayers(players, ctx, powerUpArray) {
 		}
 	}
 
-	if(playerDrawn == false && !players.current.wonGame && players.current.health > 0)
+	if(playerDrawn == false && !players.current.wonGame && players.current.health > 0 && !players.current.invisible)
 	{
 	  ctx.drawImage( images[2],players.current.sx,
       players.current.sy, players.current.swidth, players.current.sheight,
@@ -517,7 +517,7 @@ function renderPlayers(players, ctx, powerUpArray) {
 		  playerDrawn = true;
 		}
 	}
-	if(playerDrawn == false && !players.other.wonGame && players.other.health > 0)
+	if(playerDrawn == false && !players.other.wonGame && players.other.health > 0 !players.current.invisible)
 	{
       ctx.drawImage( images[2],players.other.sx ,
       players.other.sy, players.other.swidth, players.other.sheight,
