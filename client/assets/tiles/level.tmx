@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="200" height="14" tilewidth="48" tileheight="48" nextobjectid="1">
  <tileset firstgid="1" name="set1" tilewidth="48" tileheight="48" tilecount="256" columns="16">
-  <image source="set1.png" width="512" height="512"/>
+  <image source="set1.png" width="768" height="768"/>
   <tile id="89">
    <properties>
     <property name="Solid" type="bool" value="false"/>
@@ -54,7 +54,7 @@
   </tile>
  </tileset>
  <tileset firstgid="257" name="set2" tilewidth="48" tileheight="48" tilecount="256" columns="16">
-  <image source="set2.png" width="512" height="512"/>
+  <image source="set2.png" width="768" height="768"/>
   <tile id="69">
    <properties>
     <property name="Solid" type="bool" value="false"/>
@@ -112,7 +112,7 @@
   </tile>
  </tileset>
  <tileset firstgid="513" name="set3" tilewidth="48" tileheight="48" tilecount="400" columns="8">
-  <image source="set3.png" width="256" height="1600"/>
+  <image source="set3.png" width="384" height="2400"/>
   <tile id="5">
    <properties>
     <property name="Solid" type="bool" value="false"/>
@@ -530,7 +530,7 @@
   </tile>
  </tileset>
  <tileset firstgid="913" name="set4" tilewidth="48" tileheight="48" tilecount="320" columns="8">
-  <image source="set4.png" width="256" height="1280"/>
+  <image source="set4.png" width="384" height="1920"/>
   <tile id="160">
    <properties>
     <property name="Solid" type="bool" value="false"/>

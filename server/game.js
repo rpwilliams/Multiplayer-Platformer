@@ -28,6 +28,7 @@ function Game(io, sockets, room) {
   this.players = [];
   this.hidingObjects = new HidingObjects();
   this.powerUpArray = new PowerUpArray();
+  this.gameOver = false;
 
   Tilemap.load(JSON.parse(fs.readFileSync('./client/assets/tiles/level.json')), {});
 
@@ -83,14 +84,6 @@ function Game(io, sockets, room) {
     //return player;
   });
 
-  //this.io.to(this.room).emit('draw');
-
-  // Place player on the screen
-  // this.io.to(this.room).emit('render', {
-  //   player: this.players[0].send,
-  //   enemy: this.players[1].send
-  // });
-
   // Start the game
   var game = this;
   // We use setInterval to update the game every 60
@@ -113,27 +106,38 @@ Game.prototype.update = function(newTime) {
   var room = this.room;
   var io = this.io;
   
-  //Update hiding objects
-  this.hidingObjects.update(this.players[0], this.time);
+  if(!this.gameOver){
+    if(this.players[0].wonGame){
+      this.players[1].socket.emit('defeat');
+      this.players[0].socket.emit('victory');
+      this.gameOver = true;
+      return;
+    }
+    else if(this.players[0].health <= 0){
+      this.players[0].socket.emit('defeat');
+      this.players[1].socket.emit('victory');
+      this.gameOver = true;
+      return;
+    }
+  }
   
-  //Update power ups
-  this.powerUpArray.update(this.players[0], this.time);
+
+
+  if(!this.gameOver){
+    //Update hiding objects
+    this.hidingObjects.update(this.players[0], this.time);
   
+    //Update power ups
+    this.powerUpArray.update(this.players[0], this.time);
   this.time = Date.now();
   
   
-  // Update players
-  this.players.forEach(function(player, i, players) {
-    var otherPlayer = players[(i+1)%2];
-    player.update(Tilemap);
-    // Check for collision with walls
-    // if(player.position.x < 0 || player.position.x > WIDTH || player.position.y < 0 || player.position.y > HEIGHT) {
-    //   console.log("went out of bounds");
-    //   player.socket.emit('defeat');
-    //   otherPlayer.socket.emit('defeat');
-    //   clearInterval(interval);
-    // }
-  });
+    // Update players
+    this.players.forEach(function(player, i, players) {
+      var otherPlayer = players[(i+1)%2];
+      player.update(Tilemap);
+    });
+  }
 	
   // Check for player collision and use of powerups 
   for(var i = 0; i < this.powerUpArray.length; i++)

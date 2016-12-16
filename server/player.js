@@ -269,8 +269,8 @@ Player.prototype.hitSolid = function(tilemap) {
 			if(this.levelPos.y + this.heightInGame - lowerLeftPlat.tileY*TILE_SIZE < 10){
 				this.levelPos.y = lowerLeftPlat.tile.Solid ? lowerLeftPlat.tileY*TILE_SIZE: lowerRightPlat.tileY*TILE_SIZE;
 				this.screenPos.y = lowerLeftPlat.tile.Solid ? lowerLeftPlat.tileY*TILE_SIZE: lowerRightPlat.tileY*TILE_SIZE;
-				this.levelPos.y -= this.heightInGame - this.pixelBuffer;
-				this.screenPos.y -= this.heightInGame - this.pixelBuffer;
+				this.levelPos.y -= this.heightInGame - this.pixelBuffer + 4; // bad magic numbers
+				this.screenPos.y -= this.heightInGame - this.pixelBuffer + 4;
 				this.velocity.y=0;
 				this.falling=false;
 			}
