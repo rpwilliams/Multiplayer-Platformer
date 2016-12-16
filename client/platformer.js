@@ -28,7 +28,6 @@ var images = [
   new Image(),
   new Image(),
   new Image(),
-  new Image(),
   new Image()
 ];
 
@@ -38,7 +37,6 @@ images[2].src = 'player.png';  // Player
 images[3].src = 'Enemy_Ship.png'; // enemy
 images[4].src = 'enemyBomb.png';
 images[5].src = 'Explosion.png';
-images[6].src = '30secondbox.png';  // 30 second box powerup
 
 var hidingObjImages = [
   new Image(),
@@ -58,6 +56,14 @@ hidingObjImages[3].src = 'hiding_objects/BrownBox.png'; // Brown box
 hidingObjImages[4].src = 'hiding_objects/PlainBox.png'; // Plainbox
 hidingObjImages[5].src = 'hiding_objects/Cabinet.png'; // Cabinet
 hidingObjImages[6].src = 'hiding_objects/Cabinet2.png'; // Cabinet2
+
+var powerUpImages = [
+	new Image(),
+	new Image()
+];
+
+powerUpImages[0].src = 'power_ups/30secondbox.png'; //30 second box powerup
+powerUpImages[1].src = 'power_ups/radar.png';  // radar powerup
 
 var music = new Audio('sounds/StarCommander1.wav');
 music.setAttribute('autoplay', 'autoplay');
@@ -140,7 +146,7 @@ window.onload = function() {
       playSound(players);
     }
     renderHidingObjects(players, hidingObjects, ctx, true); 
-	renderPowerups(players, powerUpArray, ctx);
+	renderPowerUps(players, powerUpArray, ctx);
 
     if(gameOver)
     {
@@ -552,7 +558,16 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 
 function renderPowerUps(players, powerUpArray, ctx)
 {
-	
+	ctx.save();
+	for(var i = 0; i < powerUpArray.length; i++)
+	{
+		if(powerUpArray.powerUps[i].render)
+		{
+			ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], powerUpArray.powerUps[i].position.x + (players.current.screenPos.x - players.current.levelPos.x),
+			powerUpArray.powerUps[i].position.y + powerUpArray.yOffset, powerUpImages[powerUpArray.powerUps[i].type].width * .85, powerUpImages[powerUpArray.powerUps[i].type].height * .85);
+		}
+	}
+	ctx.restore();
 }
 
 /*
