@@ -134,6 +134,11 @@ Game.prototype.update = function(newTime) {
       this.gameOver = true;
     }
   }
+  else
+  {
+    var rocketShip = this.hidingObjects.objects[37];
+    rocketShip.position.y -= 2.5;  
+  }
   
 
 
