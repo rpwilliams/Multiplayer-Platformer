@@ -169,7 +169,7 @@ Game.prototype.update = function(newTime) {
 			i--;
 		}
 	}
-	
+
 	//Check if the enemy has passed the player
 	if (this.players[1].levelPos.x < this.players[0].levelPos.x)
 	{

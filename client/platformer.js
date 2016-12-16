@@ -8,12 +8,21 @@ canvas.height = canvas.offsetHeight;
 
 // Audio files
 var radarAudio = new Audio('sounds/radar.mp3');
+var playerHitAudio = new Audio('sounds/player_hit.wav');
+playerHitAudio.loop = false;
 
 // Flags to ensure instructions only appear once
 var playerFlag = true;  
 var enemyFlag = true;
 var gameOver = false;
 var playerWinner = 0;
+
+// Flags to ensure hit sounds play only once
+var playedFour = false;
+var playedThree = false;
+var playedTwo = false;
+var playedOne = false;
+var playedZero = false;
 
 var images = [
   new Image(),
@@ -316,6 +325,33 @@ function renderPlayers(players, ctx) {
       players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y,
       players.other.width, players.other.height);   
 
+    // Check if the player got hit
+    if(players.current.health == 4 && !playedFour)
+    {
+      playerHitAudio.play();
+      playedFour = true;
+    }
+    else if(players.current.health == 3 && !playedThree)
+    {
+      playerHitAudio.play();
+      playedThree = true;
+    }
+    else if(players.current.health == 2 && !playedTwo)
+    {
+      playerHitAudio.play();
+      playedTwo = true;
+    }
+    else if(players.current.health == 1 && !playedOne)
+    {
+      playerHitAudio.play();
+      playedOne = true;
+    }
+    else if(players.current.health == 0 && !playedZero)
+    {
+      playerHitAudio.play();
+      playedZero = true;
+    }
+
     // Player HUD
     ctx.fillStyle = "rgb(250,250, 250)";
     ctx.font = "20px Verdana";
@@ -471,6 +507,7 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
 	  {
 		  if(hidingObjects.objects[i].delayRender == true && hidingObjects.objects[i].render)
 		  {
+        hidingAudio.play();
         ctx.drawImage(hidingObjImages[hidingObjects.objects[i].type],  hidingObjects.objects[i].position.x + (players.current.screenPos.x - players.current.levelPos.x), 
           hidingObjects.objects[i].position.y, hidingObjImages[hidingObjects.objects[i].type ].width * 2, hidingObjImages[hidingObjects.objects[i].type].height * 2); 
 		  }

@@ -49,7 +49,8 @@ function Player(position,socket ) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity, wonGame:this.wonGame,id:this.id, health:this.health};
+	velocity:this.velocity, wonGame:this.wonGame,id:this.id, health:this.health,
+	hit: this.hit};
 
 	this.socket = socket;
 
@@ -61,6 +62,7 @@ function Player(position,socket ) {
 	this.facing = "left";
 	this.wonGame = false;
 	this.health = 5;
+	this.hit = false;
 }
 
 
@@ -197,7 +199,8 @@ Player.prototype.update = function(tilemap) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,wonGame:this.wonGame, id:this.id, health:this.health};
+	velocity:this.velocity,wonGame:this.wonGame, id:this.id, health:this.health,
+	hit:this.hit};
 }
 
 
