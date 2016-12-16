@@ -28,6 +28,7 @@ var images = [
   new Image(),
   new Image(),
   new Image(),
+  new Image(),
   new Image()
 ];
 
@@ -37,6 +38,7 @@ images[2].src = 'player.png';  // Player
 images[3].src = 'Enemy_Ship.png'; // enemy
 images[4].src = 'enemyBomb.png';
 images[5].src = 'Explosion.png';
+images[6].src = '30secondbox.png';  // 30 second box powerup
 
 var hidingObjImages = [
   new Image(),
@@ -130,7 +132,7 @@ window.onload = function() {
   });
 
   // Handle movement updates from the server
-  socket.on('render', function(players, hidingObjects){
+  socket.on('render', function(players, hidingObjects, powerUpArray){
     renderHidingObjects(players, hidingObjects, ctx, false);
     if(!gameOver)
     {
@@ -138,6 +140,7 @@ window.onload = function() {
       playSound(players);
     }
     renderHidingObjects(players, hidingObjects, ctx, true); 
+	renderPowerups(players, powerUpArray, ctx);
 
     if(gameOver)
     {
@@ -547,6 +550,11 @@ function renderHidingObjects (players, hidingObjects, ctx, renderDelayedObjs)
   ctx.restore();
 }
 
+function renderPowerUps(players, powerUpArray, ctx)
+{
+	
+}
+
 /*
  * @function midpoint()
  * Calculates the midpoint of a rectangle
@@ -585,7 +593,7 @@ function win(players, ctx, playerNum)
   ctx.fontWeight = 'bolder';
   // Get the center of the screen
   var midpoint = rectangleMidpoint(0, 0, canvas.width, canvas.height);
-  var X_OFFSET_1 = 100;
+  var X_OFFSET_1 = 150;
   var X_OFFSET_2 = 100;
   var Y_OFFSET = 50;
   // Subtract the midpoint by half of the number of letters of the message
