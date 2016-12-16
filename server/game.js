@@ -6,6 +6,7 @@ module.exports = exports = Game;
 const Player = require('./player.js');
 const Enemy = require('./enemy.js');
 const HidingObjects = require('./hiding-objects.js');
+const PowerUpArray = require('./powerUpArray.js');
 const Tilemap = require('./tilemap.js');
 
 const fs = require('fs');
@@ -26,6 +27,7 @@ function Game(io, sockets, room) {
   this.enemyBombs = []; // Same goes for this
   this.players = [];
   this.hidingObjects = new HidingObjects();
+  this.powerUpArray = new PowerUpArray();
 
   Tilemap.load(JSON.parse(fs.readFileSync('./client/assets/tiles/level.json')), {});
 
@@ -107,6 +109,10 @@ Game.prototype.update = function(newTime) {
   
   //Update hiding objects
   this.hidingObjects.update(this.players[0], this.time);
+  
+  //Update power ups
+  this.powerUpArray.update(this.players[0], this.time);
+  
   this.time = Date.now();
   
   // Update players
@@ -190,12 +196,12 @@ Game.prototype.update = function(newTime) {
   this.players[0].socket.emit('render', {
     current: this.players[0].send,
     other: this.players[1].send
-  }, this.hidingObjects);
+  }, this.hidingObjects, this.powerUpArray);
 
   this.players[1].socket.emit('render', {
     other: this.players[0].send,
     current: this.players[1].send
-  }, this.hidingObjects);
+  }, this.hidingObjects, this.powerUpArray);
 
   this.players[0].sound = null;
   this.players[1].sound = null;
