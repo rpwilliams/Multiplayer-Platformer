@@ -79,7 +79,7 @@ function Game(io, sockets, room) {
   	player.socket.on('fire',function(reticulePosition){
 		if (i == 1) { // enemy, not player, clicked
   		  player.reticulePosition = reticulePosition;
-		  player.sound = 0;
+		  if(player.lazerCooldown < 1) player.sound = 0;
 		}
   	});
 	
@@ -136,7 +136,6 @@ Game.prototype.update = function(newTime) {
   }
   else
   {
-    console.log("LIFT OFF!!");
     var rocketShip = this.hidingObjects.objects[37];
     rocketShip.position.y -= 3.5; 
     this.io.to(this.room).emit('lift off'); 
