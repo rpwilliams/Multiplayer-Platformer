@@ -4,17 +4,15 @@ var firstFrame = true;
 	Constants
 	We made these "var" instead of "const" because node.js is
 	outdated on the lab computers
-	*/
+*/
 var PLAYER_RUN_VELOCITY = 4;
-var PLAYER_RUN_SPEED = 5;
-var PLAYER_RUN_MAX = 3;
 var PLAYER_FALL_VELOCITY = 0.5;
-var PLAYER_JUMP_SPEED = 10;
-var PLAYER_JUMP_BREAK_VELOCITY= 0.10;
-var PLAYER_WON_GAME_X_POS = 10900;
-var SCREEN_POS_X = 512;
-var FLOOR_Y_POS = 610;
-var LEVEL_LENGTH = 11100;
+var PLAYER_JUMP_SPEED = 8;
+var PLAYER_WON_GAME_X_POS = 9500;
+var CANVAS_WIDTH = 1024;
+var LEVEL_LENGTH = 9600;
+var PLAYER_MAX_FALL_VELOCITY = 12;
+var TILE_SIZE = 48;
 
 /**
  * @module exports the Player class
@@ -34,13 +32,13 @@ function Player(position,socket ) {
 	this.numberOfSprites = 0; // how man y frames are there in the animation
 	this.spriteWidth = 23; // width of each frame
 	this.spriteHeight = 34; // height of each frame
-	this.widthInGame = 46;
-	this.heightInGame = 68;
+	this.widthInGame = 34.5;
+	this.heightInGame = 51;
 	this.xPlaceInImage = 0; // this should CHANGE for the same animation
 	this.yPlaceInImage = 0; // this should NOT change for the same animation
 	this.animation = "stand still"; // this will keep track of the animation
 	this.velocity = {x: 0, y: 0};
-	this.screenPos= {x: 512, y: position.y};
+	this.screenPos= {x: CANVAS_WIDTH/2, y: position.y};
 	this.levelPos= {x: position.x, y: position.y};
 	this.direction = {left:false, down:false, right:false, up:false};
 	this.noDir = {left:false, down:false, right:false, up:false};
@@ -53,15 +51,12 @@ function Player(position,socket ) {
 	velocity:this.velocity, sound:this.sound, wonGame:this.wonGame,id:this.id, health:this.health};
 
 	this.socket = socket;
-
 	this.jumping = false;
 	this.falling = true;
-	this.crouching = "no";
-	this.floorYPostion = FLOOR_Y_POS;
-	this.jumpingTime = 0;
 	this.facing = "left";
 	this.wonGame = false;
 	this.health = 5;
+	this.pixelBuffer = 6;
 }
 
 
@@ -74,8 +69,14 @@ function Player(position,socket ) {
  * boolean properties: up, left, right, down
  */
 Player.prototype.update = function(tilemap) {
-	  this.hitSolid(tilemap);
-	//  if(this.hitSolid(tilemap)) return;
+
+	// TODO: Remove (lets player jump to clicked X position)
+	if(this.reticulePosition && this.reticulePosition.fire){
+		this.levelPos.x += this.reticulePosition.x - CANVAS_WIDTH/2;
+		this.levelPos.y = 100;
+		this.screenPos.y = 100;
+		this.reticulePosition.fire=false;
+  	}
 
 	// Left key pressed
 	if(this.direction.left){
@@ -108,21 +109,14 @@ Player.prototype.update = function(tilemap) {
 	// Jumping or falling
 	if(this.jumping || this.falling){
 		this.changeAnimation("moving up");
-		this.velocity.y += PLAYER_FALL_VELOCITY;
+		if(this.velocity.y < PLAYER_MAX_FALL_VELOCITY){
+			this.velocity.y += PLAYER_FALL_VELOCITY;
+		}
 		if(this.velocity.y > 0){
 			this.jumping=false;
 			this.falling=true;
 		}
 
-		// TODO: Change this once the tile interactions are working
-		if (this.levelPos.y > this.floorYPostion)
-		{
-			this.levelPos.y = this.floorYPostion;
-			this.screenPos.y = this.floorYPostion;
-			this.velocity.y = 0;
-			this.jumping = false;
-			this.falling=false;
-		}
 	}
 
 	// Beginning to jump
@@ -153,14 +147,14 @@ Player.prototype.update = function(tilemap) {
 	}
 
 	// Prevent background from moving too far
-	if(this.levelPos.x <= SCREEN_POS_X ){
+	if(this.levelPos.x <= CANVAS_WIDTH/2 ){
 		this.screenPos.x = this.levelPos.x;
 	}
-	else if(this.levelPos.x >= LEVEL_LENGTH - 512){// TODO: magic numbers
-		this.screenPos.x = 1024 - (LEVEL_LENGTH - this.levelPos.x);// TODO: magic numbers
+	else if(this.levelPos.x >= LEVEL_LENGTH - CANVAS_WIDTH/2){
+		this.screenPos.x = CANVAS_WIDTH - (LEVEL_LENGTH - this.levelPos.x);
 	}
 	else{
-		this.screenPos.x = SCREEN_POS_X;
+		this.screenPos.x = CANVAS_WIDTH/2;
 	}
 
 
@@ -193,12 +187,16 @@ Player.prototype.update = function(tilemap) {
 		this.wonGame = true;
   	}
 
+	// Tile collisions
+	this.hitSolid(tilemap);
+
 
 	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,sound:this.sound,wonGame:this.wonGame, id:this.id, health:this.health};
+	velocity:this.velocity,wonGame:this.wonGame, sound: this.sound, id:this.id, health:this.health,
+	hit:this.hit};
 }
 
 
@@ -250,75 +248,46 @@ Player.prototype.changeAnimation = function(x)
 
 
 Player.prototype.hitSolid = function(tilemap) {
-  var rightTile = tilemap.tileAt((this.levelPos.x-this.widthInGame)/(768*1.5/672), (this.levelPos.y)/(768*1.5/672), 2);
-  var leftTile = tilemap.tileAt((this.levelPos.x)/(768*1.5/672), (this.levelPos.y)/(768*1.5/672), 2);
-  var tile1;
-  var tile2;
-  var tile3;
-	if(rightTile.Solid || leftTile.Solid){
-		this.screenPos.x-=this.velocity.x;
-		this.levelPos.x-=this.velocity.x;
-		this.velocity.x=0;
+	var lowerLeft = tilemap.tileAt(this.levelPos.x + this.pixelBuffer, (this.levelPos.y + this.heightInGame), 2);
+	var lowerRight = tilemap.tileAt((this.levelPos.x + this.widthInGame - this.pixelBuffer), (this.levelPos.y + this.heightInGame), 2);
+	var lowerLeftPlat = tilemap.tileAt(this.levelPos.x + this.pixelBuffer, (this.levelPos.y + this.heightInGame), 3);
+	var lowerRightPlat = tilemap.tileAt((this.levelPos.x + this.widthInGame - this.pixelBuffer), (this.levelPos.y + this.heightInGame), 3);
+	var side;
+
+	// No tiles underneath player - fall
+	if (!(lowerLeft.tile.Solid || lowerRight.tile.Solid) && this.velocity.y >= 0) {
+		this.falling=true;
 	}
-  if(this.direction.right){
-    //   console.log("right")
-      //tile1 = tilemap.tileAt((this.levelPos.x+this.widthInGame)/(768*1.5/672), (this.levelPos.y-this.heightInGame/2)/(768*1.5/672), 2);
-      //tile2 = tilemap.tileAt((this.levelPos.x + this.widthInGame)/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2);
- 
 
-    //   console.log(tile1);
-       // if (tile1.Solid){// || tile2.Solid) {
-        // this.levelPos.x -= ((this.levelPos.x + this.widthInGame) % tilemap.tileWidth) - 1;
-	 			// this.direction.right = false;
-				
-        // return true;
-       // }
-  }
+	// Right
+	if(this.velocity.x > 0){
+		side = tilemap.tileAt((this.levelPos.x + this.widthInGame - this.pixelBuffer), (this.levelPos.y + this.heightInGame - 2*this.pixelBuffer), 2); 
+		if(side.tile.Solid){
+			this.levelPos.x -= this.velocity.x;
+			this.velocity.x = 0;
+		}
+	}
 
-  else if(this.direction.left){
-		//   console.log("left")
-		// tile1 = tilemap.tileAt((this.levelPos.x)/(768*1.5/672), (this.levelPos.y-this.heightInGame/2)/(768*1.5/672), 2);
-		//tile2 = tilemap.tileAt((this.levelPos.x)/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2);
-		
-		// if (tile1.Solid ){//|| tile2.Solid) {
-			//this.levelPos.x += tilemap.tileWidth - ((this.levelPos.x) % tilemap.tileWidth) + 1;
-			// this.direction.left = false;
-			
-        // return true;
-       // }
-  }
+	// Left
+	else if(this.velocity.x < 0){
+		side = tilemap.tileAt((this.levelPos.x + this.pixelBuffer), (this.levelPos.y + this.heightInGame - 2*this.pixelBuffer), 2); 
+		if(side.tile.Solid){
+			this.levelPos.x -= this.velocity.x;
+			this.velocity.x = 0;
+		}		
+	}
 
-  else if(this.direction.up){
-	  
-      // tile1 = tilemap.tileAt((this.levelPos.x+this.widthInGame)/(768*1.5/672), (this.levelPos.y-this.heightInGame/2)/(768*1.5/672), 2);
-      //tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 2);
-    //   console.log(tile1);
-      // if (tile1.Solid || tile2.Solid) {
-        // this.levelPos.y += tilemap.tileHeight - ((this.levelPos.y) % tilemap.tileHeight) + 1;
-        // this.levelPos.y += tilemap.tileHeight - ((this.levelPos.y) % tilemap.tileHeight) + 1;
-	// this.direction.up = false;
-        // return true;
-      // }
-  }
-
-  if(this.falling){
-    //   console.log("down")
-      tile1 = tilemap.tileAt(this.levelPos.x/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2);
-      tile2 = tilemap.tileAt((this.levelPos.x + this.widthInGame)/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2) - 1;
-    //   console.log(tile1);
-      if (tile1.Solid || tile2.Solid) {
-        //this.levelPos.y -= ((this.levelPos.y + this.widthInGame) % tilemap.tileHeight);
-		//this.
-		this.velocity.y=0;
-		
-		this.falling=false;
-		this.direction.down = false;
-		this.sound = 1;
-        return true;
-      }
-	  //else this.falling=true;
-  }
-
-  return false;
+	// Falling
+	if(this.falling){
+		if (lowerLeftPlat.tile.Solid || lowerRightPlat.tile.Solid) {
+			if(this.levelPos.y + this.heightInGame - lowerLeftPlat.tileY*TILE_SIZE < 10){
+				this.levelPos.y = lowerLeftPlat.tile.Solid ? lowerLeftPlat.tileY*TILE_SIZE: lowerRightPlat.tileY*TILE_SIZE;
+				this.screenPos.y = lowerLeftPlat.tile.Solid ? lowerLeftPlat.tileY*TILE_SIZE: lowerRightPlat.tileY*TILE_SIZE;
+				this.levelPos.y -= this.heightInGame - this.pixelBuffer;
+				this.screenPos.y -= this.heightInGame - this.pixelBuffer;
+				this.velocity.y=0;
+				this.falling=false;
+			}
+		}	  
+	}
 }
-

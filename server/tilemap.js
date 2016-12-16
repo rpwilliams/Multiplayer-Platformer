@@ -28,35 +28,28 @@ module.exports = exports = (function (){
     mapData.tilesets.forEach( function(tilesetmapData, index) {
       // Load the tileset image
       // Create the tileset's tiles
-      var colCount = Math.floor(tilesetmapData.imagewidth / 32),
-          rowCount = Math.floor(tilesetmapData.imageheight / 32),
+      var colCount = Math.floor(tilesetmapData.imagewidth / tilesetmapData.tilewidth),
+          rowCount = Math.floor(tilesetmapData.imageheight / tilesetmapData.tileheight),
           tileCount = colCount * rowCount;
-
-      //console.log(tileCount);
 
       for(i = 0; i < tileCount; i++) {
         var tile = {
-          // Reference to the image, shared amongst all tiles in the tileset
-          image: null,
-          // Source x position.  i % colCount == col number (as we remove full rows)
-          sx: (i % colCount) * 32,
-          // Source y position. i / colWidth (integer division) == row number
-          sy: Math.floor(i / rowCount) * 32,
+          id: i,
           // Indicates a solid tile (i.e. solid property is true).  As properties
           // can be left blank, we need to make sure the property exists.
           // We'll assume any tiles missing the solid property are *not* solid
-          Solid: (tilesetmapData.tileproperties[i] && tilesetmapData.tileproperties[i].Solid == true) ? true : false
+          Solid: (tilesetmapData.tileproperties[i] && tilesetmapData.tileproperties[i].Solid) ? true : false
         }
-          if(tilesetmapData.tileproperties[i]){
-            //console.log(tilesetmapData.tileproperties[i].Solid);
-            if(tilesetmapData.tileproperties[i].Solid){
-              //console.log(tile);
-              //console.log(i);
-            }
-          }
-          else{
-            //console.log('missing tile');
-          }
+          // if(tilesetmapData.tileproperties[i]){
+          //   // console.log(tilesetmapData.tileproperties[i].Solid);
+          //   if(tilesetmapData.tileproperties[i].Solid){
+          //     // console.log(tile);
+          //     // console.log(i);
+          //   }
+          // }
+          // else{
+          //   console.log('missing tile');
+          // }
         tiles.push(tile);
       }
     });
@@ -91,7 +84,6 @@ module.exports = exports = (function (){
   }
 
   var tileAt = function(x, y, layer) {
-    //console.log("x: ", x, "y: ", y);
     // sanity check
     if(layer < 0 || x < 0 || y < 0 || layer >= layers.length || x > 11229 || y > 768)
       return undefined;
@@ -100,17 +92,11 @@ module.exports = exports = (function (){
     // console.log("Tile x: ", tilemapX);
     // console.log("Tile y: ", tilemapY);
     // console.log(tiles)
-    // for(var i = 0; i < tiles.length; i++){
-    //   if(tiles[i].Solid){
-    //     console.log("Tile: ", tiles[i]);
-    //     console.log("i: ", i);
-    //   }
-    // }
-    // console.log(tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)]])
+    // console.log(tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] -1])
     // if(!(tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1])){
-    //   console.log(layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1);
+      // console.log(layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1);
     // }
-    return tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1];
+    return {tile: tiles[layers[layer].data[tilemapX + (tilemapY * layers[layer].width)] - 1], tileX: tilemapX, tileY: tilemapY};
   }
 
   // Expose the module's public API

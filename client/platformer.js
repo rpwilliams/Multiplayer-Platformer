@@ -6,11 +6,23 @@ canvas.width = canvas.offsetWidth;
 canvas.height = canvas.offsetHeight;
 //var camera = new Camera(canvas);
 
+// Audio files
+var radarAudio = new Audio('sounds/radar.mp3');
+var playerHitAudio = new Audio('sounds/player_hit.wav');
+playerHitAudio.loop = false;
+
 // Flags to ensure instructions only appear once
 var playerFlag = true;  
 var enemyFlag = true;
 var gameOver = false;
 var playerWinner = 0;
+
+// Flags to ensure hit sounds play only once
+var playedFour = false;
+var playedThree = false;
+var playedTwo = false;
+var playedOne = false;
+var playedZero = false;
 
 var images = [
   new Image(),
@@ -255,9 +267,10 @@ function renderBackground(ctx, current) {
   // Render background
   ctx.save();
   ctx.drawImage(images[0],
-                (images[0].width/((canvas.height/images[0].height)*images[0].width))*(current.levelPos.x - current.screenPos.x),
-                0, images[0].width, images[0].height,
-                0, 0, (canvas.height/(images[0].height)*images[0].width), canvas.height);
+                (current.levelPos.x - current.screenPos.x),
+                // (images[0].width/((canvas.height/images[0].height)*images[0].width))*(current.levelPos.x - current.screenPos.x),
+                0, canvas.width, canvas.height,
+                0, 0, canvas.width, canvas.height);
   ctx.restore();
 }
 
@@ -325,6 +338,33 @@ function renderPlayers(players, ctx) {
       players.other.sy, players.other.swidth, players.other.sheight,
       players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y,
       players.other.width, players.other.height);   
+
+    // Check if the player got hit
+    if(players.current.health == 4 && !playedFour)
+    {
+      playerHitAudio.play();
+      playedFour = true;
+    }
+    else if(players.current.health == 3 && !playedThree)
+    {
+      playerHitAudio.play();
+      playedThree = true;
+    }
+    else if(players.current.health == 2 && !playedTwo)
+    {
+      playerHitAudio.play();
+      playedTwo = true;
+    }
+    else if(players.current.health == 1 && !playedOne)
+    {
+      playerHitAudio.play();
+      playedOne = true;
+    }
+    else if(players.current.health == 0 && !playedZero)
+    {
+      playerHitAudio.play();
+      playedZero = true;
+    }
 
     // Player HUD
     ctx.fillStyle = "rgb(250,250, 250)";
@@ -396,6 +436,7 @@ function renderPlayers(players, ctx) {
   	//Draw hintbox if necessary
   	if (players.current.hintboxAlpha > 0.1)
   	{	
+      radarAudio.play();
   		ctx.save();			
   		var grd;
   		if(players.current.leftOfPlayer == false)
