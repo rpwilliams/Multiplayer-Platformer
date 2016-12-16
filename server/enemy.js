@@ -55,6 +55,7 @@ function Enemy(position,socket ) {
 	this.noDir = {left:false, down:false, right:false, up:false};	
 	this.enemyFire = []; // Array of enemy bullets
 	this.enemyBombs = []; // Array of enemy bombs
+	this.sound = null;
 	
 	//hintbox properties
 	this.hintboxAlpha = 0.1;
@@ -67,7 +68,7 @@ function Enemy(position,socket ) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,enemyFire:this.enemyFire, hintboxAlpha:this.hintboxAlpha,
+	velocity:this.velocity,enemyFire:this.enemyFire, sound:this.sound, hintboxAlpha:this.hintboxAlpha,
 	leftOfPlayer:this.leftOfPlayer};
 
 	this.socket = socket;
@@ -248,7 +249,7 @@ if(this.direction.left){
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
 	velocity:this.velocity,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire,
-	enemyBomb:this.enemyBombs, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer};
+	enemyBomb:this.enemyBombs, sound:this.sound, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer};
 }
 
 Enemy.prototype.changeAnimation = function(animation)

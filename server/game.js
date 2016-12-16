@@ -68,6 +68,7 @@ function Game(io, sockets, room) {
 
 	player.socket.on('fire',function(reticulePosition){
 		player.reticulePosition = reticulePosition;
+		player.sound = 0;
 	});
 	
     //return player;
@@ -196,4 +197,7 @@ Game.prototype.update = function(newTime) {
     other: this.players[0].send,
     current: this.players[1].send
   }, this.hidingObjects);
+
+  this.players[0].sound = null;
+  this.players[1].sound = null;
 }

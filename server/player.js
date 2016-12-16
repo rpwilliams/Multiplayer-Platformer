@@ -1,5 +1,5 @@
 "use strict";
-
+var firstFrame = true;
 /*
 	Constants
 	We made these "var" instead of "const" because node.js is
@@ -45,11 +45,12 @@ function Player(position,socket ) {
 	this.direction = {left:false, down:false, right:false, up:false};
 	this.noDir = {left:false, down:false, right:false, up:false};
 	this.id = 'player';
+	this.sound = null;
 	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity, wonGame:this.wonGame,id:this.id};
+	velocity:this.velocity, sound:this.sound, wonGame:this.wonGame,id:this.id};
 
 	this.socket = socket;
 
@@ -194,7 +195,7 @@ Player.prototype.update = function(tilemap) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,wonGame:this.wonGame, id:this.id};
+	velocity:this.velocity,sound:this.sound,wonGame:this.wonGame, id:this.id};
 }
 
 
@@ -218,11 +219,27 @@ Player.prototype.changeAnimation = function(x)
   				break;
 			case "moving left":
 				if(this.jumping==false && this.falling==false){
-            		this.yPlaceInImage =this.spriteHeight*1;
+            		          this.yPlaceInImage =this.spriteHeight*1;
+                                  if (this.animationCounter == 3) { 
+				    if (firstFrame) {
+				      this.sound = 1; 
+				      firstFrame = false; 
+				    }
+				  } else {
+				    firstFrame = true;
+				  }
           		}
 				break;
 			case "moving right":
 				this.yPlaceInImage =this.spriteHeight*0;
+                                if (this.animationCounter == 3) { 
+			          if (firstFrame) {
+	                 	    this.sound = 1; 
+				    firstFrame = false; 
+				  }
+				} else {
+				    firstFrame = true;
+				}
 				break;
 		}
 	}
@@ -232,6 +249,7 @@ Player.prototype.changeAnimation = function(x)
 Player.prototype.hitSolid = function(tilemap) {
   var tile1;
   var tile2;
+  /*
 
   if(this.direction.right){
       console.log("right")
@@ -283,4 +301,5 @@ Player.prototype.hitSolid = function(tilemap) {
   }
 
   return false;
+  */
 }
