@@ -50,17 +50,18 @@ function Player(position,socket ) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity, sound:this.sound, wonGame:this.wonGame,id:this.id};
+	velocity:this.velocity, wonGame:this.wonGame,id:this.id, health:this.health};
 
 	this.socket = socket;
 
 	this.jumping = false;
-	this.falling=false;
+	this.falling = true;
 	this.crouching = "no";
 	this.floorYPostion = FLOOR_Y_POS;
 	this.jumpingTime = 0;
 	this.facing = "left";
 	this.wonGame = false;
+	this.health = 5;
 }
 
 
@@ -73,7 +74,8 @@ function Player(position,socket ) {
  * boolean properties: up, left, right, down
  */
 Player.prototype.update = function(tilemap) {
-	 if(this.hitSolid(tilemap)) return;
+	  this.hitSolid(tilemap);
+	//  if(this.hitSolid(tilemap)) return;
 
 	// Left key pressed
 	if(this.direction.left){
@@ -191,11 +193,12 @@ Player.prototype.update = function(tilemap) {
 		this.wonGame = true;
   	}
 
+
 	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,sound:this.sound,wonGame:this.wonGame, id:this.id};
+	velocity:this.velocity,wonGame:this.wonGame, id:this.id, health:this.health};
 }
 
 
@@ -247,59 +250,74 @@ Player.prototype.changeAnimation = function(x)
 
 
 Player.prototype.hitSolid = function(tilemap) {
+  var rightTile = tilemap.tileAt((this.levelPos.x-this.widthInGame)/(768*1.5/672), (this.levelPos.y)/(768*1.5/672), 2);
+  var leftTile = tilemap.tileAt((this.levelPos.x)/(768*1.5/672), (this.levelPos.y)/(768*1.5/672), 2);
   var tile1;
   var tile2;
-  /*
-
+  var tile3;
+	if(rightTile.Solid || leftTile.Solid){
+		this.screenPos.x-=this.velocity.x;
+		this.levelPos.x-=this.velocity.x;
+		this.velocity.x=0;
+	}
   if(this.direction.right){
-      console.log("right")
-      tile1 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 2);
-      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 2);
+    //   console.log("right")
+      //tile1 = tilemap.tileAt((this.levelPos.x+this.widthInGame)/(768*1.5/672), (this.levelPos.y-this.heightInGame/2)/(768*1.5/672), 2);
+      //tile2 = tilemap.tileAt((this.levelPos.x + this.widthInGame)/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2);
+ 
 
-      console.log(tile1);
-      if (tile1.Solid || tile2.Solid) {
-        this.levelPos.x -= ((this.levelPos.x + this.widthInGame) % tilemap.tileWidth) - 1;
-				this.direction.right = false;
-        return true;
-      }
+    //   console.log(tile1);
+       // if (tile1.Solid){// || tile2.Solid) {
+        // this.levelPos.x -= ((this.levelPos.x + this.widthInGame) % tilemap.tileWidth) - 1;
+	 			// this.direction.right = false;
+				
+        // return true;
+       // }
   }
 
   else if(this.direction.left){
-      console.log("left")
-      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y, 2);
-      tile2 = tilemap.tileAt(this.levelPos.x, this.levelPos.y + this.heightInGame, 2);
-      console.log(tile1);
-      if (tile1.Solid || tile2.Solid) {
-        this.levelPos.x += tilemap.tileWidth - ((this.levelPos.x) % tilemap.tileWidth) + 1;
-	this.direction.left = false;
-        return true;
-      }
+		//   console.log("left")
+		// tile1 = tilemap.tileAt((this.levelPos.x)/(768*1.5/672), (this.levelPos.y-this.heightInGame/2)/(768*1.5/672), 2);
+		//tile2 = tilemap.tileAt((this.levelPos.x)/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2);
+		
+		// if (tile1.Solid ){//|| tile2.Solid) {
+			//this.levelPos.x += tilemap.tileWidth - ((this.levelPos.x) % tilemap.tileWidth) + 1;
+			// this.direction.left = false;
+			
+        // return true;
+       // }
   }
 
   else if(this.direction.up){
-	console.log("up")
-      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y, 2);
-      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 2);
-      console.log(tile1);
-      if (tile1.Solid || tile2.Solid) {
-        this.levelPos.y += tilemap.tileHeight - ((this.levelPos.y) % tilemap.tileHeight) + 1;
-	this.direction.up = false;
-        return true;
-      }
+	  
+      // tile1 = tilemap.tileAt((this.levelPos.x+this.widthInGame)/(768*1.5/672), (this.levelPos.y-this.heightInGame/2)/(768*1.5/672), 2);
+      //tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y, 2);
+    //   console.log(tile1);
+      // if (tile1.Solid || tile2.Solid) {
+        // this.levelPos.y += tilemap.tileHeight - ((this.levelPos.y) % tilemap.tileHeight) + 1;
+        // this.levelPos.y += tilemap.tileHeight - ((this.levelPos.y) % tilemap.tileHeight) + 1;
+	// this.direction.up = false;
+        // return true;
+      // }
   }
 
-  else if(this.direction.down){
-      console.log("down")
-      tile1 = tilemap.tileAt(this.levelPos.x, this.levelPos.y + this.heightInGame, 2);
-      tile2 = tilemap.tileAt(this.levelPos.x + this.widthInGame, this.levelPos.y + this.heightInGame, 2) - 1;
-      console.log(tile1);
+  if(this.falling){
+    //   console.log("down")
+      tile1 = tilemap.tileAt(this.levelPos.x/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2);
+      tile2 = tilemap.tileAt((this.levelPos.x + this.widthInGame)/(768*1.5/672), (this.levelPos.y + this.heightInGame)/(768*1.5/672), 2) - 1;
+    //   console.log(tile1);
       if (tile1.Solid || tile2.Solid) {
-        this.levelPos.y -= ((this.levelPos.y + this.widthInGame) % tilemap.tileHeight);
+        //this.levelPos.y -= ((this.levelPos.y + this.widthInGame) % tilemap.tileHeight);
+		//this.
+		this.velocity.y=0;
+		
+		this.falling=false;
 		this.direction.down = false;
         return true;
       }
+	  //else this.falling=true;
   }
 
   return false;
-  */
 }
+

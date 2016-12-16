@@ -73,6 +73,7 @@ HidingObjects.prototype.add = function(pos, t)
 
 HidingObjects.prototype.update = function(player, newTime)
 {	
+	this.objects[37].render = true;
 	// Check for player collision with each object
 	for(var i = 0; i < this.length; i++)
 	{

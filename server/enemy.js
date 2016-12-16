@@ -78,7 +78,7 @@ function Enemy(position,socket ) {
 	this.facing = "left";
 	this.lazerCooldown=0;
 	this.bombCooldown=0;
-
+	this.numBombs = 3;
 }
 
 
@@ -135,7 +135,7 @@ if(this.direction.left){
 		this.levelPos.x = LEVEL_LENGTH - this.widthInGame;
 	}
 
-	// Prevent background from moving too far0
+	// Prevent background from moving too far
 	if(this.levelPos.x <= 512 ){
 		this.screenPos.x = this.levelPos.x;
 	}
@@ -184,6 +184,7 @@ if(this.direction.left){
 	  if (this.enemyBombs[i].timer>40 && this.enemyBombs[i].state=="falling")
 	  {
 		  this.enemyBombs[i].explode();
+		  this.numBombs--;
 		  
 	  }
 	  else if (this.enemyBombs[i].state=="finished")
@@ -203,7 +204,10 @@ if(this.direction.left){
 		this.fire(direction,this.enemyFire);
 	  }
 	  else if(this.reticulePosition.type=="bomb"){
-		  
+		  if(this.numBombs == 0)
+		  {
+		  	return;
+		  }
 		  this.bomb(direction,this.enemyBombs);
 	  }
 	  this.reticulePosition.fire=false;
@@ -241,15 +245,16 @@ if(this.direction.left){
 	  }
   }
 	  
-  this.lazerCooldown--;
-  this.bombCooldown--;
+  	this.lazerCooldown--;
+  	this.bombCooldown--;
   
 	this.send = {levelPos:this.levelPos, screenPos:this.screenPos, direction: this.noDir,
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
 	velocity:this.velocity,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire,
-	enemyBomb:this.enemyBombs, sound:this.sound, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer};
+	enemyBomb:this.enemyBombs, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer,
+	numBombs:this.numBombs};
 }
 
 Enemy.prototype.changeAnimation = function(animation)
@@ -309,7 +314,7 @@ Enemy.prototype.bomb = function(direction,enemyBombs)
 {
 	var velocity = Vector.scale(Vector.normalize(direction), FIRE_SPEED);
 	if ( this.bombCooldown<1)
-  {
+  	{
 	  
 	  //var p = {x : this.position.x+this.widthInGame/2, y: this.position.y+this.heightInGame - this.heightInGame/3}
 	  var p =  Vector.add(this.levelPos, {x:15, y:15});
@@ -322,12 +327,10 @@ Enemy.prototype.bomb = function(direction,enemyBombs)
 		   bomb =  new EnemyBomb(p,velocity);
 	  }
 		*/ 
-	 
+ 
 	  
 	  enemyBombs.push(bomb);
-	  
-	  this.bombCooldown = 60;
-	  
-  }
+	  this.bombCooldown = 60;  
+  	}
 	
 }
