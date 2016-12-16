@@ -30,7 +30,6 @@ var images = [
   new Image(),
   new Image(),
   new Image(),
-  new Image()
 ];
 
 images[0].src = 'level.png'; // Background
@@ -39,7 +38,6 @@ images[2].src = 'player.png';  // Player
 images[3].src = 'Enemy_Ship.png'; // enemy
 images[4].src = 'enemyBomb.png';
 images[5].src = 'Explosion.png';
-images[6].src = 'guardrails.png'; // Guard rails
 
 var hidingObjImages = [
   new Image(),
@@ -147,7 +145,6 @@ window.onload = function() {
     renderPowerUps(players, powerUpArray, ctx);
     playSound(players);
     renderHidingObjects(players, hidingObjects, ctx, true);
-    renderRails(ctx, players.current);
   });
 
   // Handle game on events
@@ -296,27 +293,9 @@ function renderBackground(ctx, current) {
   ctx.drawImage(images[0],
                 (current.levelPos.x - current.screenPos.x),
                 0, canvas.width, canvas.height,
-                0, 0, canvas.width, canvas.height);
-  ctx.drawImage(images[6],
-                (current.levelPos.x - current.screenPos.x),
-                0, canvas.width, canvas.height,
-                0, 0, canvas.width, canvas.height);                
+                0, 0, canvas.width, canvas.height);              
   ctx.restore();
 }
-
-/**
-  * @function renderBackground()
-  * Renders the background (stars) and the foreground (the space station)
-  * @param ctx: the canvas context to be drawn to
-  */
-function renderRails(ctx, current) {
-  // Render guardrails
-  ctx.drawImage(images[6],
-                (current.levelPos.x - current.screenPos.x),
-                0, canvas.width, canvas.height,
-                0, 0, canvas.width, canvas.height);                
-}
-
 
 
 /**
@@ -386,7 +365,7 @@ function renderPlayers(players, ctx, powerUpArray) {
 		}
 	}
 	
-	if(playerDrawn == false && !players.current.wonGame)
+	if(playerDrawn == false && !players.current.wonGame && players.current.health > 0)
 	{
 	  ctx.drawImage( images[2],players.current.sx,
       players.current.sy, players.current.swidth, players.current.sheight,
@@ -486,7 +465,7 @@ function renderPlayers(players, ctx, powerUpArray) {
 		  playerDrawn = true;
 		}
 	}	
-	if(playerDrawn == false && !players.other.wonGame)
+	if(playerDrawn == false && !players.other.wonGame && players.other.health > 0)
 	{
       ctx.drawImage( images[2],players.other.sx ,
       players.other.sy, players.other.swidth, players.other.sheight,
