@@ -129,11 +129,8 @@ Game.prototype.update = function(newTime) {
   		if (this.players[1].enemyFire[i].position.x > (this.hidingObjects.objects[j].position.x - 5) && this.players[1].enemyFire[i].position.x < (this.hidingObjects.objects[j].position.x + 70)
   			&& this.players[1].enemyFire[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyFire[i].position.y < this.hidingObjects.objects[j].position.y + 65)			
   		{
-        console.log("Ouch!");
-        this.players[0].health--;
-        console.log("Player health: " + this.players[0].health);
-  		  this.players[1].enemyFire.splice(i,1);
-  			i--;
+        this.players[1].enemyFire.splice(i,1);
+        i--;  
   		}
   	}
   	for (var i = 0 ; i < this.players[1].enemyBombs.length ; i++)
@@ -144,9 +141,12 @@ Game.prototype.update = function(newTime) {
   			{
   				//this.woo={bomb:this.players[1].enemyBombs[i].position,
   				//object:this.hidingObjects.objects[j].position};
-  				this.players[1].enemyBombs[i].explode();
-  				this.hidingObjects.objects[j].position.x=100000;
-  				break;
+          if(this.hidingObjects.objects[j].type != 7)
+          {
+            this.players[1].enemyBombs[i].explode();
+            this.hidingObjects.objects[j].position.x=100000;
+            break;
+          }
   			}
   			if (this.players[1].enemyBombs[i].state=="finished")
   		  {

@@ -414,7 +414,7 @@ function renderPlayers(players, ctx) {
     ctx.font = "20px Verdana";
     ctx.textAlign = "left";
     ctx.textBaseline = "bottom";
-    ctx.fillText("BOMBS: " + players.current.enemyBomb.length, 32, 32);
+    ctx.fillText("BOMBS: " + players.current.numBombs, 32, 32);
   }
 
   // Indicate if player 1 won the game by reaching the end
