@@ -43,7 +43,7 @@ function Game(io, sockets, room) {
     sockets[1]
   ));
 
-  this.players.forEach(function(player) {
+  this.players.forEach(function(player, i) {
 	  
     // Join the room
     player.socket.join(room);
@@ -77,8 +77,10 @@ function Game(io, sockets, room) {
 	});
 
   	player.socket.on('fire',function(reticulePosition){
-  		player.reticulePosition = reticulePosition;
-		player.sound = 0;
+		if (i == 1) { // enemy, not player, clicked
+  		  player.reticulePosition = reticulePosition;
+		  player.sound = 0;
+		}
   	});
 	
     //return player;
