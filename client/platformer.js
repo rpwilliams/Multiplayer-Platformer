@@ -100,7 +100,6 @@ sounds[5].src = 'sounds/bomb-drop.wav';
 sounds[6].src = 'sounds/explosion.wav';
 sounds[7].src = 'sounds/rocket-launch.wav';
 sounds[7].loop = false;
-
 /* 
   The rocketship at the end of the level, which is used
   as a hiding object but is not actually a hiding object.
@@ -182,12 +181,10 @@ window.onload = function() {
     message.style.display = 'block';
     refreshMessage.style.display = 'block';
   });
-
-  // Handle rocket launch
   socket.on('lift off', function() {
-    sounds[7].play();
-    hidingObjImages[7].src = 'rocket_on.png';
-  });
+     sounds[7].play();
+     hidingObjImages[7].src = 'rocket_on.png';
+   });
 
   /**
     * @function onkeydown
@@ -315,14 +312,14 @@ function renderBackground(ctx, current) {
   */
 function renderPlayers(players, ctx, powerUpArray) {
   // Render debug information. TODO: Remove
-  ctx.save();
-  ctx.fillStyle = 'white';
-  ctx.font="20px Verdana";
-  ctx.fillText('level: (' + Math.floor(players.current.levelPos.x) + ',' + Math.floor(players.current.levelPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 30);
-  ctx.fillText('screen: (' + Math.floor(players.current.screenPos.x)+ ',' + Math.floor(players.current.screenPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 10);
-  ctx.fillText('level: (' + Math.floor(players.other.levelPos.x) + ',' + Math.floor(players.other.levelPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 30);
-  ctx.fillText('screen: (' + Math.floor(players.other.screenPos.x)+ ',' + Math.floor(players.other.screenPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 10);  
-  ctx.restore();
+  // ctx.save();
+  // ctx.fillStyle = 'white';
+  // ctx.font="20px Verdana";
+  // ctx.fillText('level: (' + Math.floor(players.current.levelPos.x) + ',' + Math.floor(players.current.levelPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 30);
+  // ctx.fillText('screen: (' + Math.floor(players.current.screenPos.x)+ ',' + Math.floor(players.current.screenPos.y) + ')', players.current.screenPos.x, players.current.screenPos.y - 10);
+  // ctx.fillText('level: (' + Math.floor(players.other.levelPos.x) + ',' + Math.floor(players.other.levelPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 30);
+  // ctx.fillText('screen: (' + Math.floor(players.other.screenPos.x)+ ',' + Math.floor(players.other.screenPos.y) + ')', players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y - 10);  
+  // ctx.restore();
 
   // Player perspective
   if(players.current.id=='player') {
@@ -333,6 +330,19 @@ function renderPlayers(players, ctx, powerUpArray) {
       playerModal.style.display = "block";
       playerFlag = false;
     }
+	//Render where enemy is
+	var enemyDistance = Math.floor((players.other.levelPos.x - players.current.levelPos.x)/100);
+	ctx.font="25px Verdana";
+	if(enemyDistance > 0)
+	{
+		ctx.fillText(enemyDistance + 'm', canvas.width - 90, canvas.height/2);
+		ctx.drawImage(powerUpImages[2], canvas.width - 35, canvas.height/2 - 5, 30, 45);
+	}
+	else
+	{
+		ctx.fillText(Math.abs(enemyDistance) + 'm', 40, canvas.height/2);
+		ctx.drawImage(powerUpImages[3], 5, canvas.height/2 - 5, 30, 45);
+	}
 
     // Render lasers
     for (var i = 0 ; i < players.other.enemyFire.length ; i++)
@@ -365,7 +375,7 @@ function renderPlayers(players, ctx, powerUpArray) {
 	var playerDrawn = false;
 	for(var i = 0; i < powerUpArray.length; i++)
 	{
-		if(powerUpArray.powerUps[i].type == 0 && powerUpArray.powerUps[i].active)
+		if(powerUpArray.powerUps[i].type == 0 && powerUpArray.powerUps[i].active && !players.current.wonGame)
 		{
 		  // Draw the player as a box instead if they are using the 30 second box powerup
 		  ctx.drawImage(hidingObjImages[3], players.current.screenPos.x, 
@@ -466,7 +476,7 @@ function renderPlayers(players, ctx, powerUpArray) {
 	var playerDrawn = false;
 	for(var i = 0; i < powerUpArray.length; i++)
 	{
-		if(powerUpArray.powerUps[i].type == 0 && powerUpArray.powerUps[i].active)
+		if(powerUpArray.powerUps[i].type == 0 && powerUpArray.powerUps[i].active && !players.other.wonGame)
 		{
 		  // Draw the player as a box instead if they are using the 30 second box powerup
 		  ctx.drawImage(hidingObjImages[3], players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, 
