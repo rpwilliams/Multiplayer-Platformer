@@ -142,23 +142,23 @@ Game.prototype.update = function(newTime) {
 	&& this.players[0].levelPos.y > this.powerUpArray.powerUps[i].position.y - 35 && this.players[0].levelPos.y < this.powerUpArray.powerUps[i].position.y + 25)
 	{
 		// Disable any powerups previously picked up
-		for (var j = 0; j < this.powerUpArray.length; j++)
-		{
-			if(this.powerUpArray.powerUps[j].pickedUp)
-			{
-				this.powerUpArray.powerUps[j].pickedUp = false;
-				this.powerUpArray.powerUps[j].active = false;
-				this.powerUpArray.powerUps[j].depleted = true;
-			}
-		}
-		
+		//for (var j = 0; j < this.powerUpArray.length; j++)
+		//{
+			//if(this.powerUpArray.powerUps[j].pickedUp)
+			//{
+				//this.powerUpArray.powerUps[j].pickedUp = false;
+				//this.powerUpArray.powerUps[j].active = false;
+			//	this.powerUpArray.powerUps[j].depleted = true;
+			//}
+		//}		
 		this.powerUpArray.powerUps[i].position.x = -100;
 		this.powerUpArray.powerUps[i].render = false;
 		this.powerUpArray.powerUps[i].pickedUp = true;
+		this.powerUpArray.powerUpsBeingHeld++;
 	}
 	
 	// Check if the player has activated a power up and make sure that powerup hasn't already been used
-    if(this.players[0].ctrlKeyPressed && this.powerUpArray.powerUps[i].pickedUp && this.powerUpArray.powerUps[i].depleted == false)
+    if(this.players[0].ctrlKeyPressed && this.powerUpArray.powerUps[i].pickedUp && this.powerUpArray.powerUps[i].depleted == false && this.powerUpArray.powerUps[0].active == false)
 	{
 	   this.powerUpArray.powerUps[i].active = true;
 	}

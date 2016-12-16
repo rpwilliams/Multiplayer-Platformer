@@ -33,6 +33,7 @@ function PowerUpArray()
 	this.oldTime = Date.now();
 	this.elapsedTime = 0;
 	this.powerUpTimeElapsed = 0;
+	this.powerUpsBeingHeld = 0;
 	
 	this.powerUps[0] = new PowerUp({x: 3595, y: 320}, 0);
 	this.powerUps[1] = new PowerUp({x: 5280, y: 200}, 1);
@@ -74,6 +75,7 @@ PowerUpArray.prototype.update = function(player, newTime)
 				this.powerUps[i].active = false;
 				this.powerUps[i].depleted = true;
 				this.powerUps[i].pickedUp = false;
+				this.powerUpsBeingHeld--;
 			}
 			else
 			{
