@@ -267,6 +267,7 @@ function renderPlayers(players, ctx) {
 
   // Player perspective
   if(players.current.id=='player') {
+    // Display the instructions
     if(playerFlag)
     {
       var playerModal = document.getElementById('playerModal');
@@ -284,13 +285,12 @@ function renderPlayers(players, ctx) {
       ctx.fillRect(0,0, players.other.enemyFire[i].width, players.other.enemyFire[i].height*3);
       ctx.restore();
     }
-	for (var i = 0 ; i < players.other.enemyBomb.length ; i++)
+    for (var i = 0 ; i < players.other.enemyBomb.length ; i++)
     {
-  	  ctx.save();
+      ctx.save();
   	  
   	  ctx.translate(players.other.enemyBomb[i].position.x+players.current.screenPos.x-players.current.levelPos.x, players.other.enemyBomb[i].position.y);
   		
-  	 
   	  if(players.other.enemyBomb[i].state=="falling"){
   	  ctx.drawImage(images[4],0,0, 14,32 ,0,0,players.other.enemyBomb[i].width ,players.other.enemyBomb[i].height);
   	  }
@@ -312,9 +312,17 @@ function renderPlayers(players, ctx) {
       players.other.sy, players.other.swidth, players.other.sheight,
       players.other.levelPos.x - players.current.levelPos.x + players.current.screenPos.x, players.other.screenPos.y,
       players.other.width, players.other.height);   
+
+    // Player HUD
+    ctx.fillStyle = "rgb(250,250, 250)";
+    ctx.font = "20px Verdana";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("HEALTH: " + players.current.health, 32, 32);
   }
   // Enemy perspective
   else{
+    // Display the instructions
     if(enemyFlag)
     {
       var enemyModal = document.getElementById('enemyModal');
@@ -395,6 +403,18 @@ function renderPlayers(players, ctx) {
   		}
   		ctx.restore();
   	}
+    // Enemy HUD
+    ctx.fillStyle = "rgb(250,250, 250)";
+    ctx.font = "20px Verdana";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("BULLETS: ∞", 32, 32);
+
+    ctx.fillStyle = "rgb(250,250, 250)";
+    ctx.font = "20px Verdana";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("BOMBS: " + players.current.enemyBomb.length, 32, 32);
   }
 
   // Indicate if player 1 won the game by reaching the end
@@ -483,7 +503,7 @@ function rectangleMidpoint(x1, y1, x2, y2)
  */
 function win(players, ctx, playerNum)
 {
-  console.log("Player" + playerNum + "won!");
+  console.log("Player " + playerNum + " won!");
   ctx.fillStyle = 'white';
   ctx.font="40px Verdana";
   ctx.fontWeight = 'bolder';

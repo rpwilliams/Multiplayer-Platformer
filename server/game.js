@@ -129,6 +129,9 @@ Game.prototype.update = function(newTime) {
   		if (this.players[1].enemyFire[i].position.x > (this.hidingObjects.objects[j].position.x - 5) && this.players[1].enemyFire[i].position.x < (this.hidingObjects.objects[j].position.x + 70)
   			&& this.players[1].enemyFire[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyFire[i].position.y < this.hidingObjects.objects[j].position.y + 65)			
   		{
+        console.log("Ouch!");
+        this.players[0].health--;
+        console.log("Player health: " + this.players[0].health);
   		  this.players[1].enemyFire.splice(i,1);
   			i--;
   		}
