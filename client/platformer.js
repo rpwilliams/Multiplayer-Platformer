@@ -7,9 +7,6 @@ canvas.height = canvas.offsetHeight;
 //var camera = new Camera(canvas);
 
 // Audio files
-var radarAudio = new Audio('sounds/radar.mp3');
-var playerHitAudio = new Audio('sounds/player_hit.wav');
-playerHitAudio.loop = false;
 
 // Flags to ensure instructions only appear once
 var playerFlag = true;  
@@ -70,7 +67,10 @@ var sounds = [
 ];
 
 sounds[0].src = 'sounds/Laser.wav';
-sounds[1].src = 'sounds/Footstep.mp3';
+sounds[1].src = 'sounds/jump.wav';
+sounds[2].src = 'sounds/radar.mp3';
+sounds[3].src = 'sounds/player_hit.wav';
+sounds[3].loop = false;
 
 /* 
   The rocketship at the end of the level, which is used
@@ -342,27 +342,27 @@ function renderPlayers(players, ctx) {
     // Check if the player got hit
     if(players.current.health == 4 && !playedFour)
     {
-      playerHitAudio.play();
+      sounds[3].play();
       playedFour = true;
     }
     else if(players.current.health == 3 && !playedThree)
     {
-      playerHitAudio.play();
+      sounds[3].play();
       playedThree = true;
     }
     else if(players.current.health == 2 && !playedTwo)
     {
-      playerHitAudio.play();
+      sounds[3].play();
       playedTwo = true;
     }
     else if(players.current.health == 1 && !playedOne)
     {
-      playerHitAudio.play();
+      sounds[3].play();
       playedOne = true;
     }
     else if(players.current.health == 0 && !playedZero)
     {
-      playerHitAudio.play();
+      sounds[3].play();
       playedZero = true;
     }
 
@@ -436,7 +436,7 @@ function renderPlayers(players, ctx) {
   	//Draw hintbox if necessary
   	if (players.current.hintboxAlpha > 0.1)
   	{	
-      radarAudio.play();
+                sounds[2].play();
   		ctx.save();			
   		var grd;
   		if(players.current.leftOfPlayer == false)

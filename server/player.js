@@ -1,5 +1,4 @@
 "use strict";
-var firstFrame = true;
 /*
 	Constants
 	We made these "var" instead of "const" because node.js is
@@ -123,6 +122,7 @@ Player.prototype.update = function(tilemap) {
 	else if(this.direction.up){
 		this.velocity.y -= PLAYER_JUMP_SPEED;
 		this.jumping=true;
+		this.sound = 1;
 	}
 
 	// Standing still
@@ -221,26 +221,10 @@ Player.prototype.changeAnimation = function(x)
 			case "moving left":
 				if(this.jumping==false && this.falling==false){
             		          this.yPlaceInImage =this.spriteHeight*1;
-                                  if (this.animationCounter == 3) { 
-				    if (firstFrame) {
-				      this.sound = 1; 
-				      firstFrame = false; 
-				    }
-				  } else {
-				    firstFrame = true;
-				  }
           		}
 				break;
 			case "moving right":
 				this.yPlaceInImage =this.spriteHeight*0;
-                                if (this.animationCounter == 3) { 
-			          if (firstFrame) {
-	                 	    this.sound = 1; 
-				    firstFrame = false; 
-				  }
-				} else {
-				    firstFrame = true;
-				}
 				break;
 		}
 	}
