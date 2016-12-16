@@ -48,6 +48,18 @@ hidingObjImages[4].src = 'hiding_objects/PlainBox.png'; // Plainbox
 hidingObjImages[5].src = 'hiding_objects/Cabinet.png'; // Cabinet
 hidingObjImages[6].src = 'hiding_objects/Cabinet2.png'; // Cabinet2
 
+var sounds = [
+  new Audio(),
+  new Audio(),
+  new Audio(),
+  new Audio(),
+  new Audio(),
+  new Audio()
+];
+
+sounds[0].src = 'sounds/Laser.wav';
+sounds[1].src = 'sounds/Footstep.mp3';
+
 /* 
   The rocketship at the end of the level, which is used
   as a hiding object but is not actually a hiding object.
@@ -98,6 +110,7 @@ window.onload = function() {
     if(!gameOver)
     {
       renderPlayers(players, ctx);
+      playSound(players);
     }
     renderHidingObjects(players, hidingObjects, ctx, true); 
 
@@ -491,6 +504,15 @@ function rectangleMidpoint(x1, y1, x2, y2)
   midpoint.x = (x1 + x2)/2;
   midpoint.y = (y1 + y2)/2;
   return midpoint;
+}
+
+function playSound(players) {
+  console.log(players.current.sound)
+  if (players.current.sound != null) {
+    sounds[players.current.sound].pause();
+    sounds[players.current.sound].currentTime = 0;
+    sounds[players.current.sound].play();
+  }
 }
 
 /*

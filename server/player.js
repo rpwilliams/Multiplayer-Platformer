@@ -50,7 +50,7 @@ function Player(position,socket ) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity, wonGame:this.wonGame,id:this.id, health:this.health};
+	velocity:this.velocity, sound:this.sound, wonGame:this.wonGame,id:this.id, health:this.health};
 
 	this.socket = socket;
 
@@ -198,7 +198,7 @@ Player.prototype.update = function(tilemap) {
 	sx:this.xPlaceInImage+this.spriteWidth*this.animationCounter, sy:this.yPlaceInImage,
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
-	velocity:this.velocity,wonGame:this.wonGame, id:this.id, health:this.health};
+	velocity:this.velocity,sound:this.sound,wonGame:this.wonGame, id:this.id, health:this.health};
 }
 
 

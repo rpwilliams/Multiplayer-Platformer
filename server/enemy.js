@@ -253,7 +253,7 @@ if(this.direction.left){
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
 	velocity:this.velocity,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire,
-	enemyBomb:this.enemyBombs, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer,
+	enemyBomb:this.enemyBombs, sound:this.sound, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer,
 	numBombs:this.numBombs};
 }
 
