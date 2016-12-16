@@ -77,7 +77,7 @@ function Enemy(position,socket ) {
 	this.facing = "left";
 	this.lazerCooldown=0;
 	this.bombCooldown=0;
-	this.woo="";
+
 }
 
 
@@ -248,8 +248,7 @@ if(this.direction.left){
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
 	velocity:this.velocity,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire,
-	enemyBomb:this.enemyBombs, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer,
-	woo:this.woo};
+	enemyBomb:this.enemyBombs, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer};
 }
 
 Enemy.prototype.changeAnimation = function(animation)

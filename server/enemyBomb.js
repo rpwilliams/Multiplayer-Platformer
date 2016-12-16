@@ -101,6 +101,6 @@ EnemyBomb.prototype.explode = function()
     this.height = this.inGameExplosionHeight;
 	
 	this.position.y-=this.height/4;
-	this.position.x -=2*this.width/5;
+	this.position.x -=this.width/2;
    
 }

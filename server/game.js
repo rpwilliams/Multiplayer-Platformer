@@ -7,7 +7,6 @@ const Player = require('./player.js');
 const Enemy = require('./enemy.js');
 const HidingObjects = require('./hiding-objects.js');
 const Tilemap = require('./tilemap.js');
-
 const fs = require('fs');
 
 /**
@@ -126,6 +125,7 @@ Game.prototype.update = function(newTime) {
     //   clearInterval(interval);
     // }
   });
+		
   // Check for projectile collisions with hiding objects
   for (var j = 0; j < this.hidingObjects.length; j++)
   {
@@ -141,17 +141,14 @@ Game.prototype.update = function(newTime) {
 	for (var i = 0 ; i < this.players[1].enemyBombs.length ; i++)
 	  {
 		  if (this.players[1].enemyBombs[i].position.x > this.hidingObjects.objects[j].position.x - 5 && this.players[1].enemyBombs[i].position.x < (this.hidingObjects.objects[j].position.x + 70)
-			&& this.players[1].enemyBombs[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyBombs[i].position.y < this.hidingObjects.objects[j].position.y + 65 &&
-				this.players[1].enemyBombs[i].state=="falling")			
+			&& this.players[1].enemyBombs[i].position.y > this.hidingObjects.objects[j].position.y  - 25 && this.players[1].enemyBombs[i].position.y < this.hidingObjects.objects[j].position.y + 65)			
 			{
-				//this.woo={bomb:this.players[1].enemyBombs[i].position,
-				//object:this.hidingObjects.objects[j].position};
 				this.players[1].enemyBombs[i].explode();
 				this.hidingObjects.objects[j].position.x=100000;
 				
 				break;
 			}
-			if (this.players[1].enemyBombs[i].state=="finished")
+			else if (this.players[1].enemyBombs[i].state=="finished")
 		   {
 				this.players[1].enemyBombs.splice(i,1);
 			i--; 
