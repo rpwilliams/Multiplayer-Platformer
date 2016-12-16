@@ -517,7 +517,7 @@ function renderPlayers(players, ctx, powerUpArray) {
 		  playerDrawn = true;
 		}
 	}
-	if(playerDrawn == false && !players.other.wonGame && players.other.health > 0 !players.current.invisible)
+	if(playerDrawn == false && !players.other.wonGame && players.other.health > 0 && !players.current.invisible)
 	{
       ctx.drawImage( images[2],players.other.sx ,
       players.other.sy, players.other.swidth, players.other.sheight,
