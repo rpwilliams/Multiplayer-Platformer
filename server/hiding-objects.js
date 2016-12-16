@@ -2,7 +2,6 @@
 
 module.exports = exports = HidingObjects;
 
-var first = true;
 
 function SingleObject(pos, t)
 {
@@ -23,45 +22,45 @@ function HidingObjects()
 	this.elapsedTime = 0;
 	
 	// Pre-made objects that will spawn in the same locations at the beginning of each game
-	this.objects[0] = new SingleObject({x: 900, y: 512}, 1);
-	this.objects[1] = new SingleObject({x: 980, y: 512}, 1);
-	this.objects[2] = new SingleObject({x: 1440, y: 464}, 3);
-	this.objects[3] = new SingleObject({x: 1805, y: 482}, 5);
-	this.objects[4] = new SingleObject({x: 2305, y: 414}, 2);
-	this.objects[5] = new SingleObject({x: 2850, y: 512}, 3);
-	this.objects[6] = new SingleObject({x: 2910, y: 512}, 3);
-	this.objects[7] = new SingleObject({x: 3400, y: 319}, 2);
-	this.objects[8] = new SingleObject({x: 3461, y: 319}, 2);
-	this.objects[9] = new SingleObject({x: 3650, y: 482}, 5);
-	this.objects[10] = new SingleObject({x: 4050, y: 560}, 3);
-	this.objects[11] = new SingleObject({x: 4315, y: 482}, 5);
-	this.objects[12] = new SingleObject({x: 4460, y: 482}, 5);
-	this.objects[13] = new SingleObject({x: 4604, y: 482}, 5);
-	this.objects[14] = new SingleObject({x: 4945, y: 272}, 2);
-	this.objects[15] = new SingleObject({x: 5410, y: 452}, 3);
-	this.objects[16] = new SingleObject({x: 5380, y: 512}, 3);
-	this.objects[17] = new SingleObject({x: 5440, y: 512}, 3);
-	this.objects[18] = new SingleObject({x: 5835, y: 343}, 3);
-	this.objects[19] = new SingleObject({x: 5895, y: 343}, 3);
-	this.objects[20] = new SingleObject({x: 5807, y: 403}, 3);
-	this.objects[21] = new SingleObject({x: 5867, y: 403}, 3);
-	this.objects[22] = new SingleObject({x: 5927, y: 403}, 3);
-	this.objects[23] = new SingleObject({x: 5779, y: 464}, 3);
-	this.objects[24] = new SingleObject({x: 5839, y: 464}, 3);
-	this.objects[25] = new SingleObject({x: 5899, y: 464}, 3);
-	this.objects[26] = new SingleObject({x: 5959, y: 464}, 3);//
-	this.objects[27] = new SingleObject({x: 6400, y: 434}, 5);
-	this.objects[28] = new SingleObject({x: 7097, y: 462}, 2);
-	this.objects[29] = new SingleObject({x: 7380, y: 462}, 2);
-	this.objects[30] = new SingleObject({x: 7441, y: 462}, 2);
-	this.objects[31] = new SingleObject({x: 7720, y: 462}, 2);
-	this.objects[32] = new SingleObject({x: 8220, y: 482}, 5);
-	this.objects[33] = new SingleObject({x: 8643, y: 353}, 3);
-	this.objects[34] = new SingleObject({x: 8643, y: 417}, 3);
-	this.objects[35] = new SingleObject({x: 8703, y: 417}, 3);
-	this.objects[36] = new SingleObject({x: 8818, y: 417}, 3);
+	this.objects[0] = new SingleObject({x: 900, y: 515}, 1);
+	this.objects[1] = new SingleObject({x: 980, y: 515}, 1);
+	this.objects[2] = new SingleObject({x: 1440, y: 467}, 3);
+	this.objects[3] = new SingleObject({x: 1805, y: 485}, 5);
+	this.objects[4] = new SingleObject({x: 2305, y: 417}, 2);
+	this.objects[5] = new SingleObject({x: 2850, y: 515}, 3);
+	this.objects[6] = new SingleObject({x: 2907, y: 515}, 3);
+	this.objects[7] = new SingleObject({x: 3400, y: 322}, 2);
+	this.objects[8] = new SingleObject({x: 3458, y: 322}, 2);
+	this.objects[9] = new SingleObject({x: 3650, y: 485}, 5);
+	this.objects[10] = new SingleObject({x: 4050, y: 563}, 3);
+	this.objects[11] = new SingleObject({x: 4315, y: 485}, 5);
+	this.objects[12] = new SingleObject({x: 4460, y: 485}, 5);
+	this.objects[13] = new SingleObject({x: 4604, y: 485}, 5);
+	this.objects[14] = new SingleObject({x: 4945, y: 275}, 2);
+	this.objects[15] = new SingleObject({x: 5410, y: 458}, 3);
+	this.objects[16] = new SingleObject({x: 5380, y: 515}, 3);
+	this.objects[17] = new SingleObject({x: 5437, y: 515}, 3);
+	this.objects[18] = new SingleObject({x: 5835, y: 352}, 3);
+	this.objects[19] = new SingleObject({x: 5892, y: 352}, 3);
+	this.objects[20] = new SingleObject({x: 5807, y: 409}, 3);
+	this.objects[21] = new SingleObject({x: 5864, y: 409}, 3);
+	this.objects[22] = new SingleObject({x: 5921, y: 409}, 3);
+	this.objects[23] = new SingleObject({x: 5779, y: 467}, 3);
+	this.objects[24] = new SingleObject({x: 5836, y: 467}, 3);
+	this.objects[25] = new SingleObject({x: 5893, y: 467}, 3);
+	this.objects[26] = new SingleObject({x: 5950, y: 467}, 3);//
+	this.objects[27] = new SingleObject({x: 6400, y: 437}, 5);
+	this.objects[28] = new SingleObject({x: 7097, y: 465}, 2);
+	this.objects[29] = new SingleObject({x: 7380, y: 465}, 2);
+	this.objects[30] = new SingleObject({x: 7438, y: 465}, 2);
+	this.objects[31] = new SingleObject({x: 7720, y: 465}, 2);
+	this.objects[32] = new SingleObject({x: 8220, y: 485}, 5);
+	this.objects[33] = new SingleObject({x: 8643, y: 420}, 3);
+	this.objects[34] = new SingleObject({x: 8643, y: 360}, 3);
+	this.objects[35] = new SingleObject({x: 8701, y: 420}, 3);
+	this.objects[36] = new SingleObject({x: 8818, y: 420}, 3);
 	//this.objects[37] = new SingleObject({x: 11000, y: 460}, 7);
-	this.objects[37] = new SingleObject({x: 9300, y: 359}, 7);
+	this.objects[37] = new SingleObject({x: 9300, y: 371}, 7);
 	this.length = 38;
 }
 
@@ -92,12 +91,10 @@ HidingObjects.prototype.update = function(player, newTime)
 			{
 				this.objects[i].displayArrow = false;
 				this.objects[i].delayRender = true;
-				if (first) { player.sound = 4; first = false; } 
 			}
 			else{
 				this.objects[i].delayRender = false;
 				this.objects[i].displayArrow = true;
-				first = true;
 			}
 		}
 		else

@@ -7,6 +7,10 @@ function PowerUp(pos, t)
 	this.position = pos;
 	this.type = t;
 	this.render = true;
+	this.pickedUp = false;
+	this.active = false;
+	this.depleted = false;
+	this.duration = 30000;
 }
 
 function PowerUpArray()
@@ -17,6 +21,7 @@ function PowerUpArray()
 	this.yOffsetDir = 'up';
 	this.oldTime = Date.now();
 	this.elapsedTime = 0;
+	this.powerUpTimeElapsed = 0;
 	
 	this.powerUps[0] = new PowerUp({x: 3595, y: 320}, 0);
 	this.powerUps[1] = new PowerUp({x: 5280, y: 200}, 1);
@@ -25,16 +30,6 @@ function PowerUpArray()
 
 PowerUpArray.prototype.update = function(player, newTime)
 {	
-	//Check for player collision
-	for(var i = 0; i < this.length; i++)
-	{
-		if(player.levelPos.x > this.powerUps[i].position.x - 25 && player.levelPos.x < this.powerUps[i].position.x + 25
-		&& player.levelPos.y > this.powerUps[i].position.y - 35 && player.levelPos.y < this.powerUps[i].position.y + 25)
-		{
-			this.powerUps[i].render = false;
-		}
-	}
-
 	//adjust the yOffset to give the image an animated effect
 	if(this.elapsedTime > 32){
 		if(this.yOffset == 15)
@@ -57,6 +52,25 @@ PowerUpArray.prototype.update = function(player, newTime)
 		
 		this.elapsedTime = 0;
 	}
+	
+	// Reduce the duration of all active powerups
+	for(var i = 0; i < this.length; i++)
+	{
+		if(this.powerUps[i].active)
+		{
+			if(this.powerUps[i].duration <= 0)
+			{
+				this.powerUps[i].active = false;
+				this.powerUps[i].depleted = true;
+			}
+			else
+			{
+				this.powerUps[i].duration -= (newTime - this.oldTime);
+			}
+		}
+	}
+	
+	this.powerUpTimeElapsed += (newTime - this.oldTime);
 	this.elapsedTime += (newTime - this.oldTime);
 	this.oldTime = newTime;
 }

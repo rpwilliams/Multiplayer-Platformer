@@ -40,6 +40,7 @@ function Player(position,socket ) {
 	this.screenPos= {x: CANVAS_WIDTH/2, y: position.y};
 	this.levelPos= {x: position.x, y: position.y};
 	this.direction = {left:false, down:false, right:false, up:false};
+	this.ctrlKeyPressed = false;
 	this.noDir = {left:false, down:false, right:false, up:false};
 	this.id = 'player';
 	this.sound = null;
@@ -56,6 +57,7 @@ function Player(position,socket ) {
 	this.wonGame = false;
 	this.health = 5;
 	this.pixelBuffer = 6;
+	this.powerUps = [];
 }
 
 

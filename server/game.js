@@ -54,20 +54,33 @@ function Game(io, sockets, room) {
     });
 
     // Handle steering events
-    player.socket.on('keyDown', function(direction) {
-      player.direction.left = player.direction.left | direction.left;
-      player.direction.down = player.direction.down | direction.down;
-      player.direction.right = player.direction.right | direction.right;
-      player.direction.up = player.direction.up | direction.up;
+    player.socket.on('keyDown', function(direction, ctrlKey) {
+		player.direction.left = player.direction.left | direction.left;
+		player.direction.down = player.direction.down | direction.down;
+		player.direction.right = player.direction.right | direction.right;
+		player.direction.up = player.direction.up | direction.up;
     });
 
     // Handle steering events
-    player.socket.on('keyUp', function(direction) {
-      player.direction.left = player.direction.left & direction.left;
-      player.direction.down = player.direction.down & direction.down;
-      player.direction.right = player.direction.right & direction.right;
-      player.direction.up = player.direction.up & direction.up;
+    player.socket.on('keyUp', function(direction, ctrlKey) {
+
+		player.direction.left = player.direction.left & direction.left;
+		player.direction.down = player.direction.down & direction.down;
+		player.direction.right = player.direction.right & direction.right;
+		player.direction.up = player.direction.up & direction.up;
     });
+	
+	player.socket.on('ctrlKeyDown', function(ctrlKey)
+	{
+		if(ctrlKey == false)
+		{
+			player.ctrlKeyPressed = false;
+		}
+		else
+		{
+			player.ctrlKeyPressed = true;
+		}
+	});
 
   	player.socket.on('fire',function(reticulePosition){
   		player.reticulePosition = reticulePosition;
@@ -128,7 +141,24 @@ Game.prototype.update = function(newTime) {
     //   clearInterval(interval);
     // }
   });
-		
+	
+  // Check for player collision and use of powerups 
+  for(var i = 0; i < this.powerUpArray.length; i++)
+  {
+	if(this.players[0].levelPos.x > this.powerUpArray.powerUps[i].position.x - 25 && this.players[0].levelPos.x < this.powerUpArray.powerUps[i].position.x + 25
+	&& this.players[0].levelPos.y > this.powerUpArray.powerUps[i].position.y - 35 && this.players[0].levelPos.y < this.powerUpArray.powerUps[i].position.y + 25)
+	{
+		this.powerUpArray.powerUps[i].render = false;
+		this.powerUpArray.powerUps[i].pickedUp = true;
+	}
+	
+	  // Check if the player has activated a power up and make sure that powerup hasn't already been used
+      if(this.players[0].ctrlKeyPressed && this.powerUpArray.powerUps[i].pickedUp && this.powerUpArray.powerUps[i].depleted == false)
+	  {
+		  this.powerUpArray.powerUps[i].active = true;
+	  }
+  }
+	
   // Check for projectile collisions with hiding objects
   for (var j = 0; j < this.hidingObjects.length; j++)
   {
