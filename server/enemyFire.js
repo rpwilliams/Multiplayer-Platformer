@@ -13,8 +13,8 @@ function EnemyFire(position,velocity,levelPos) {
    //this.velocity = {x: velocity.x, y:velocity.y}
    //this.direction = direction;
    //this.kind = kind;
-   this.width = 10;
-   this.height = 10;
+   this.width = 5;
+   this.height = 20;
    this.lazerSize = 3;
    this.widthOverlap = this.width*0.30;
    this.heightOverlap = this.height*0.60;

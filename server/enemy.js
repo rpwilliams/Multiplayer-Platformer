@@ -302,7 +302,7 @@ Enemy.prototype.fire = function(direction,enemyFire)
 	 
 	 if ( this.lazerCooldown<1)
   {
-	  var p = Vector.add(this.levelPos, {x:0, y:0});
+	  var p = Vector.add(this.levelPos, {x:20, y:20});
 	  var laz = new EnemyFire(p,velocity,this.levelPos);
 	  this.enemyFire.push(laz);	  
 	  this.lazerCooldown = 15;  
