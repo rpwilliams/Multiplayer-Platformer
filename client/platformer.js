@@ -318,7 +318,7 @@ function renderPlayers(players, ctx) {
     ctx.font = "20px Verdana";
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
-    ctx.fillText("HEALTH: " + players.current.health, 32, 32);
+    ctx.fillText("HEALTH: " + players.current.health + "/5", 32, 32);
   }
   // Enemy perspective
   else{
@@ -510,7 +510,7 @@ function win(players, ctx, playerNum)
   // Get the center of the screen
   var midpoint = rectangleMidpoint(0, 0, canvas.width, canvas.height);
   var X_OFFSET_1 = 100;
-  var X_OFFSET_2 = 115;
+  var X_OFFSET_2 = 100;
   var Y_OFFSET = 50;
   // Subtract the midpoint by half of the number of letters of the message
   // so that the text appears in the center of the midpoint.
