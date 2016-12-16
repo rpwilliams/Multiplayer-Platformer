@@ -60,11 +60,15 @@ hidingObjImages[6].src = 'hiding_objects/Cabinet2.png'; // Cabinet2
 
 var powerUpImages = [
 	new Image(),
-	new Image()
+	new Image(),
+	new Image(),
+	new Image
 ];
 
 powerUpImages[0].src = 'power_ups/30secondbox.png'; //30 second box powerup
 powerUpImages[1].src = 'power_ups/radar.png';  // radar powerup
+powerUpImages[2].src = 'power_ups/arrowRight.png';  // Arrow right
+powerUpImages[3].src = 'power_ups/arrowLeft.png';  // Arrow left
 
 var music = new Audio('sounds/StarCommander1.wav');
 music.setAttribute('autoplay', 'autoplay');
@@ -606,12 +610,31 @@ function renderPowerUps(players, powerUpArray, ctx)
 			powerUpArray.powerUps[i].position.y + powerUpArray.yOffset, powerUpImages[powerUpArray.powerUps[i].type].width * .85, powerUpImages[powerUpArray.powerUps[i].type].height * .85);
 		}
 		
+		// Display distance between player and enemy if radar is active
+		if(powerUpArray.powerUps[i].active && powerUpArray.powerUps[i].type == 1)
+		{			
+			var enemyDistance = Math.floor((players.other.levelPos.x - players.current.levelPos.x)/100);
+			ctx.font="25px Verdana";
+			if(enemyDistance > 0)
+			{
+				ctx.fillText(enemyDistance + 'm', canvas.width - 90, canvas.height/2);
+				ctx.drawImage(powerUpImages[2], canvas.width - 35, canvas.height/2 - 5, 30, 45);
+			}
+			else
+			{
+				ctx.fillText(Math.abs(enemyDistance) + 'm', 40, canvas.height/2);
+				ctx.drawImage(powerUpImages[3], 5, canvas.height/2 - 5, 30, 45);
+			}
+		}
+		
+		// Display in HUD if picked up
 		if(powerUpArray.powerUps[i].pickedUp)
 		{
 			ctx.drawImage(powerUpImages[powerUpArray.powerUps[i].type], players.current.screenPos.x - 478,
 			60, powerUpImages[powerUpArray.powerUps[i].type].width * .85, powerUpImages[powerUpArray.powerUps[i].type].height * .85);
 		}
 		
+		// HUD timer
 		if(powerUpArray.powerUps[i].pickedUp)
 		{
 			powerUpTimerDiv.innerHTML = Math.floor(powerUpArray.powerUps[i].duration / 1000);
