@@ -292,7 +292,7 @@ function renderPlayers(players, ctx) {
   		
   	 
   	  if(players.other.enemyBomb[i].state=="falling"){
-  	  ctx.drawImage(images[4],0,0);
+  	  ctx.drawImage(images[4],0,0, 14,32 ,0,0,players.other.enemyBomb[i].width ,players.other.enemyBomb[i].height);
   	  }
   	  else if(players.other.enemyBomb[i].state!="finished"){
   		ctx.drawImage( images[5],players.other.enemyBomb[i].explosionAnimation*players.other.enemyBomb[i].explosionImageWidth,0 , 
@@ -338,7 +338,7 @@ function renderPlayers(players, ctx) {
   		
   	  //ctx.rotate(-players.current.enemyBomb[i].angle);
   	  if(players.current.enemyBomb[i].state=="falling"){
-  	  ctx.drawImage(images[4],0,0);
+  	  ctx.drawImage(images[4],0,0,14,32 ,0,0,players.current.enemyBomb[i].width ,players.current.enemyBomb[i].height);
   	  }
   	  else if(players.current.enemyBomb[i].state!="finished"){
   		ctx.drawImage( images[5],players.current.enemyBomb[i].explosionAnimation*players.current.enemyBomb[i].explosionImageWidth,0 , 
