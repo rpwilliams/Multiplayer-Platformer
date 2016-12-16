@@ -77,7 +77,6 @@ function Enemy(position,socket ) {
 	this.facing = "left";
 	this.lazerCooldown=0;
 	this.bombCooldown=0;
-	this.numBombs = 3;
 }
 
 
@@ -163,16 +162,15 @@ if(this.direction.left){
 		this.animationCounter = 0;
 		}
   }
-   for (var i = 0 ; i < this.enemyFire.length ; i++)
+  for (var i = 0 ; i < this.enemyFire.length ; i++)
   {
 	  this.enemyFire[i].update();
 	  
 	  //remove the shot at this condtion, it could be hitting an opject or going out of the screen
 	  if (this.enemyFire[i].timer>40)
 	  {
-		  
-		  this.enemyFire.splice(i,1);
-		  i--;
+	  	this.enemyFire.splice(i,1);
+		i--;
 	  }
   }
   for (var i = 0 ; i < this.enemyBombs.length ; i++)
@@ -183,16 +181,13 @@ if(this.direction.left){
 	  if (this.enemyBombs[i].timer>40 && this.enemyBombs[i].state=="falling")
 	  {
 		  this.enemyBombs[i].explode();
-		  this.numBombs--;
-		this.sound = 6;
-		  
+		  this.sound = 6;
 	  }
 	  else if (this.enemyBombs[i].state=="finished")
-	   {
-	   	this.numBombs--;
+	  {
 		this.enemyBombs.splice(i,1);
 		i--; 
-	   }
+	  }
   }
   
   if(this.reticulePosition.fire==true){
@@ -209,10 +204,6 @@ if(this.direction.left){
 		this.fire(direction,this.enemyFire);
 	  }
 	  else if(this.reticulePosition.type=="bomb"){
-		  if(this.numBombs == 0)
-		  {
-		  	return;
-		  }
 		  this.bomb(direction,this.enemyBombs);
 	  }
 	  this.reticulePosition.fire=false;
@@ -258,8 +249,7 @@ if(this.direction.left){
 	swidth:this.spriteWidth, sheight:this.spriteHeight, width:this.widthInGame,
 	height:this.heightInGame, animation:this.animationCounter,
 	velocity:this.velocity,enemyFire:this.enemyFire,reticule:this.reticulePosition.fire,
-	enemyBomb:this.enemyBombs, sound:this.sound, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer,
-	numBombs:this.numBombs};
+	enemyBomb:this.enemyBombs, sound:this.sound, hintboxAlpha:this.hintboxAlpha, leftOfPlayer:this.leftOfPlayer};
 }
 
 Enemy.prototype.changeAnimation = function(animation)

@@ -142,30 +142,30 @@ Game.prototype.update = function(newTime) {
   // Check for player collision and use of powerups 
   for(var i = 0; i < this.powerUpArray.length; i++)
   {
-	if(this.players[0].levelPos.x > this.powerUpArray.powerUps[i].position.x - 25 && this.players[0].levelPos.x < this.powerUpArray.powerUps[i].position.x + 25
-	&& this.players[0].levelPos.y > this.powerUpArray.powerUps[i].position.y - 35 && this.players[0].levelPos.y < this.powerUpArray.powerUps[i].position.y + 25)
-	{
-		// Disable any powerups previously picked up
-		//for (var j = 0; j < this.powerUpArray.length; j++)
-		//{
-			//if(this.powerUpArray.powerUps[j].pickedUp)
-			//{
-				//this.powerUpArray.powerUps[j].pickedUp = false;
-				//this.powerUpArray.powerUps[j].active = false;
-			//	this.powerUpArray.powerUps[j].depleted = true;
-			//}
-		//}		
-		this.powerUpArray.powerUps[i].position.x = -100;
-		this.powerUpArray.powerUps[i].render = false;
-		this.powerUpArray.powerUps[i].pickedUp = true;
-		this.powerUpArray.powerUpsBeingHeld++;
-	}
-	
-	// Check if the player has activated a power up and make sure that powerup hasn't already been used
+  	if(this.players[0].levelPos.x > this.powerUpArray.powerUps[i].position.x - 25 && this.players[0].levelPos.x < this.powerUpArray.powerUps[i].position.x + 25
+  	&& this.players[0].levelPos.y > this.powerUpArray.powerUps[i].position.y - 35 && this.players[0].levelPos.y < this.powerUpArray.powerUps[i].position.y + 25)
+  	{
+  		// Disable any powerups previously picked up
+  		//for (var j = 0; j < this.powerUpArray.length; j++)
+  		//{
+  			//if(this.powerUpArray.powerUps[j].pickedUp)
+  			//{
+  				//this.powerUpArray.powerUps[j].pickedUp = false;
+  				//this.powerUpArray.powerUps[j].active = false;
+  			//	this.powerUpArray.powerUps[j].depleted = true;
+  			//}
+  		//}		
+  		this.powerUpArray.powerUps[i].position.x = -100;
+  		this.powerUpArray.powerUps[i].render = false;
+  		this.powerUpArray.powerUps[i].pickedUp = true;
+  		this.powerUpArray.powerUpsBeingHeld++;
+  	}
+  	
+  	// Check if the player has activated a power up and make sure that powerup hasn't already been used
     if(this.players[0].ctrlKeyPressed && this.powerUpArray.powerUps[i].pickedUp && this.powerUpArray.powerUps[i].depleted == false && this.powerUpArray.powerUps[0].active == false)
-	{
-	   this.powerUpArray.powerUps[i].active = true;
-	}
+  	{
+      this.powerUpArray.powerUps[i].active = true;
+  	}
   }
 	
   // Check for projectile collisions with hiding objects
@@ -197,7 +197,6 @@ Game.prototype.update = function(newTime) {
   			}
   			if (this.players[1].enemyBombs[i].state=="finished")
   		  {
-          this.players[1].numBombs--;
           this.players[1].enemyBombs.splice(i,1);
           i--; 
   		  }

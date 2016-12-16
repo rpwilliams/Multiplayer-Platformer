@@ -14,6 +14,8 @@ var playerFlag = true;
 var enemyFlag = true;
 var playerWinner = 0;
 
+var numBombs = 3;
+
 // Flags to ensure hit sounds play only once
 var playedFour = false;
 var playedThree = false;
@@ -264,9 +266,13 @@ window.onload = function() {
 
   canvas.oncontextmenu = function(event) {
       event.preventDefault();
+      if(numBombs <= 0)
+      {
+        return;
+      }
+      numBombs--;
       reticule.x = event.offsetX;
       reticule.y = event.offsetY;
-      
       reticule.fire=true;
       reticule.type="bomb";
     	socket.emit('fire',reticule);
@@ -532,7 +538,7 @@ function renderPlayers(players, ctx, powerUpArray) {
     ctx.font = "20px Verdana";
     ctx.textAlign = "left";
     ctx.textBaseline = "bottom";
-    ctx.fillText("BOMBS: " + players.current.numBombs, 32, 32);
+    ctx.fillText("BOMBS: " + numBombs, 32, 32);
   }
   ctx.restore();
 }
