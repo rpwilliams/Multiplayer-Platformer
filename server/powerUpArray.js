@@ -50,8 +50,8 @@ function PowerUpArray() {
 		0
 	);
 	this.powerUps[1] = new PowerUp({
-		x: 5280,
-		y: 200},
+		x: 4850,
+		y: 400},
 		1
 	);
 	this.length = 2;
