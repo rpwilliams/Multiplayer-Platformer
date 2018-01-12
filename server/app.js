@@ -1,5 +1,3 @@
-const PORT = 8080;
-
 const fs = require('fs');
 
 var html = fs.readFileSync('./client/platformer.html', {encoding: 'utf8'});
@@ -9,6 +7,7 @@ var css = fs.readFileSync('./client/platformer.css', {encoding: 'utf8'});
 var players = [];
 var games = 0;
 const Game = require('./game');
+var port = process.env.PORT || 8080;
 
 /**
  * @function handleRequest()
@@ -64,6 +63,6 @@ io.on('connection', function(socket) {
 });
 
 /* Launch the server */
-server.listen(PORT, function() {
-  console.log("Server listening on: http://localhost:%s", PORT);
+server.listen(port, function() {
+  console.log("Server listening on: http://localhost:%s", port);
 })

@@ -684,7 +684,7 @@ function renderPowerUps(players, powerUpArray, ctx)
 }
 
 function playSound(players) {
-  console.log(players.current.sound)
+  // console.log(players.current.sound)
   if (players.current.sound != null) {
     sounds[players.current.sound].pause();
     sounds[players.current.sound].currentTime = 0;
