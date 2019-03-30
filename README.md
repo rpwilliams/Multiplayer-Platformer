@@ -6,7 +6,7 @@ Built with HTML5 and socket.io.
 
 ### Getting Started
 
-A live version of the game can be found at: http://www.alienprisonescape.com/. Another player must be connected in order to play.
+The hosted website for this game is no longer available, but can still be installed locally via npm. Another player must be connected in order to play.
 
 ### Prerequisites
 
